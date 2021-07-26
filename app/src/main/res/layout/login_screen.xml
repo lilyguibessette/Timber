@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:background="#eeeeee">
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="200dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintBottom_toTopOf="@id/login_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,8 +21,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Welcome! Enter your username."
-        android:textColor="@color/dark_green"
+        android:text="Welcome! Sign in below."
+        android:textColor="@color/light_green"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/enter_username"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:autofillHints="Enter your username"
         android:hint="Enter your username"
-        android:backgroundTint="@color/light_grey"
+        android:backgroundTint="@color/hints"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="14sp"
@@ -45,7 +45,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_text"
         app:layout_constraintWidth_percent=".6"
-        tools:ignore="LabelFor"
         android:inputType="text" />
 
     <Button
@@ -62,5 +61,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/enter_username"
         />
+
+    <Button
+        android:id="@+id/create_account_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:textStyle="italic"
+        android:textColor="@color/dark_green"
+        android:text="New User? create an account"
+        android:background=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/login_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
