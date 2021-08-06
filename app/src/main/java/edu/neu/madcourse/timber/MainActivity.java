@@ -232,9 +232,10 @@ public class MainActivity extends AppCompatActivity {
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        double distance = Math.sqrt(Math.pow(R * c, 2));
+        // to approx. convert to miles
+        double distance = Math.round(Math.sqrt(Math.pow(R * c, 2)) * 0.6213712);
 
         // return (distance <= searchRadius);
-        return (distance * 0.6213712); // to approx. convert to miles
+        return (distance); // to approx. convert to miles
     }
 }
