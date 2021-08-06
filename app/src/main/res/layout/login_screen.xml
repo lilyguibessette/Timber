@@ -69,10 +69,12 @@
         android:textSize="10sp"
         android:textStyle="italic"
         android:textColor="@color/dark_green"
+        android:backgroundTint="@android:color/transparent"
         android:text="New User? create an account"
+        style="?android:attr/borderlessButtonStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_button" />
+        app:layout_constraintTop_toBottomOf="@id/login_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
