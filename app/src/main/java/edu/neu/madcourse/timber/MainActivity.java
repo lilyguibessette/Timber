@@ -130,7 +130,9 @@ public class MainActivity extends AppCompatActivity {
                 }
         });*/
 
-        // TODO: can we stick this in the user class and initialize in the onCreate?
+        // TODO: can we stick this in the user class and initialize in the onCreate
+        //  then save to database?
+
         // define the location manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -166,8 +168,10 @@ public class MainActivity extends AppCompatActivity {
                 longitude = location.getLongitude();
                 // if there is a location, update TextView to include lat and long coordinates
                 if (location != null) {
+                    double distance = findDistance(38.89511,-77.03637);
                     Toast.makeText(this, "Latitude: " + latitude + "\nLongitude: " +
-                            longitude, Toast.LENGTH_SHORT).show();
+                            longitude + "\nDistance from Washington, DC: " + distance,
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     // if there is no location, send error to the user
                     Toast.makeText(this,
@@ -210,13 +214,16 @@ public class MainActivity extends AppCompatActivity {
 
         }).start();
     }
+    */
 
     // math supplemented by these posts:
     // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
     // https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
-    public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
+
+    // if we want an adjustable radius -> public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
+    public double findDistance(double otherLatitude, double otherLongitude) {
         int R = 6371; // radius of the earth
-        double M = 3958.761; // convert Radians to miles
+        //double M = 3958.761; // convert Radians to miles
 
         double latDistance = Math.toRadians(otherLatitude - latitude);
         double lonDistance = Math.toRadians(otherLongitude - longitude);
@@ -225,8 +232,9 @@ public class MainActivity extends AppCompatActivity {
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        double distance = Math.sqrt(Math.pow(R * c * M, 2));
-        return (distance <= searchRadius);
+        double distance = Math.sqrt(Math.pow(R * c, 2));
+
+        // return (distance <= searchRadius);
+        return (distance * 0.6213712); // to approx. convert to miles
     }
-    */
 }
