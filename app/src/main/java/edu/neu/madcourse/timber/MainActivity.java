@@ -4,21 +4,37 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
+
+    // login screen variables
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public String my_username;
+    private static final String USERNAME = "USERNAME";
+    private static String CLIENT_REGISTRATION_TOKEN;
+    private static String SERVER_KEY = ""; // TODO: set up connection to database
+    private static Button login_button;
 
     // GPS variables
     private LocationManager locationManager;
@@ -30,24 +46,94 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.login_screen);
 
-        // TODO: Homescreen design
+        // hide the action bar for aesthetics
+        getSupportActionBar().hide();
 
-        // TODO bottom menu: https://github.com/PhanVanLinh/AndroidBottomMenu
-        BottomNavigationView bottomNavigation =
-                (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        /*// if the user is returning to the app, open HomepageActivity
+        if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
+            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+        }
+        */
 
-        // TODO: this has been depreciated so need the updated stuffs
-        bottomNavigation.setOnNavigationItemSelectedListener(item -> {
-            handleBottomNavigationItemSelected(item);
-            return true;
+        // else recognize the login button
+        login_button = findViewById(R.id.login_button);
+
+        /*// and generate the user token for the first time ... then no need to do later
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+
+            // if there is an error, display some error information to the user
+            if (!task.isSuccessful()) {
+                Toast.makeText(MainActivity.this, "Something is wrong!",
+                        Toast.LENGTH_SHORT).show();
+
+            } else {
+                // otherwise if the token worked, store it for later
+                if (CLIENT_REGISTRATION_TOKEN == null) {
+                    CLIENT_REGISTRATION_TOKEN = task.getResult();
+                }
+                Log.e("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
+            }
         });
 
-        // TODO: can we stick this in a class and initialize in the onCreate?
-        // TODO: maybe where we read user information
+        // store the preferences in the username
+        my_username = getSharedPreferences("MySharedPref", MODE_PRIVATE).getString(
+                "userName", null);
+
+        // if the username is not null, go to the HomepageActivity class
+        if (my_username != null) {
+            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+        }
+        */
+
+        // Listen for a click on the login button
+        login_button.setOnClickListener(view -> {
+
+            /*// Save down the username from the user
+            my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
+
+            // Write a message to the database
+            login_user();
+
+            // Store the username in shared preferences to skip login if already done
+            SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",
+                    MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putString("userName", my_username);
+            myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
+            myEdit.commit();
+            */
+            // start the new activity
+            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+        });
+
+        // TODO: Homescreen design - still pending
+
+
+        // TODO: move screens to fragments instead of regular layouts
+        // https://androidresearch.wordpress.com/2016/10/29/android-bottomnavigationview-example/
+
+        // TODO bottom menu: https://github.com/PhanVanLinh/AndroidBottomMenu
+        // TODO: this has been depreciated so need the updated stuffs
+        /* findViewById(R.id.bottomNavigationView).setOnNavigationItemSelectedListener(item ->
+                switch (item.getItemId()) {
+                    case R.id.menu_home:
+                        //switchFragment(new RecentsFragment());
+                        break;
+                    case R.id.menu_profile:
+                        //switchFragment(new FavoritesFragment());
+                        break;
+                    case R.id.menu_search:
+                        //switchFragment(new ExploreFragment());
+                        break;
+                }
+        });*/
+
+        // TODO: can we stick this in the user class and initialize in the onCreate?
         // define the location manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         // if the location manager permissions are not enabled, request access from user
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             final AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -91,22 +177,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // bottom menu switch cases
-    // TODO: make and assign these fragments
-    // TODO: move screens to fragments instead of regular layouts
-    // https://androidresearch.wordpress.com/2016/10/29/android-bottomnavigationview-example/
-    private void handleBottomNavigationItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_home:
-                //switchFragment(new RecentsFragment());
-                break;
-            case R.id.menu_profile:
-                //switchFragment(new FavoritesFragment());
-                break;
-            case R.id.menu_search:
-                //switchFragment(new ExploreFragment());
-                break;
-        }
+    /*
+    // from previous app
+    private void login_user() {
+        new Thread(() -> {
+            // connect to the database and look at the users
+            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
+                    "Users/" + my_username);
+
+            myUserRef.addValueEventListener(new ValueEventListener() {
+
+                public User my_user;
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // if the user exists, get their data
+                    if (dataSnapshot.exists()) {
+                        my_user = dataSnapshot.getValue(User.class);
+                    } else {
+                        // else create a new user and store their token
+                        myUserRef.setValue(new User(my_username, CLIENT_REGISTRATION_TOKEN));
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // if getting post failed, log a message
+                    Log.w(TAG, "my_user start login onCancelled",
+                            databaseError.toException());
+                }
+            });
+
+        }).start();
     }
 
     // math supplemented by these posts:
@@ -126,4 +228,5 @@ public class MainActivity extends AppCompatActivity {
         double distance = Math.sqrt(Math.pow(R * c * M, 2));
         return (distance <= searchRadius);
     }
+    */
 }
