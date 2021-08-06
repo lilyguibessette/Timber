@@ -55,12 +55,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
-        */
 
-        // else recognize the login button
-        login_button = findViewById(R.id.login_button);
-
-        /*// and generate the user token for the first time ... then no need to do later
+        // and generate the user token for the first time ... then no need to do later
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
 
             // if there is an error, display some error information to the user
@@ -87,10 +83,13 @@ public class MainActivity extends AppCompatActivity {
         }
         */
 
+        // else recognize the login button
+        login_button = findViewById(R.id.login_button);
+
         // Listen for a click on the login button
         login_button.setOnClickListener(view -> {
 
-            /*// Save down the username from the user
+            /* // Save down the username from the user
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
 
             // Write a message to the database
@@ -104,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
             */
+
             // start the new activity
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         });
