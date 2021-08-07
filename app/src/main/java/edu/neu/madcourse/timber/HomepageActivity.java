@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,9 +29,9 @@ public class HomepageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_homepage);
+       // setContentView(R.layout.screen_homepage);
 
-        CardStackView cardStackView = findViewById(R.id.homepage_card_stack_view);
+        CardStackView cardStackView = findViewById(R.id.homepage);
 
         // Using yuyakaido card stack manager for our swiping implementation
         manager = new CardStackLayoutManager(this, new CardStackListener() {
