@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login_screen);
         //if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
         if (true){
-            startActivity(new Intent(MainActivity.this, HomepageFragment.class));
+            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
     }
 /*

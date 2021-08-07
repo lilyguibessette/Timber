@@ -20,6 +20,7 @@ public class HomepageActivity extends AppCompatActivity {
         bottomNavigation = findViewById(R.id.bottomNavigationView);
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(HomepageFragment.newInstance());
+
     }
 
     public void openFragment(Fragment fragment) {
