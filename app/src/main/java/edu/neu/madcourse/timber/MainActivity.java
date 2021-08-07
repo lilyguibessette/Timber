@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
 
-        Intent startButtonActivity = new Intent(getApplicationContext(), TinderSwipeTest.class);
-        startActivity(startButtonActivity);
+        startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+
 
 /*
 
