@@ -27,6 +27,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name">
         </activity>
+        <activity android:name=".TinderSwipeTest"></activity>
 
 
     </application>

@@ -2,14 +2,14 @@ package edu.neu.madcourse.timber;
 
 public class ItemModel {
     private int image;
-    private String username, details;
+    private String name, details;
 
     public ItemModel() {
     }
 
-    public ItemModel(int image, String username, String details) {
+    public ItemModel(int image, String name, String details) {
         this.image = image;
-        this.username = username;
+        this.name = name;
         this.details = details;
     }
 
@@ -18,11 +18,10 @@ public class ItemModel {
     }
 
     public String getUsername() {
-        return username;
+        return name;
     }
 
     public String getDetails() {
         return details;
     }
-
 }

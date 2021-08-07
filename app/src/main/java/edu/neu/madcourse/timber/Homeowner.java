@@ -11,6 +11,7 @@ public class Homeowner {
     private String zipcode;
     private String email;
     private String phoneNumber;
+    private String image;
 
     public Homeowner(){
     }
@@ -50,4 +51,6 @@ public class Homeowner {
     public String getEmail() { return email; }
 
     public String getPhoneNumber() { return phoneNumber; }
+
+    public void setImage(String image) { this.image = image;}
 }
