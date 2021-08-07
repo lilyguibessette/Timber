@@ -14,7 +14,7 @@ public class HomepageActivity extends AppCompatActivity {
 
         // TODO: if-then to determine the Activity path
         //setContentView(R.layout.homepage_contractor);
-        setContentView(R.layout.homepage_homeowner);
+        setContentView(R.layout.homepage_swipe);
 
     }
 }

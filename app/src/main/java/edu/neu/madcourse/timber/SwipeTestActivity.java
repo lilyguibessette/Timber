@@ -24,7 +24,7 @@ public class SwipeTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.swipe_test);
+        setContentView(R.layout.homepage_swipe);
 
         // this is the view we will add the gesture detector to
         View myView = findViewById(R.id.swipeArea);

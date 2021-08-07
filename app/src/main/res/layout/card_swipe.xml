@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="2dp"
     app:cardCornerRadius="5dp">
 
@@ -12,7 +12,7 @@
         android:layout_margin="5dp">
 
         <TextView
-            android:id="@+id/username"
+            android:id="@+id/swipe_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
@@ -20,30 +20,31 @@
             android:textColor="@color/light_green"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/post_image"
+            app:layout_constraintBottom_toTopOf="@+id/swipe_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/budget"
+            android:id="@+id/swipe_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:text="project budget"
+            android:text="details"
             android:textColor="@color/text"
             android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/post_image"
+            app:layout_constraintBottom_toTopOf="@+id/swipe_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/post_image"
+            android:id="@+id/swipe_image"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_below="@id/username"
-            android:contentDescription="sticker"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent=".95"
+            android:layout_below="@id/swipe_username"
+            android:contentDescription="display image"
             android:padding="3dp"
-            app:layout_constraintTop_toBottomOf="@id/username"
+            app:layout_constraintTop_toBottomOf="@id/swipe_username"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
