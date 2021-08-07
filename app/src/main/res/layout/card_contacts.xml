@@ -21,7 +21,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:hint="message goes here" />
+                    android:hint="last message goes here" />
 
         </LinearLayout>
 
