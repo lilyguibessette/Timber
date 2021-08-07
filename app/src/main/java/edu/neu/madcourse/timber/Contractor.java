@@ -11,6 +11,7 @@ public class Contractor {
     private String email;
     private String zipcode;
     private String phoneNumber;
+    private String image;
 
 
     public Contractor(){
@@ -51,4 +52,6 @@ public class Contractor {
     public String getZipcode() { return zipcode; }
 
     public String getPhoneNumber() {return phoneNumber; }
+
+    public void setImage(String image) { this.image = image;}
 }

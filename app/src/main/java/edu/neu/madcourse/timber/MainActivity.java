@@ -48,10 +48,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
 
+        Intent startButtonActivity = new Intent(getApplicationContext(), TinderSwipeTest.class);
+        startActivity(startButtonActivity);
+
+/*
+
+
         // hide the action bar for aesthetics
         getSupportActionBar().hide();
 
-        /*// if the user is returning to the app, open HomepageActivity
+
+        // if the user is returning to the app, open HomepageActivity
         if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if (my_username != null) {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
-        */
+
 
         // else recognize the login button
         login_button = findViewById(R.id.login_button);
@@ -89,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         // Listen for a click on the login button
         login_button.setOnClickListener(view -> {
 
-            /* // Save down the username from the user
+            // Save down the username from the user
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
 
             // Write a message to the database
@@ -102,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             myEdit.putString("userName", my_username);
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
-            */
+
 
             // start the new activity
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO bottom menu: https://github.com/PhanVanLinh/AndroidBottomMenu
         // TODO: this has been depreciated so need the updated stuffs
-        /* findViewById(R.id.bottomNavigationView).setOnNavigationItemSelectedListener(item ->
+         findViewById(R.id.bottomNavigationView).setOnNavigationItemSelectedListener(item ->
                 switch (item.getItemId()) {
                     case R.id.menu_home:
                         //switchFragment(new RecentsFragment());
@@ -128,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                         //switchFragment(new ExploreFragment());
                         break;
                 }
-        });*/
+        });
 
         // TODO: can we stick this in the user class and initialize in the onCreate
         //  then save to database?
@@ -179,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        */
+
     }
 
     /*
