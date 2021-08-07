@@ -31,14 +31,12 @@ public class HompageActivityTest extends AppCompatActivity {
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.menu_feed:
-                            openFragment(fragment_news_feed.newInstance());
-                            return true;
-                    }
-                    return false;
+            item -> {
+                switch (item.getItemId()) {
+                    case R.id.menu_feed:
+                        openFragment(fragment_news_feed.newInstance());
+                        return true;
                 }
+                return false;
             };
 }

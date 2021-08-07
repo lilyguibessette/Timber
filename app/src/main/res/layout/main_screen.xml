@@ -5,11 +5,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
-        android:id="@+id/bottomNavigationView"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             app:itemIconTint="@drawable/selected_items"
@@ -17,4 +18,5 @@
             app:menu="@menu/menu_bottom_nav" />
 
     </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
