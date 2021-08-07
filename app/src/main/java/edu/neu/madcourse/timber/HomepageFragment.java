@@ -25,7 +25,7 @@ import java.util.List;
 
 public class HomepageFragment extends Fragment {
 
-    private static final String TAG = "HomepageActivity";
+    private static final String TAG = "HomepageFragment";
     private CardStackLayoutManager manager;
     private CardStackAdapter adapter;
     public HomepageFragment() {
@@ -46,8 +46,8 @@ public class HomepageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_screen_homepage, container, false);
-        CardStackView cardStackView = view.findViewById(R.id.homepage_card_stack_view);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        CardStackView cardStackView = view.findViewById(R.id.homepage);
 
         // Using yuyakaido card stack manager for our swiping implementation
         manager = new CardStackLayoutManager(view.getContext(), new CardStackListener() {

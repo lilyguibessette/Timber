@@ -32,8 +32,8 @@ public class HomepageActivity extends AppCompatActivity {
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             item -> {
                 switch (item.getItemId()) {
-                    case R.id.menu_feed:
-                        openFragment(fragment_news_feed.newInstance());
+                    case R.id.menu_home:
+                        openFragment(HomepageFragment.newInstance());
                         return true;
                 }
                 return false;
