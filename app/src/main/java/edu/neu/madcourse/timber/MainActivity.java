@@ -1,30 +1,12 @@
 package edu.neu.madcourse.timber;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
-        startActivity(new Intent(MainActivity.this, HompageActivityTest.class));
-
-
+        //if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
+        if (true){
+            startActivity(new Intent(MainActivity.this, HomepageFragment.class));
+        }
+    }
 /*
 
 
@@ -187,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         }
         */
 
-    }
+    //}
 
     /*
     // from previous app
