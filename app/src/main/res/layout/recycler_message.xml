@@ -10,6 +10,7 @@
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
+        android:padding="5dp"
         app:layout_constraintBottom_toTopOf="@id/messages"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -33,8 +34,6 @@
         android:id="@+id/messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:backgroundTint="@color/white"
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +46,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messages">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <EditText
             android:id="@+id/message_write"

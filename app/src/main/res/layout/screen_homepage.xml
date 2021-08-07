@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <com.yuyakaido.android.cardstackview.CardStackView
-        android:id="@+id/card_stack_view_homeowner"
+        android:id="@+id/homepage_card_stack_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="8dp"

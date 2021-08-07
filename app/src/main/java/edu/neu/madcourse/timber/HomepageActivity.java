@@ -35,7 +35,7 @@ public class HomepageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_homepage);
 
-        CardStackView cardStackView = findViewById(R.id.card_stack_view_homeowner);
+        CardStackView cardStackView = findViewById(R.id.homepage_card_stack_view);
 
         // Using yuyakaido card stack manager for our swiping implementation
         manager = new CardStackLayoutManager(this, new CardStackListener() {
@@ -80,13 +80,13 @@ public class HomepageActivity extends AppCompatActivity {
 
             @Override
             public void onCardAppeared(View view, int position) {
-                TextView tv = view.findViewById(R.id.item_name);
+                //TextView tv = view.findViewById(R.id.item_name);
                 //Log.d(TAG, "onCardAppeared: " + position + ", nama: " + tv.getText());
             }
 
             @Override
             public void onCardDisappeared(View view, int position) {
-                TextView tv = view.findViewById(R.id.item_name);
+                //TextView tv = view.findViewById(R.id.item_name);
                 //Log.d(TAG, "onCardAppeared: " + position + ", nama: " + tv.getText());
             }
         });
