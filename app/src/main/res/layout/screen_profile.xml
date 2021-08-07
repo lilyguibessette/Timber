@@ -8,41 +8,34 @@
         android:id="@+id/profile_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="5dp"
+        android:layout_gravity="left"
+        android:layout_marginTop="10dp"
         android:text="username"
         android:textColor="@color/light_green"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/profile_details"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/profile_pin"
+        android:layout_width="15dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/pin"
+        app:layout_constraintBottom_toTopOf="@id/profile_details"
+        app:layout_constraintEnd_toStartOf="@+id/profile_location"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/profile_location"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:hint="zipcode"
+        app:layout_constraintBottom_toTopOf="@id/profile_details"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_username">
-
-        <ImageView
-            android:id="@+id/profile_homeowner_pin"
-            android:layout_width="15dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:background="@drawable/pin"
-            android:padding="10dp" />
-
-        <TextView
-            android:id="@+id/profile_homeowner_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="City, State"
-            android:padding="10dp" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/profile_details"
@@ -78,7 +71,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="NEW PROJECT"
+        android:layout_marginBottom="10dp"
+        android:text="ACTION BUTTON"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
