@@ -34,6 +34,7 @@ public class TinderSwipeTest extends AppCompatActivity {
 
         CardStackView cardStackView = findViewById(R.id.card_stack_view_homeowner);
 
+        // Using yuyakaido card stack manager for our swiping implementation
         manager = new CardStackLayoutManager(this, new CardStackListener() {
             @Override
             public void onCardDragging(Direction direction, float ratio) {
