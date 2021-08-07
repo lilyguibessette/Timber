@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * Use the {@link fragment_news_feed} factory method to
  * create an instance of this fragment.
  */
-public class fragment_news_feed extends Fragment {
+public class fragment_home extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,12 +24,12 @@ public class fragment_news_feed extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public fragment_news_feed() {
+    public fragment_home() {
         // Required empty public constructor
     }
 
-    public static fragment_news_feed newInstance() {
-        fragment_news_feed fragment = new fragment_news_feed();
+    public static fragment_home newInstance() {
+        fragment_home fragment = new fragment_home();
         return fragment;
     }
 
@@ -42,6 +42,6 @@ public class fragment_news_feed extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_news_feed, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 }
