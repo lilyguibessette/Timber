@@ -1,18 +1,13 @@
 package edu.neu.madcourse.timber;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintSet;
 
 import static android.content.ContentValues.TAG;
 
@@ -24,7 +19,7 @@ public class SwipeTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.homepage_swipe);
+        setContentView(R.layout.screen_homepage);
 
         // this is the view we will add the gesture detector to
         View myView = findViewById(R.id.swipeArea);
