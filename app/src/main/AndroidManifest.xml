@@ -28,6 +28,13 @@
             android:label="@string/app_name">
         </activity>
 
+        <activity
+            android:name=".NewsFeedActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name">
+        </activity>
+
+
 
     </application>
 

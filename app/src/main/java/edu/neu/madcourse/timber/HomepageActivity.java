@@ -1,5 +1,6 @@
 package edu.neu.madcourse.timber;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
@@ -26,6 +28,7 @@ public class HomepageActivity extends AppCompatActivity {
     private static final String TAG = "HomepageActivity";
     private CardStackLayoutManager manager;
     private CardStackAdapter adapter;
+    private BottomNavigationView bottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +61,10 @@ public class HomepageActivity extends AppCompatActivity {
                 }
 
                 // Paginating
+                /*
                 if (manager.getTopPosition() == adapter.getItemCount() - 5){
                     paginate();
-                }
+                }*/
 
             }
 
