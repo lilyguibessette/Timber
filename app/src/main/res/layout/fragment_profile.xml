@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,26 +15,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Space
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#eeeeee" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/profile_contractor_icon"
+                android:id="@+id/profile_homeowner_icon"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_gravity="center"
                 android:padding="10dp" />
 
             <ImageView
-                android:id="@+id/profile_contractor_pin"
+                android:id="@+id/profile_homeowner_pin"
                 android:layout_width="30dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
@@ -43,65 +37,51 @@
                 android:padding="10dp" />
 
             <TextView
-                android:id="@+id/profile_contractor_location"
+                android:id="@+id/profile_homeowner_location"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:hint="City, State"
                 android:padding="10dp" />
-        </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#eeeeee" />
+        </TableRow>
 
         <TextView
-            android:id="@+id/profile_contractor_information"
+            android:id="@+id/profile_homeowner_information"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="center"
-            android:hint="Company information"
+            android:hint="profile details"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_contractor_icon" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#eeeeee" />
+            app:layout_constraintTop_toBottomOf="@id/profile_homeowner_icon" />
 
         <TextView
-            android:id="@+id/profile_contractor_projects_title"
-            android:layout_width="wrap_content"
+            android:id="@+id/profile_homeowner_projects_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:gravity="center"
-            android:text="COMPLETED PROJECTS"
+            android:layout_gravity="center"
+            android:text="PREVIOUS PROJECTS"
             android:textColor="@color/light_green"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/profile_contractor_projects"
+            app:layout_constraintBottom_toTopOf="@id/profile_homeowner_projects"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_contractor_information" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#eeeeee" />
+            app:layout_constraintTop_toBottomOf="@id/profile_homeowner_information" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/profile_contractor_projects"
+            android:id="@+id/profile_homeowner_projects"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_contractor_projects_title" />
+            app:layout_constraintTop_toBottomOf="@id/profile_homeowner_projects_title" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#eeeeee" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="NEW PROJECT" />
 
     </LinearLayout>
 

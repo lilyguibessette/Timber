@@ -4,20 +4,20 @@
     <item
         android:id="@+id/menu_home"
         android:icon="@drawable/icon_home"
-        android:title="Feed" />
+        android:title="Home" />
 
     <item
-        android:id="@+id/menu_search"
+        android:id="@+id/menu_feed"
         android:icon="@drawable/icon_search"
-        android:title="Projects" />
+        android:title="News Feed" />
+
+    <item
+        android:id="@+id/menu_messaging"
+        android:icon="@drawable/icon_profile"
+        android:title="Messages" />
 
     <item
         android:id="@+id/menu_profile"
         android:icon="@drawable/icon_profile"
-        android:title="Profile" />
-
-    <item
-        android:id="@+id/menu_settings"
-        android:icon="@drawable/icon_settings"
         android:title="Settings" />
 </menu>
