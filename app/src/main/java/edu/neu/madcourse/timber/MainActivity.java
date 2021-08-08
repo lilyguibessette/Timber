@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     private static final String TAG = MainActivity.class.getSimpleName();
     public String my_username;
     public String my_usertype;
-    public String my_token;
     public String my_param1;
     public String my_param2;
     public String my_email;
@@ -189,17 +188,23 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                     if (dataSnapshot.exists()) {
                         my_user = dataSnapshot.getValue(User.class);
                     } else {
-                        // else create a new user and store their token
-                        /*
                         if (my_usertype == HOMEOWNERS) {
                             myUserRef.setValue(new Homeowner(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
-                                    ));
+                                    my_param1,
+                                    my_param2,
+                                    my_email,
+                                    my_zip,
+                                    my_phone));
                         } else {
                             myUserRef.setValue(new Contractor(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
-                                    ));
-                        }*/
+                                    my_param1,
+                                    my_param2,
+                                    my_email,
+                                    my_zip,
+                                    my_phone));
+                        }
                     }
                 }
 
