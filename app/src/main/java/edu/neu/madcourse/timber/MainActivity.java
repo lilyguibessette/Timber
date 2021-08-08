@@ -40,10 +40,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     public String my_username;
     public String my_usertype;
     public String my_token;
-    public String my_param1 ;
-    public String my_param2 ;
-    public String my_email ;
-    public String my_zip ;
+    public String my_param1;
+    public String my_param2;
+    public String my_email;
+    public String my_zip;
     public String my_phone;
     private static final String USERNAME = "USERNAME";
     private static final String USERTYPE = "USERTYPE";
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     private static Button createUserButton;
     private RadioGroup radioGroupUserType;
     private RadioButton radioButtonUserType;
-
 
 
     // GPS variables
@@ -138,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         radioGroupUserType = (RadioGroup) findViewById(R.id.radiogroup_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
         radioButtonUserType = (RadioButton) findViewById(selectedUserType);
-        String usertype  = radioButtonUserType.getText().toString();
-        if (usertype == "Homeowner"){
+        String usertype = radioButtonUserType.getText().toString();
+        if (usertype == "Homeowner") {
             my_usertype = HOMEOWNERS;
         } else {
             my_usertype = CONTRACTORS;
@@ -169,43 +168,44 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         createUserDialog.dismiss();
     }
 
-    private void login_user(){
-            new Thread(() -> {
-                // connect to the database and look at the users
-                DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
-                        my_usertype +"/" + my_username);
+    private void login_user() {
+        new Thread(() -> {
+            // connect to the database and look at the users
+            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
+                    my_usertype + "/" + my_username);
 
-                myUserRef.addValueEventListener(new ValueEventListener() {
-                    public User my_user;
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // if the user exists, get their data
-                        if (dataSnapshot.exists()) {
-                            my_user = dataSnapshot.getValue(User.class);
+            myUserRef.addValueEventListener(new ValueEventListener() {
+                public User my_user;
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // if the user exists, get their data
+                    if (dataSnapshot.exists()) {
+                        my_user = dataSnapshot.getValue(User.class);
+                    } else {
+                        // else create a new user and store their token
+                        if (my_usertype == HOMEOWNERS) {
+                            myUserRef.setValue(new Homeowner(my_username,
+                                    CLIENT_REGISTRATION_TOKEN,
+                                    ));
                         } else {
-                            // else create a new user and store their token
-                            if (my_usertype == HOMEOWNERS) {
-                                myUserRef.setValue(new Homeowner(my_username,
-                                        CLIENT_REGISTRATION_TOKEN,
-                                        ));
-                            } else{
-                                myUserRef.setValue(new Contractor(my_username,
-                                        CLIENT_REGISTRATION_TOKEN,
-                                        ));
-                            }
+                            myUserRef.setValue(new Contractor(my_username,
+                                    CLIENT_REGISTRATION_TOKEN,
+                                    ));
                         }
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // if getting post failed, log a message
-                        Log.w(TAG, "my_user start login onCancelled",
-                                databaseError.toException());
-                    }
-                });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // if getting post failed, log a message
+                    Log.w(TAG, "my_user start login onCancelled",
+                            databaseError.toException());
+                }
+            });
 
-            }).start();
-        }
+        }).start();
+    }
 
 /*
 
@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
     }
 */
+
     private Location getLocation(){
 
         // TODO: can we stick this in the user class and initialize in the onCreate
@@ -270,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 }*/
             }
         }
+        return null;
     }
 
 
