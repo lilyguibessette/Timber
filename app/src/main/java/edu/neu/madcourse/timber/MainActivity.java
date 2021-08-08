@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        my_user = dataSnapshot.getValue(User.class);
+                        //my_user = dataSnapshot.getValue(User.class);
                     } else {
                         if (my_usertype == HOMEOWNERS) {
                             myUserRef.setValue(new Homeowner(my_username,
