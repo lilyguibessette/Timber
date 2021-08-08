@@ -17,13 +17,13 @@
             android:layout_height="250dp"
             android:padding="5dp"
             android:contentDescription="post image"
-            app:layout_constraintBottom_toTopOf="@id/username"
+            app:layout_constraintBottom_toTopOf="@id/post_username"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/username"
+            android:id="@+id/post_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -36,15 +36,15 @@
             app:layout_constraintTop_toBottomOf="@id/post_image" />
 
         <TextView
-            android:id="@+id/content"
+            android:id="@+id/post_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="content post"
+            android:text="content"
             android:textColor="@color/text"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/username"
+            app:layout_constraintStart_toEndOf="@id/post_username"
             app:layout_constraintTop_toBottomOf="@id/post_image" />
 
 
