@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1020635565901",
+    "firebase_url": "https://timber-lld-default-rtdb.firebaseio.com",
+    "project_id": "timber-lld",
+    "storage_bucket": "timber-lld.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1020635565901:android:c79ff5eb292ac8b5ca7104",
+        "android_client_info": {
+          "package_name": "edu.neu.madcourse.timber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1020635565901-8l9g7000h5t6ko4u5c8itgj3javikl92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGRwAUdFrYH_jT7OFtOWQDU_TDrx7fWjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1020635565901-8l9g7000h5t6ko4u5c8itgj3javikl92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
