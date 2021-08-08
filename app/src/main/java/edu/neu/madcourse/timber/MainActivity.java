@@ -3,6 +3,7 @@ package edu.neu.madcourse.timber;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,19 +12,24 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-//import com.google.firebase.firestore.auth.User;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import edu.neu.madcourse.timber.fcm_server.Utils;
 
@@ -41,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     private static String CLIENT_REGISTRATION_TOKEN;
     private static String SERVER_KEY = ""; // TODO: set up connection to database
     private static Button login_button;
+    private static Button createUserButton;
+    private RadioGroup radioGroupUserType;
+    private RadioButton radioButtonUserType;
 
     // GPS variables
     private LocationManager locationManager;
@@ -57,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.login_screen);
         login_button = findViewById(R.id.login_button);
-        getLocation();
-
-        /*
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
 
             // if there is an error, display some error information to the user
@@ -83,17 +89,14 @@ public class MainActivity extends AppCompatActivity {
         if (my_username != null) {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
-        */
 
         login_button.setOnClickListener(view -> {
 
-            getLocation();
-            /*
             // Save down the username from the user
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
 
             // Write a message to the database
-            //login_user();
+            login_user();
 
             // Store the username in shared preferences to skip login if already done
             SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",
@@ -105,11 +108,55 @@ public class MainActivity extends AppCompatActivity {
 
             // start the new activity
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
-        });*/
+        });
+
+        createUserButton = findViewById(R.id.create_account_button);
+        createUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // use dialog for add link
+                startCreateUserDialog();
+            }
         });
     }
 
-/*
+
+    public void startLinkCollectorDialog() {
+        DialogFragment linkDialog = new LinkCollectorDialogFragment();
+        linkDialog.show(getSupportFragmentManager(), "LinkDialogFragment");
+    }
+
+    public void onDialogPositiveClick(DialogFragment linkDialog) {
+        Dialog createUserDialog = linkDialog.getDialog();
+
+
+        radiogroup_type = (RadioGroup) findViewById(R.id.radiogroup_usertype);
+        int selectedNationalityId = radioGroupNationality.getCheckedRadioButtonId();
+        radioButtonNationality = (RadioButton) findViewById(selectedNationalityId);
+        nationality = radioButtonNationality.getText().toString();
+
+        my_username = ((EditText) createUserDialog.findViewById(R.id.create_username)).getText().toString();
+        param1 = ((EditText) createUserDialog.findViewById(R.id.param1)).getText().toString();
+        param2 = ((EditText) createUserDialog.findViewById(R.id.param2)).getText().toString();
+        email = ((EditText) createUserDialog.findViewById(R.id.create_email)).getText().toString();
+        zip = ((EditText) createUserDialog.findViewById(R.id.create_zip)).getText().toString();
+        phone = ((EditText) createUserDialog.findViewById(R.id.create_phone)).getText().toString();
+
+        if (my_usertype != null && my_username != null) {
+            linkDialog.dismiss();
+            View parentLayout = findViewById(android.R.id.content);
+            Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
+        } else {
+            Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment linkDialog) {
+        linkDialog.dismiss();
+    }
+
         private void login_user(){
             new Thread(() -> {
                 // connect to the database and look at the users
@@ -152,6 +199,14 @@ public class MainActivity extends AppCompatActivity {
 
             }).start();
         }
+
+/*
+
+
+        // hide the action bar for aesthetics
+        getSupportActionBar().hide();
+
+
     }
 */
     private void getLocation(){
