@@ -15,7 +15,7 @@ public class CreateUserDialogFragment extends DialogFragment {
         void onDialogPositiveClick(DialogFragment linkDialog);
         void onDialogNegativeClick(DialogFragment linkDialog);
     }
-    LinkCollectorDialogListener listener;
+    CreateUserDialogListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -25,17 +25,17 @@ public class CreateUserDialogFragment extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.fragment_link_collector_dialog, null))
+        builder.setView(inflater.inflate(R.layout.create_account, null))
                 // Add action buttons
-                .setPositiveButton(R.string.add_link, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.create_account, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onDialogPositiveClick(LinkCollectorDialogFragment.this);
+                        listener.onDialogPositiveClick(CreateUserDialogFragment.this);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onDialogNegativeClick(LinkCollectorDialogFragment.this);
+                        listener.onDialogNegativeClick(CreateUserDialogFragment.this);
                     }
                 });
         return builder.create();
@@ -45,10 +45,10 @@ public class CreateUserDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (LinkCollectorDialogListener) context;
+            listener = (CreateUserDialogListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException("Activity must implement LinkCollectorDialogListener");
+            throw new ClassCastException("Activity must implement CreateUserDialogListener");
         }
     }
 }
