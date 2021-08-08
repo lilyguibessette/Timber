@@ -1,17 +1,23 @@
 package edu.neu.madcourse.timber;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private static String CLIENT_REGISTRATION_TOKEN;
     private static String SERVER_KEY = ""; // TODO: set up connection to database
     private static Button login_button;
+    private static Button createUserButton;
+    private RadioGroup radioGroupUserType;
+    private RadioButton radioButtonUserType;
 
     // GPS variables
     private LocationManager locationManager;
@@ -95,7 +104,52 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         });
 
+        createUserButton = findViewById(R.id.create_account_button);
+        createUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // use dialog for add link
+                startCreateUserDialog();
+            }
+        });
+    }
 
+
+    public void startLinkCollectorDialog() {
+        DialogFragment linkDialog = new LinkCollectorDialogFragment();
+        linkDialog.show(getSupportFragmentManager(), "LinkDialogFragment");
+    }
+
+    public void onDialogPositiveClick(DialogFragment linkDialog) {
+        Dialog createUserDialog = linkDialog.getDialog();
+
+
+        radiogroup_type = (RadioGroup) findViewById(R.id.radiogroup_usertype);
+        int selectedNationalityId = radioGroupNationality.getCheckedRadioButtonId();
+        radioButtonNationality = (RadioButton) findViewById(selectedNationalityId);
+        nationality = radioButtonNationality.getText().toString();
+
+        my_username = ((EditText) createUserDialog.findViewById(R.id.create_username)).getText().toString();
+        param1 = ((EditText) createUserDialog.findViewById(R.id.param1)).getText().toString();
+        param2 = ((EditText) createUserDialog.findViewById(R.id.param2)).getText().toString();
+        email = ((EditText) createUserDialog.findViewById(R.id.create_email)).getText().toString();
+        zip = ((EditText) createUserDialog.findViewById(R.id.create_zip)).getText().toString();
+        phone = ((EditText) createUserDialog.findViewById(R.id.create_phone)).getText().toString();
+
+        if (my_usertype != null && my_username != null) {
+            linkDialog.dismiss();
+            View parentLayout = findViewById(android.R.id.content);
+            Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
+        } else {
+            Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment linkDialog) {
+        linkDialog.dismiss();
+    }
 
         private void login_user(){
             new Thread(() -> {
@@ -139,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
             }).start();
         }
-    }
+
 /*
 
 
