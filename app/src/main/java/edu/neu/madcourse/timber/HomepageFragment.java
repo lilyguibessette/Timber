@@ -145,6 +145,7 @@ public class HomepageFragment extends Fragment {
     }
 
     private List<ItemModel> addList() {
+
         Log.e(TAG,"addList called");
         List<ItemModel> items = new ArrayList<>();
         items.add(new ItemModel(R.drawable.sample1, "Markonah", "24"));
@@ -158,6 +159,7 @@ public class HomepageFragment extends Fragment {
         items.add(new ItemModel(R.drawable.sample3, "Sukijah", "27"));
         items.add(new ItemModel(R.drawable.sample4, "Markobar", "19"));
         items.add(new ItemModel(R.drawable.sample5, "Marmut", "25"));
+
         return items;
     }
 }

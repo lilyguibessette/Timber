@@ -3,4 +3,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="test_item_name">test item name</string>
+    <string name="textview">TextView</string>
+    <string name="description">description</string>
+    <string name="name">name</string>
+    <string name="display_image">display image</string>
+    <string name="zipcode">zipcode</string>
 </resources>
