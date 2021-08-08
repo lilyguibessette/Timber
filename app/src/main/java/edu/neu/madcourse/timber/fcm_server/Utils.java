@@ -1,22 +1,5 @@
 package edu.neu.madcourse.timber.fcm_server;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -26,12 +9,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.neu.madcourse.timber.HomepageFragment;
-import edu.neu.madcourse.timber.ItemModel;
 
 // Reference: Firebase Demo 3 from classwork
 

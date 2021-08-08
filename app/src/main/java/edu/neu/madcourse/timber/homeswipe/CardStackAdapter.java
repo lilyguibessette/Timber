@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.homeswipe;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static android.content.ContentValues.TAG;
+
+import edu.neu.madcourse.timber.R;
 
 public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.ViewHolder> {
 

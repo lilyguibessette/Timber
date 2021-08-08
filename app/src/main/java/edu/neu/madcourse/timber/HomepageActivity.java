@@ -3,14 +3,17 @@ package edu.neu.madcourse.timber;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import edu.neu.madcourse.timber.homeswipe.HomepageFragment;
+import edu.neu.madcourse.timber.matches.MatchesFragment;
+import edu.neu.madcourse.timber.newsfeed.NewsFeedFragment;
+import edu.neu.madcourse.timber.profile.ProfileFragment;
 
 public class HomepageActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigation;
@@ -21,9 +24,12 @@ public class HomepageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().hide();
+
         // Getting current username that is logged in
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        my_username = sharedPreferences.getString("userName", "Not found");
+        SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        my_username = sharedPreferences.getString("USERNAME", "Not found");
         my_token = sharedPreferences.getString("CLIENT_REGISTRATION_TOKEN", "Not found");
 
         // If we don't have the userName or token, restart the login activity
@@ -60,7 +66,7 @@ public class HomepageActivity extends AppCompatActivity {
                 }
                 switch (item.getItemId()) {
                     case R.id.menu_messaging:
-                        openFragment(MessagesFragment.newInstance());
+                        openFragment(MatchesFragment.newInstance());
                         return true;
                 }
                 switch (item.getItemId()) {

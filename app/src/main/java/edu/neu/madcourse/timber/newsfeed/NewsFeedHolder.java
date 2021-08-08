@@ -1,10 +1,12 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.newsfeed;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import edu.neu.madcourse.timber.R;
 
 public class NewsFeedHolder extends RecyclerView.ViewHolder {
 

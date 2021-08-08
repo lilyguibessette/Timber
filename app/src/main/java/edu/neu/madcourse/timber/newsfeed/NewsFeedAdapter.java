@@ -1,8 +1,7 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.newsfeed;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +15,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
+
+import edu.neu.madcourse.timber.R;
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 

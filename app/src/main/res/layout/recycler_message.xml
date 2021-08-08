@@ -19,10 +19,11 @@
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="messages"
+            android:text="Matches"
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/my_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"

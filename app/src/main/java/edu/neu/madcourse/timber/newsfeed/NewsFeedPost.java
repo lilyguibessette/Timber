@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.newsfeed;
 
 public class NewsFeedPost {
     public String username;

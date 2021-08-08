@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.homeswipe;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
@@ -22,6 +20,8 @@ import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.neu.madcourse.timber.R;
 
 public class HomepageFragment extends Fragment {
 

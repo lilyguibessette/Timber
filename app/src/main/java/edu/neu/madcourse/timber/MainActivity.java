@@ -31,7 +31,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
-import edu.neu.madcourse.timber.fcm_server.Utils;
+
+import edu.neu.madcourse.timber.users.Contractor;
+import edu.neu.madcourse.timber.users.Homeowner;
+
+//TODO NOTES
+/*
+- Add empty lists to users for
+    - ActiveProjectList IDs
+    - CompletedProjectList IDs
+    - SwipedOn List - T/F for all projects (for contractors) and all contractors for homeowners
+    - Matched List - T/F as swipes are recorded in DB
+- Create better project class
+- Photo upload
+- Ugh Messaging is 'set up', but can't transition from Matches fragment to Messages (made both activity and fragment to see)
+- Finalize database structures
+   - Need to plug everything in
+- GPS and filtering
+- Match notifications
+
+ */
+
 
 public class MainActivity extends AppCompatActivity implements CreateUserDialogFragment.CreateUserDialogListener {
 
@@ -87,27 +107,30 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             }
         });
         // store the preferences in the username
-        my_username = getSharedPreferences("MySharedPref", MODE_PRIVATE).getString(
-                "userName", null);
+        my_username = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
+                USERNAME, null);
+        my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
+                USERTYPE, null);
 
         // if the username is not null, go to the ReceivedActivity class
-        if (my_username != null) {
+        if (my_username != null && my_usertype != null) {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
 
         login_button.setOnClickListener(view -> {
 
-            // Save down the username from the user
+            //TODO VALIDATE LOGIN FROM DB QUERY
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
 
             // Write a message to the database
             login_user();
 
             // Store the username in shared preferences to skip login if already done
-            SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",
+            SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref",
                     MODE_PRIVATE);
             SharedPreferences.Editor myEdit = sharedPreferences.edit();
-            myEdit.putString("userName", my_username);
+            myEdit.putString(USERNAME, my_username);
+            myEdit.putString(USERTYPE, my_usertype);
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
 
@@ -179,22 +202,20 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
     private void login_user() {
         new Thread(() -> {
-            SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",
+            SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref",
                     MODE_PRIVATE);
             SharedPreferences.Editor myEdit = sharedPreferences.edit();
-            myEdit.putString("userName", my_username);
+            myEdit.putString(USERNAME, my_username);
             // connect to the database and look at the users
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
 
             myUserRef.addValueEventListener(new ValueEventListener() {
-                public User my_user;
-
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        //my_user = dataSnapshot.getValue(User.class);
+                        Log.e(TAG,"User exists in DB");
                     } else {
                         if (my_usertype == HOMEOWNERS) {
                             myUserRef.setValue(new Homeowner(my_username,
