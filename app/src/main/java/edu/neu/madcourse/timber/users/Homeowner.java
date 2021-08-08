@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.users;
 
 import android.location.Location;
 

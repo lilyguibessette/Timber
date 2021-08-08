@@ -3,14 +3,15 @@ package edu.neu.madcourse.timber;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import edu.neu.madcourse.timber.matches.MatchesFragment;
+import edu.neu.madcourse.timber.messages.MessagesFragment;
 
 public class HomepageActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigation;
@@ -60,7 +61,7 @@ public class HomepageActivity extends AppCompatActivity {
                 }
                 switch (item.getItemId()) {
                     case R.id.menu_messaging:
-                        openFragment(MessagesFragment.newInstance());
+                        openFragment(MatchesFragment.newInstance());
                         return true;
                 }
                 switch (item.getItemId()) {

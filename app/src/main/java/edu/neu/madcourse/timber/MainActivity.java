@@ -31,7 +31,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
-import edu.neu.madcourse.timber.fcm_server.Utils;
+
+import edu.neu.madcourse.timber.users.Contractor;
+import edu.neu.madcourse.timber.users.Homeowner;
 
 public class MainActivity extends AppCompatActivity implements CreateUserDialogFragment.CreateUserDialogListener {
 
