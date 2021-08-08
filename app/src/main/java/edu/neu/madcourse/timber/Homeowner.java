@@ -18,6 +18,22 @@ public class Homeowner implements User {
 
     public Homeowner(String username,
                      String token,
+                     String firstName,
+                     String lastName,
+                     String email,
+                     String zipcode,
+                     String phoneNumber){
+        this.username = username;
+        this.token = token;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.zipcode = zipcode;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Homeowner(String username,
+                     String token,
                      Location location,
                      String firstName,
                      String lastName,

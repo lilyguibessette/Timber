@@ -91,7 +91,15 @@ public class Utils {
 
     }
 
-    public static double findDistance(double latitude, double longitude, double otherLatitude, double otherLongitude) {
+
+    /**
+    Checking Distance between two points
+     */
+    // if we want an adjustable radius -> public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
+    // math supplemented by these posts:
+    // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
+    // https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
+    public double findDistance(double latitude, double longitude, double otherLatitude, double otherLongitude) {
         int R = 6371; // radius of the earth
         //double M = 3958.761; // convert Radians to miles
         double latDistance = Math.toRadians(otherLatitude - latitude);

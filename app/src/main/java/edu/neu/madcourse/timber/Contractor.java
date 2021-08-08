@@ -19,6 +19,22 @@ public class Contractor implements User {
 
     public Contractor(String username,
                       String token,
+                      String businessName,
+                      String taxID,
+                      String email,
+                      String zipcode,
+                      String phoneNumber){
+        this.username = username;
+        this.token = token;
+        this.businessName = businessName;
+        this.taxID = taxID;
+        this.email = email;
+        this.zipcode = zipcode;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Contractor(String username,
+                      String token,
                       Location location,
                       String businessName,
                       String taxID,

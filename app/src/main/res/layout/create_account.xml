@@ -43,7 +43,7 @@
             android:id="@+id/create_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:hint="Username"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
@@ -51,7 +51,7 @@
             android:id="@+id/create_param1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="First name / Business name"
+            android:hint="First name / Business name"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
@@ -59,7 +59,7 @@
             android:id="@+id/create_param2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Last name / Tax ID"
+            android:hint="Last name / Tax ID"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
@@ -67,7 +67,7 @@
             android:id="@+id/create_zip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Zip code"
+            android:hint="Zip code"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
@@ -75,7 +75,7 @@
             android:id="@+id/create_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email"
+            android:hint="Email"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
@@ -83,7 +83,7 @@
             android:id="@+id/create_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Phone number"
+            android:hint="Phone number"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
