@@ -2,7 +2,7 @@ package edu.neu.madcourse.timber;
 
 import android.location.Location;
 
-public class Contractor {
+public class Contractor implements User {
     private String username;
     private String token;
     private Location location;
