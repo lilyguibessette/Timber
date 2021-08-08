@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                         my_user = dataSnapshot.getValue(User.class);
                     } else {
                         // else create a new user and store their token
+                        /*
                         if (my_usertype == HOMEOWNERS) {
                             myUserRef.setValue(new Homeowner(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                             myUserRef.setValue(new Contractor(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
                                     ));
-                        }
+                        }*/
                     }
                 }
 
