@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -62,7 +63,19 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
             Log.e(TAG,"putBytes start");
 
-            newImageRef.putBytes(byteArray);
+            UploadTask uploadTask = newImageRef.putBytes(byteArray);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.e(TAG,"upload completed");
+                }
+            });
+
 
             Log.e(TAG,"putBytes end");
 
@@ -70,13 +83,21 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
             // ImageView in your Activity
             ImageView imageView = view.findViewById(R.id.post_image);
 
+            newImageRef.getBytes(999999999).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    imageView.setImageBitmap(bitmap);
+                }
+            });
+
 
             // Download directly from StorageReference using Glide
             // (See MyAppGlideModule for Loader registration)
-            Glide.with(view)
-                    .asDrawable()
-                    .load(newImageRef)
-                    .into(imageView);
+            /*Glide.with(view)
+                    .asBitmap()
+                    .load()
+                    .into(imageView);*/
 
             holder.post_image_id.setImageResource(currentItem.getPost_id());
             holder.post_description.setText(currentItem.getDescription());
