@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="2dp"
@@ -16,32 +15,37 @@
             android:id="@+id/swipe_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="9dp"
-            android:padding="3dp"
+            android:padding="10dp"
             android:text="@string/name"
             android:textColor="@color/light_green"
-            android:textSize="15sp"
+            android:textSize="12sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/swipe_details"
+            app:layout_constraintBottom_toTopOf="@+id/swipe_image"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/swipe_image" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/swipe_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="11dp"
-            android:padding="3dp"
+            android:padding="10dp"
             android:text="@string/description"
             android:textColor="@color/text"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/swipe_zipcode"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/swipe_username" />
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/swipe_image"
+            app:layout_constraintStart_toEndOf="@id/swipe_username"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/swipe_zipcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/zipcode"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/swipe_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/swipe_image"
@@ -50,22 +54,11 @@
             android:layout_below="@id/swipe_username"
             android:contentDescription="@string/display_image"
             android:padding="3dp"
-            app:layout_constraintBottom_toTopOf="@+id/swipe_username"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/swipe_zipcode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/zipcode"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/swipe_details" />
+            app:layout_constraintTop_toBottomOf="@id/swipe_username" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>
