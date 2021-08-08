@@ -135,11 +135,19 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         Dialog createUserDialog = createAccountDialog.getDialog();
         radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
+
+        Log.e(TAG," " + selectedUserType);
+
         radioButtonUserType = (RadioButton) createUserDialog.findViewById(selectedUserType);
         String usertype = radioButtonUserType.getText().toString();
-        if (usertype == "Homeowner") {
+
+        Log.e(TAG,usertype);
+
+        if (usertype.equals("Homeowner")) {
+            Log.e(TAG,"entered if");
             my_usertype = HOMEOWNERS;
         } else {
+            Log.e(TAG,"entered else");
             my_usertype = CONTRACTORS;
         }
 
@@ -186,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        my_user = dataSnapshot.getValue(User.class);
+                        //my_user = dataSnapshot.getValue(User.class);
                     } else {
                         if (my_usertype == HOMEOWNERS) {
                             myUserRef.setValue(new Homeowner(my_username,
