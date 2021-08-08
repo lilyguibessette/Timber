@@ -179,12 +179,12 @@ public class MainActivity extends AppCompatActivity {
                             } else{
                                 myUserRef.setValue(new Contractor(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
-                                        Utils.getLocation(),
-                                         businessName,
-                                         taxID,
-                                         email,
-                                         zipcode,
-                                         phoneNumber));
+                                        getLocation(),
+                                        businessName,
+                                        taxID,
+                                        email,
+                                        zipcode,
+                                        phoneNumber));
                             }
                         }
                     }
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 */
-    private void getLocation(){
+    private Location getLocation(){
 
         // TODO: can we stick this in the user class and initialize in the onCreate
         //  then save to database?
@@ -245,6 +245,9 @@ public class MainActivity extends AppCompatActivity {
                 // if permissions are granted, find the last location
                 location = locationManager.getLastKnownLocation
                         (LocationManager.GPS_PROVIDER);
+                return location;
+
+                /*
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 // if there is a location, update TextView to include lat and long coordinates
@@ -257,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                     // if there is no location, send error to the user
                     Toast.makeText(this,
                             "Unable to find location data", Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         }
     }
