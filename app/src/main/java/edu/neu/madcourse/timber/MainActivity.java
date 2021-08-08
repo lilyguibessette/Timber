@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     private static final String TAG = MainActivity.class.getSimpleName();
     public String my_username;
     public String my_usertype;
-    public String my_token;
     public String my_param1 ;
     public String my_param2 ;
     public String my_email ;
@@ -153,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
+            login_user();
         } else {
             Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
         }
@@ -181,11 +181,19 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                             if (my_usertype == HOMEOWNERS) {
                                 myUserRef.setValue(new Homeowner(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
-                                        ));
+                                        my_param1,
+                                        my_param2,
+                                        my_email,
+                                        my_zip,
+                                        my_phone));
                             } else{
                                 myUserRef.setValue(new Contractor(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
-                                        ));
+                                        my_param1,
+                                        my_param2,
+                                        my_email,
+                                        my_zip,
+                                        my_phone));
                             }
                         }
                     }
@@ -296,11 +304,5 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         }).start();
     }
     */
-
-    // math supplemented by these posts:
-    // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
-    // https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
-
-    // if we want an adjustable radius -> public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
 
 }
