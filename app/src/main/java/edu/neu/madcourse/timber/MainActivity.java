@@ -1,23 +1,29 @@
 package edu.neu.madcourse.timber;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
+//import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import edu.neu.madcourse.timber.fcm_server.Utils;
 
@@ -51,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.login_screen);
         login_button = findViewById(R.id.login_button);
+        getLocation();
+
+        /*
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
 
             // if there is an error, display some error information to the user
@@ -74,14 +83,17 @@ public class MainActivity extends AppCompatActivity {
         if (my_username != null) {
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
+        */
 
         login_button.setOnClickListener(view -> {
 
+            getLocation();
+            /*
             // Save down the username from the user
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
 
             // Write a message to the database
-            login_user();
+            //login_user();
 
             // Store the username in shared preferences to skip login if already done
             SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",
@@ -93,10 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
             // start the new activity
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+        });*/
         });
+    }
 
-
-
+/*
         private void login_user(){
             new Thread(() -> {
                 // connect to the database and look at the users
@@ -140,19 +153,14 @@ public class MainActivity extends AppCompatActivity {
             }).start();
         }
     }
-/*
-
-
-        // hide the action bar for aesthetics
-        getSupportActionBar().hide();
-
-
+*/
+    private void getLocation(){
 
         // TODO: can we stick this in the user class and initialize in the onCreate
         //  then save to database?
 
         // define the location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // if the location manager permissions are not enabled, request access from user
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -186,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
                 longitude = location.getLongitude();
                 // if there is a location, update TextView to include lat and long coordinates
                 if (location != null) {
-                    double distance = findDistance(38.89511,-77.03637);
+                    double distance = Utils.findDistance(latitude,longitude,38.89511, -77.03637);
                     Toast.makeText(this, "Latitude: " + latitude + "\nLongitude: " +
-                            longitude + "\nDistance from Washington, DC: " + distance,
+                                    longitude + "\nDistance from Washington, DC: " + distance,
                             Toast.LENGTH_SHORT).show();
                 } else {
                     // if there is no location, send error to the user
@@ -197,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        */
+    }
+
 
     //}
 

@@ -91,7 +91,7 @@ public class Utils {
 
     }
 
-    public double findDistance(double latitude, double longitude, double otherLatitude, double otherLongitude) {
+    public static double findDistance(double latitude, double longitude, double otherLatitude, double otherLongitude) {
         int R = 6371; // radius of the earth
         //double M = 3958.761; // convert Radians to miles
         double latDistance = Math.toRadians(otherLatitude - latitude);
