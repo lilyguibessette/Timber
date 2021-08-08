@@ -20,4 +20,5 @@
     <string name="update_account">Update Account</string>
     <string name="update_account_error">Error! Unable to update account.</string>
     <string name="create_project">Create Project</string>
+    <string name="create_project_error">Error! Unable to create project.</string>
 </resources>

@@ -13,11 +13,7 @@ import edu.neu.madcourse.timber.R;
 
 public class UpdateProfileDialogFragment extends  DialogFragment{
 
-    public interface UpdateProfileDialogListener {
-        void onDialogPositiveClick(DialogFragment projectDialog);
-        void onDialogNegativeClick(DialogFragment projectDialog);
-    }
-    UpdateProfileDialogFragment.UpdateProfileDialogListener listener;
+    CreateActionDialogListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -47,7 +43,7 @@ public class UpdateProfileDialogFragment extends  DialogFragment{
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (UpdateProfileDialogFragment.UpdateProfileDialogListener) context;
+            listener = (CreateActionDialogListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException("Activity must implement UpdateProfileDialogListener");

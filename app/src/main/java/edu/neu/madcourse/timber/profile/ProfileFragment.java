@@ -46,7 +46,7 @@ import edu.neu.madcourse.timber.users.Homeowner;
  * Use the {@link ProfileFragment} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment implements CreateProjectDialogFragment.CreateProjectDialogListener, UpdateProfileDialogFragment.UpdateProfileDialogListener{
+public class ProfileFragment extends Fragment implements CreateActionDialogListener{
     //TODO Listeners aren't working !!!
     // Recycler view related variables
     private final ArrayList<Project> completedProjects = new ArrayList<>();
@@ -217,8 +217,6 @@ public class ProfileFragment extends Fragment implements CreateProjectDialogFrag
         completedProjectsRecyclerView.setLayoutManager(completedProjectLayoutManager);
     }
 
-
-
     public void startActionDialog() {
         if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
         DialogFragment createProjectDialogFragment = new CreateProjectDialogFragment();
@@ -229,50 +227,51 @@ public class ProfileFragment extends Fragment implements CreateProjectDialogFrag
         }
     }
 
-    public void onDialogPositiveClick(DialogFragment updateProfileDialogFrament) {
+    public void onDialogPositiveClick(DialogFragment actionDialogFragment) {
         if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
             // change to projects
-            Dialog updateProfileDialog = updateProfileDialogFrament.getDialog();
+            Dialog actionDialog = actionDialogFragment.getDialog();
             //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
             //int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
             Log.e(TAG, " ondialog pos click");
 
-            my_username = ((EditText) updateProfileDialog.findViewById(R.id.update_username)).getText().toString();
-            my_param1 = ((EditText) updateProfileDialog.findViewById(R.id.update_param1)).getText().toString();
-            my_param2 = ((EditText) updateProfileDialog.findViewById(R.id.update_param2)).getText().toString();
-            my_email = ((EditText) updateProfileDialog.findViewById(R.id.update_email)).getText().toString();
-            my_zip = ((EditText) updateProfileDialog.findViewById(R.id.update_zip)).getText().toString();
-            my_phone = ((EditText) updateProfileDialog.findViewById(R.id.update_phone)).getText().toString();
+            my_username = ((EditText) actionDialog.findViewById(R.id.update_username)).getText().toString();
+            my_param1 = ((EditText) actionDialog.findViewById(R.id.update_param1)).getText().toString();
+            my_param2 = ((EditText) actionDialog.findViewById(R.id.update_param2)).getText().toString();
+            my_email = ((EditText) actionDialog.findViewById(R.id.update_email)).getText().toString();
+            my_zip = ((EditText) actionDialog.findViewById(R.id.update_zip)).getText().toString();
+            my_phone = ((EditText) actionDialog.findViewById(R.id.update_phone)).getText().toString();
             //TODO SET IMAGE HERE?
 
             if (my_usertype != null && my_username != null
                     && my_param1 != null && my_param2 != null
                     && my_email != null && my_zip != null && my_phone != null) {
-                updateProfileDialog.dismiss();
+                actionDialog.dismiss();
                 update_profile();
                 Toast.makeText(getContext(), "Project Createdd!", Toast.LENGTH_SHORT).show();
                 // move to swipe screen for contractors?
             } else {
-                Toast.makeText(getActivity(), R.string.update_account_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.create_project_error, Toast.LENGTH_SHORT).show();
             }
         } else {
-            Dialog updateProfileDialog = updateProfileDialogFrament.getDialog();
+            //TODO
+            Dialog actionDialog = actionDialogFragment.getDialog();
             //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
             //int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
             Log.e(TAG, " ondialog pos click");
 
-            my_username = ((EditText) updateProfileDialog.findViewById(R.id.update_username)).getText().toString();
-            my_param1 = ((EditText) updateProfileDialog.findViewById(R.id.update_param1)).getText().toString();
-            my_param2 = ((EditText) updateProfileDialog.findViewById(R.id.update_param2)).getText().toString();
-            my_email = ((EditText) updateProfileDialog.findViewById(R.id.update_email)).getText().toString();
-            my_zip = ((EditText) updateProfileDialog.findViewById(R.id.update_zip)).getText().toString();
-            my_phone = ((EditText) updateProfileDialog.findViewById(R.id.update_phone)).getText().toString();
+            my_username = ((EditText) actionDialog.findViewById(R.id.update_username)).getText().toString();
+            my_param1 = ((EditText) actionDialog.findViewById(R.id.update_param1)).getText().toString();
+            my_param2 = ((EditText) actionDialog.findViewById(R.id.update_param2)).getText().toString();
+            my_email = ((EditText) actionDialog.findViewById(R.id.update_email)).getText().toString();
+            my_zip = ((EditText) actionDialog.findViewById(R.id.update_zip)).getText().toString();
+            my_phone = ((EditText) actionDialog.findViewById(R.id.update_phone)).getText().toString();
             //TODO SET IMAGE HERE?
 
             if (my_usertype != null && my_username != null
                     && my_param1 != null && my_param2 != null
                     && my_email != null && my_zip != null && my_phone != null) {
-                updateProfileDialog.dismiss();
+                actionDialog.dismiss();
                 update_profile();
                 Toast.makeText(getContext(), "Profile Updated!", Toast.LENGTH_SHORT).show();
                 // move to swipe screen for contractors?
