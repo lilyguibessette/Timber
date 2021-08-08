@@ -158,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
+            login_user();
+            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         } else {
             Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
         }
@@ -170,6 +172,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
     private void login_user() {
         new Thread(() -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",
+                    MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putString("userName", my_username);
             // connect to the database and look at the users
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
