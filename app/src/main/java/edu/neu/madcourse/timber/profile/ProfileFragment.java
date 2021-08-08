@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.profile;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import edu.neu.madcourse.timber.R;
 
 /**
  * A simple {@link Fragment} subclass.

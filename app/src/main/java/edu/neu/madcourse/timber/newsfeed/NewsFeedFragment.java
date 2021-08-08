@@ -1,6 +1,5 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.newsfeed;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
+
+import edu.neu.madcourse.timber.R;
 
 /**
  * A simple {@link Fragment} subclass.

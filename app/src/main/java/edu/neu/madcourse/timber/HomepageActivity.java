@@ -2,8 +2,6 @@ package edu.neu.madcourse.timber;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +10,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.neu.madcourse.timber.homeswipe.HomepageFragment;
 import edu.neu.madcourse.timber.matches.MatchesFragment;
-import edu.neu.madcourse.timber.messages.MessagesFragment;
+import edu.neu.madcourse.timber.newsfeed.NewsFeedFragment;
+import edu.neu.madcourse.timber.profile.ProfileFragment;
 
 public class HomepageActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigation;

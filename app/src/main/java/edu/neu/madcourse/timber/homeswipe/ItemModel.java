@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber;
+package edu.neu.madcourse.timber.homeswipe;
 
 public class ItemModel {
     private int image;
