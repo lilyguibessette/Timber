@@ -135,11 +135,19 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         Dialog createUserDialog = createAccountDialog.getDialog();
         radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
+
+        Log.e(TAG," " + selectedUserType);
+
         radioButtonUserType = (RadioButton) createUserDialog.findViewById(selectedUserType);
         String usertype = radioButtonUserType.getText().toString();
-        if (usertype == "Homeowner") {
+
+        Log.e(TAG,usertype);
+
+        if (usertype.equals("Homeowner")) {
+            Log.e(TAG,"entered if");
             my_usertype = HOMEOWNERS;
         } else {
+            Log.e(TAG,"entered else");
             my_usertype = CONTRACTORS;
         }
 
