@@ -29,7 +29,7 @@ public class HomepageActivity extends AppCompatActivity {
 
         // Getting current username that is logged in
         SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
-        my_username = sharedPreferences.getString("userName", "Not found");
+        my_username = sharedPreferences.getString("USERNAME", "Not found");
         my_token = sharedPreferences.getString("CLIENT_REGISTRATION_TOKEN", "Not found");
 
         // If we don't have the userName or token, restart the login activity
