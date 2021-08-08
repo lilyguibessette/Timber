@@ -55,7 +55,17 @@ public class HomepageActivity extends AppCompatActivity {
                 }
                 switch (item.getItemId()) {
                     case R.id.menu_feed:
-                        openFragment(fragment_news_feed.newInstance());
+                        openFragment(NewsFeedFragment.newInstance());
+                        return true;
+                }
+                switch (item.getItemId()) {
+                    case R.id.menu_messaging:
+                        openFragment(MessagesFragment.newInstance());
+                        return true;
+                }
+                switch (item.getItemId()) {
+                    case R.id.menu_profile:
+                        openFragment(ProfileFragment.newInstance());
                         return true;
                 }
                 return false;

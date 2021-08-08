@@ -7,4 +7,10 @@
     <string name="enter_username">Enter your username</string>
     <string name="new_user">New User? create an account</string>
     <string name="login">LOGIN</string>
+
+    <string name="textview">TextView</string>
+    <string name="description">description</string>
+    <string name="name">name</string>
+    <string name="display_image">display image</string>
+    <string name="zipcode">zipcode</string>
 </resources>

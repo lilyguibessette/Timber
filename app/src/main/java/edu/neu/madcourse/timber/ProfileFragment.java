@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link fragment_news_feed} factory method to
+ * Use the {@link ProfileFragment} factory method to
  * create an instance of this fragment.
  */
-public class fragment_home extends Fragment {
+public class ProfileFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,12 +24,12 @@ public class fragment_home extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public fragment_home() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
-    public static fragment_home newInstance() {
-        fragment_home fragment = new fragment_home();
+    public static ProfileFragment newInstance() {
+        ProfileFragment fragment = new ProfileFragment();
         return fragment;
     }
 
@@ -42,6 +42,6 @@ public class fragment_home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 }
