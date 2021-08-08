@@ -1,11 +1,16 @@
 package edu.neu.madcourse.timber;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -48,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     private static Button createUserButton;
     private RadioGroup radioGroupUserType;
     private RadioButton radioButtonUserType;
-
 
 
     // GPS variables
@@ -152,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            login_user();
         } else {
             Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
         }
@@ -198,16 +202,16 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                         }
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // if getting post failed, log a message
-                        Log.w(TAG, "my_user start login onCancelled",
-                                databaseError.toException());
-                    }
-                });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // if getting post failed, log a message
+                    Log.w(TAG, "my_user start login onCancelled",
+                            databaseError.toException());
+                }
+            });
 
-            }).start();
-        }
+        }).start();
+    }
 
 /*
 
@@ -216,12 +220,16 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         getSupportActionBar().hide();
 
 
+    }
+*/
+
+    private Location getLocation(){
 
         // TODO: can we stick this in the user class and initialize in the onCreate
         //  then save to database?
 
         // define the location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // if the location manager permissions are not enabled, request access from user
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -251,22 +259,27 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 // if permissions are granted, find the last location
                 location = locationManager.getLastKnownLocation
                         (LocationManager.GPS_PROVIDER);
+                return location;
+
+                /*
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 // if there is a location, update TextView to include lat and long coordinates
                 if (location != null) {
-                    double distance = findDistance(38.89511,-77.03637);
+                    double distance = Utils.findDistance(latitude,longitude,38.89511, -77.03637);
                     Toast.makeText(this, "Latitude: " + latitude + "\nLongitude: " +
-                            longitude + "\nDistance from Washington, DC: " + distance,
+                                    longitude + "\nDistance from Washington, DC: " + distance,
                             Toast.LENGTH_SHORT).show();
                 } else {
                     // if there is no location, send error to the user
                     Toast.makeText(this,
                             "Unable to find location data", Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         }
-        */
+        return null;
+    }
+
 
     //}
 
