@@ -54,12 +54,15 @@ public class NewsFeedFragment extends Fragment {
         // get saved state and initialize the recyclerview
         initialNewsFeedData(savedInstanceState);
 
-        //newsFeedHistory.add(new NewsFeedPost("apples", 1, "this is a test post 1"));
-        //newsFeedHistory.add(new NewsFeedPost("peaches", 2, "this is a test post 2"));
+        newsFeedHistory.add(new NewsFeedPost("apples", R.drawable.timber_full, "this is a test post 1"));
+        newsFeedHistory.add(new NewsFeedPost("peaches", R.drawable.timber_icon, "this is a test post 2"));
+        newsFeedHistory.add(new NewsFeedPost("mangoes", R.drawable.timber_full, "this is a test post 3"));
+        newsFeedHistory.add(new NewsFeedPost("watermelons", R.drawable.timber_icon, "this is a test post 4"));
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
         Log.e(TAG, "We made it before the recycler view");
+
         createRecyclerView(view);
         Log.e(TAG, "We made it after the recycler view");
         return view;
@@ -88,8 +91,10 @@ public class NewsFeedFragment extends Fragment {
 
     private void createRecyclerView(View view) {
         // Create the recyclerview and populate it with the history
-        newsPostLayoutManager = new LinearLayoutManager(newsFeedRecyclerView.getContext());
-        newsFeedRecyclerView = view.findViewById(R.id.post_recycler);
+
+        newsFeedRecyclerView = view.findViewById(R.id.news_feed);
+        Log.e(TAG,"newsFeed: " + newsFeedRecyclerView.toString());
+        newsPostLayoutManager = new LinearLayoutManager(view.getContext());
         newsFeedRecyclerView.setHasFixedSize(true);
         newsFeedRecyclerView.setAdapter(new NewsFeedAdapter(newsFeedHistory));
         newsFeedRecyclerView.setLayoutManager(newsPostLayoutManager);
