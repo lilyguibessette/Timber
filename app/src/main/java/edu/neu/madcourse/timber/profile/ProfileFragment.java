@@ -47,6 +47,7 @@ import edu.neu.madcourse.timber.users.Homeowner;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment implements CreateProjectDialogFragment.CreateProjectDialogListener, UpdateProfileDialogFragment.UpdateProfileDialogListener{
+    //TODO Listeners aren't working !!!
     // Recycler view related variables
     private final ArrayList<Project> completedProjects = new ArrayList<>();
     private final ArrayList<Project> activeProjects = new ArrayList<>();
@@ -121,10 +122,12 @@ public class ProfileFragment extends Fragment implements CreateProjectDialogFrag
         Log.e(TAG, "We made it after the recycler view");
 
         action_button = view.findViewById(R.id.profile_action_button);
-        if (my_usertype.equals(HOMEOWNERS)){
+        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
             //set text
             action_button.setText("Add New Project");
 
+        } else {
+            action_button.setText("Update Profile");
         }
         action_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,7 +220,7 @@ public class ProfileFragment extends Fragment implements CreateProjectDialogFrag
 
 
     public void startActionDialog() {
-        if (my_usertype.equals(HOMEOWNERS)){
+        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
         DialogFragment createProjectDialogFragment = new CreateProjectDialogFragment();
         createProjectDialogFragment.show(getChildFragmentManager(), "createProjectDialogFragment");
         } else {
@@ -227,7 +230,32 @@ public class ProfileFragment extends Fragment implements CreateProjectDialogFrag
     }
 
     public void onDialogPositiveClick(DialogFragment updateProfileDialogFrament) {
-        if (my_usertype.equals(HOMEOWNERS)) {
+        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
+            // change to projects
+            Dialog updateProfileDialog = updateProfileDialogFrament.getDialog();
+            //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
+            //int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
+            Log.e(TAG, " ondialog pos click");
+
+            my_username = ((EditText) updateProfileDialog.findViewById(R.id.update_username)).getText().toString();
+            my_param1 = ((EditText) updateProfileDialog.findViewById(R.id.update_param1)).getText().toString();
+            my_param2 = ((EditText) updateProfileDialog.findViewById(R.id.update_param2)).getText().toString();
+            my_email = ((EditText) updateProfileDialog.findViewById(R.id.update_email)).getText().toString();
+            my_zip = ((EditText) updateProfileDialog.findViewById(R.id.update_zip)).getText().toString();
+            my_phone = ((EditText) updateProfileDialog.findViewById(R.id.update_phone)).getText().toString();
+            //TODO SET IMAGE HERE?
+
+            if (my_usertype != null && my_username != null
+                    && my_param1 != null && my_param2 != null
+                    && my_email != null && my_zip != null && my_phone != null) {
+                updateProfileDialog.dismiss();
+                update_profile();
+                Toast.makeText(getContext(), "Project Createdd!", Toast.LENGTH_SHORT).show();
+                // move to swipe screen for contractors?
+            } else {
+                Toast.makeText(getActivity(), R.string.update_account_error, Toast.LENGTH_SHORT).show();
+            }
+        } else {
             Dialog updateProfileDialog = updateProfileDialogFrament.getDialog();
             //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
             //int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
@@ -251,9 +279,6 @@ public class ProfileFragment extends Fragment implements CreateProjectDialogFrag
             } else {
                 Toast.makeText(getActivity(), R.string.update_account_error, Toast.LENGTH_SHORT).show();
             }
-        } else {
-            //contractors make projects
-            //create_project()
         }
     }
 
