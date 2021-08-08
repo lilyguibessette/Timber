@@ -134,9 +134,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
     public void onDialogPositiveClick(DialogFragment createAccountDialog) {
         Dialog createUserDialog = createAccountDialog.getDialog();
-        radioGroupUserType = (RadioGroup) findViewById(R.id.radiogroup_usertype);
+        radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
-        radioButtonUserType = (RadioButton) findViewById(selectedUserType);
+        radioButtonUserType = (RadioButton) createUserDialog.findViewById(selectedUserType);
         String usertype = radioButtonUserType.getText().toString();
         if (usertype == "Homeowner") {
             my_usertype = HOMEOWNERS;
