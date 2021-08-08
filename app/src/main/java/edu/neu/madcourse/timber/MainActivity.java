@@ -39,10 +39,11 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     private static final String TAG = MainActivity.class.getSimpleName();
     public String my_username;
     public String my_usertype;
-    public String my_param1 ;
-    public String my_param2 ;
-    public String my_email ;
-    public String my_zip ;
+    public String my_token;
+    public String my_param1;
+    public String my_param2;
+    public String my_email;
+    public String my_zip;
     public String my_phone;
     private static final String USERNAME = "USERNAME";
     private static final String USERTYPE = "USERTYPE";
@@ -136,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         radioGroupUserType = (RadioGroup) findViewById(R.id.radiogroup_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
         radioButtonUserType = (RadioButton) findViewById(selectedUserType);
-        String usertype  = radioButtonUserType.getText().toString();
-        if (usertype == "Homeowner"){
+        String usertype = radioButtonUserType.getText().toString();
+        if (usertype == "Homeowner") {
             my_usertype = HOMEOWNERS;
         } else {
             my_usertype = CONTRACTORS;
@@ -167,40 +168,34 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         createUserDialog.dismiss();
     }
 
-    private void login_user(){
-            new Thread(() -> {
-                // connect to the database and look at the users
-                DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
-                        my_usertype +"/" + my_username);
+    private void login_user() {
+        new Thread(() -> {
+            // connect to the database and look at the users
+            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
+                    my_usertype + "/" + my_username);
 
-                myUserRef.addValueEventListener(new ValueEventListener() {
-                    public User my_user;
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // if the user exists, get their data
-                        if (dataSnapshot.exists()) {
-                            my_user = dataSnapshot.getValue(User.class);
+            myUserRef.addValueEventListener(new ValueEventListener() {
+                public User my_user;
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // if the user exists, get their data
+                    if (dataSnapshot.exists()) {
+                        my_user = dataSnapshot.getValue(User.class);
+                    } else {
+                        // else create a new user and store their token
+                        /*
+                        if (my_usertype == HOMEOWNERS) {
+                            myUserRef.setValue(new Homeowner(my_username,
+                                    CLIENT_REGISTRATION_TOKEN,
+                                    ));
                         } else {
-                            // else create a new user and store their token
-                            if (my_usertype == HOMEOWNERS) {
-                                myUserRef.setValue(new Homeowner(my_username,
-                                        CLIENT_REGISTRATION_TOKEN,
-                                        my_param1,
-                                        my_param2,
-                                        my_email,
-                                        my_zip,
-                                        my_phone));
-                            } else{
-                                myUserRef.setValue(new Contractor(my_username,
-                                        CLIENT_REGISTRATION_TOKEN,
-                                        my_param1,
-                                        my_param2,
-                                        my_email,
-                                        my_zip,
-                                        my_phone));
-                            }
-                        }
+                            myUserRef.setValue(new Contractor(my_username,
+                                    CLIENT_REGISTRATION_TOKEN,
+                                    ));
+                        }*/
                     }
+                }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -317,5 +312,11 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         }).start();
     }
     */
+
+    // math supplemented by these posts:
+    // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
+    // https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
+
+    // if we want an adjustable radius -> public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
 
 }
