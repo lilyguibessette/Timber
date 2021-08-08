@@ -33,13 +33,18 @@ import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import edu.neu.madcourse.timber.fcm_server.Utils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CreateUserDialogFragment.CreateUserDialogListener {
 
     // login screen variables
     private static final String TAG = MainActivity.class.getSimpleName();
     public String my_username;
     public String my_usertype;
     public String my_token;
+    public String my_param1 ;
+    public String my_param2 ;
+    public String my_email ;
+    public String my_zip ;
+    public String my_phone;
     private static final String USERNAME = "USERNAME";
     private static final String USERTYPE = "USERTYPE";
     private static final String CONTRACTORS = "CONTRACTORS";
@@ -50,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private static Button createUserButton;
     private RadioGroup radioGroupUserType;
     private RadioButton radioButtonUserType;
+
+
 
     // GPS variables
     private LocationManager locationManager;
@@ -121,29 +128,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void startLinkCollectorDialog() {
-        DialogFragment linkDialog = new LinkCollectorDialogFragment();
-        linkDialog.show(getSupportFragmentManager(), "LinkDialogFragment");
+    public void startCreateUserDialog() {
+        DialogFragment createAccountDialog = new CreateUserDialogFragment();
+        createAccountDialog.show(getSupportFragmentManager(), "CreateUserDialogFragment");
     }
 
-    public void onDialogPositiveClick(DialogFragment linkDialog) {
-        Dialog createUserDialog = linkDialog.getDialog();
-
-
-        radiogroup_type = (RadioGroup) findViewById(R.id.radiogroup_usertype);
-        int selectedNationalityId = radioGroupNationality.getCheckedRadioButtonId();
-        radioButtonNationality = (RadioButton) findViewById(selectedNationalityId);
-        nationality = radioButtonNationality.getText().toString();
+    public void onDialogPositiveClick(DialogFragment createAccountDialog) {
+        Dialog createUserDialog = createAccountDialog.getDialog();
+        radioGroupUserType = (RadioGroup) findViewById(R.id.radiogroup_usertype);
+        int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
+        radioButtonUserType = (RadioButton) findViewById(selectedUserType);
+        String usertype  = radioButtonUserType.getText().toString();
+        if (usertype == "Homeowner"){
+            my_usertype = HOMEOWNERS;
+        } else {
+            my_usertype = CONTRACTORS;
+        }
 
         my_username = ((EditText) createUserDialog.findViewById(R.id.create_username)).getText().toString();
-        param1 = ((EditText) createUserDialog.findViewById(R.id.param1)).getText().toString();
-        param2 = ((EditText) createUserDialog.findViewById(R.id.param2)).getText().toString();
-        email = ((EditText) createUserDialog.findViewById(R.id.create_email)).getText().toString();
-        zip = ((EditText) createUserDialog.findViewById(R.id.create_zip)).getText().toString();
-        phone = ((EditText) createUserDialog.findViewById(R.id.create_phone)).getText().toString();
+        my_param1 = ((EditText) createUserDialog.findViewById(R.id.create_param1)).getText().toString();
+        my_param2 = ((EditText) createUserDialog.findViewById(R.id.create_param2)).getText().toString();
+        my_email = ((EditText) createUserDialog.findViewById(R.id.create_email)).getText().toString();
+        my_zip = ((EditText) createUserDialog.findViewById(R.id.create_zip)).getText().toString();
+        my_phone = ((EditText) createUserDialog.findViewById(R.id.create_phone)).getText().toString();
 
-        if (my_usertype != null && my_username != null) {
-            linkDialog.dismiss();
+        if (my_usertype != null && my_username != null
+                && my_param1 != null && my_param2 != null
+                && my_email != null && my_zip != null && my_phone != null) {
+            createUserDialog.dismiss();
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
@@ -153,11 +165,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment linkDialog) {
-        linkDialog.dismiss();
+    public void onDialogNegativeClick(DialogFragment createUserDialog) {
+        createUserDialog.dismiss();
     }
 
-        private void login_user(){
+    private void login_user(){
             new Thread(() -> {
                 // connect to the database and look at the users
                 DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
@@ -179,12 +191,7 @@ public class MainActivity extends AppCompatActivity {
                             } else{
                                 myUserRef.setValue(new Contractor(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
-                                        getLocation(),
-                                        businessName,
-                                        taxID,
-                                        email,
-                                        zipcode,
-                                        phoneNumber));
+                                        ));
                             }
                         }
                     }

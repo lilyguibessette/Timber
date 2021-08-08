@@ -87,12 +87,6 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/create_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="SUBMIT" />
 
     </LinearLayout>
 

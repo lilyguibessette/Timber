@@ -15,4 +15,6 @@
     <string name="zipcode">zipcode</string>
     <string name="create_account_error">Error creating account. Try again.</string>
     <string name="new_account_confirm">Thanks for joining Timber!</string>
+    <string name="create_account">Create Account</string>
+    <string name="cancel">Cancel</string>
 </resources>
