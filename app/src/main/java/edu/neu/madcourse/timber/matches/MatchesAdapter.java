@@ -13,6 +13,7 @@ import edu.neu.madcourse.timber.R;
 
 public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
     private final ArrayList<Match> matchesHistory;
+    private MatchClickListener matchClickListener;
 
     public MatchesAdapter(ArrayList<Match> matchesHistory) {
         this.matchesHistory = matchesHistory;
@@ -20,8 +21,8 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
 
     @Override
     public MatchesHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_contacts, parent, false);
-        return new MatchesHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_match, parent, false);
+        return new MatchesHolder(view, matchClickListener);
     }
 
     @Override
@@ -29,6 +30,9 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
         Match currentItem = matchesHistory.get(position);
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
+            Log.e("onBindViewHolder", currentItem.getUsername());
+            //Log.e("onBindViewHolder", currentItem.getImage());
+            Log.e("onBindViewHolder", currentItem.getLast_message());
             holder.username.setText(currentItem.getUsername());
             holder.image.setImageResource(currentItem.getImage());
             holder.last_message.setText(currentItem.getLast_message());
@@ -40,4 +44,8 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
         return matchesHistory.size();
     }
 
+
+    public void setOnMatchClickListener(MatchClickListener matchClickListener) {
+        this.matchClickListener = matchClickListener;
+    }
 }

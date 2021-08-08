@@ -1,5 +1,6 @@
 package edu.neu.madcourse.timber.matches;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -15,8 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import edu.neu.madcourse.timber.HomepageActivity;
+import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.matches.Match;
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.messages.MessagesActivity;
+import edu.neu.madcourse.timber.messages.MessagesFragment;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +34,7 @@ public class MatchesFragment extends Fragment {
     private final ArrayList<Match> matchesHistory = new ArrayList<>();
     private RecyclerView matchesRecyclerView;
     private RecyclerView.LayoutManager matchesLayoutManager;
+    private MatchesAdapter matchesAdapter;
     private int matchesSize = 0;
 
     private static final String KEY_OF_MATCH = "KEY_OF_MATCH";
@@ -71,6 +78,8 @@ public class MatchesFragment extends Fragment {
         return view;
     }
 
+
+
     private void initialMatchesData(Bundle savedInstanceState) {
 
         // recreate the sticker history on orientation change or open
@@ -98,27 +107,42 @@ public class MatchesFragment extends Fragment {
         Log.e(TAG,"Matches: " + matchesRecyclerView.toString());
         matchesLayoutManager = new LinearLayoutManager(view.getContext());
         matchesRecyclerView.setHasFixedSize(true);
-        matchesRecyclerView.setAdapter(new MatchesAdapter(matchesHistory));
+        matchesAdapter = new MatchesAdapter(matchesHistory);
+        MatchClickListener matchClickListener = new MatchClickListener() {
+            @Override
+            public void onMatchClick(String username) {
+
+                Log.e("MatchesFragment", "createrecyclerview onMatchClick");
+                switchFragment(MessagesFragment.newInstance(username));
+
+                //Intent intent = new Intent(getActivity(), MessagesActivity.class);
+                //Intent intent = new Intent(getActivity(), MainActivity.class);
+                //startActivity(intent);
+            }
+        };
+        matchesAdapter.setOnMatchClickListener(matchClickListener);
+        matchesRecyclerView.setAdapter(matchesAdapter);
         matchesRecyclerView.setLayoutManager(matchesLayoutManager);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getLayoutPosition();
-                Match match = matchesHistory.get(position);
-                other_username = match.getUsername();
-            }
-        });
-
-        itemTouchHelper.attachToRecyclerView(matchesRecyclerView);
     }
 
+    private FragmentTransaction switchFragment(Fragment targetFragment) {
+       /* new Runnable() {
+            @Override
+            public void run() {
 
+                getChildFragmentManager().beginTransaction().replace(R.id.container, targetFragment).commit();
+            }
+        };
+*/
+        // Get an instance of the thing
+        FragmentTransaction transaction = getChildFragmentManager()
+                .beginTransaction();
+              transaction
+                    .replace(R.id.container, targetFragment);
 
+        Log.e("FragmentTransaction", "transaction");
 
-
+        return transaction;
+    }
 }

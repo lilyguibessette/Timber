@@ -17,4 +17,7 @@
     <string name="new_account_confirm">Thanks for joining Timber!</string>
     <string name="create_account">Create Account</string>
     <string name="cancel">Cancel</string>
+    <string name="update_account">Update Account</string>
+    <string name="update_account_error">Error! Unable to update account.</string>
+    <string name="create_project">Create Project</string>
 </resources>

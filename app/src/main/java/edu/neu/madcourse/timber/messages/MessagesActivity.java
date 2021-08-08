@@ -1,26 +1,24 @@
 package edu.neu.madcourse.timber.messages;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import java.util.ArrayList;
 
+import edu.neu.madcourse.timber.HomepageActivity;
+import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MessagesFragment} factory method to
- * create an instance of this fragment.
- */
-public class MessagesFragment extends Fragment {
+public class MessagesActivity extends AppCompatActivity {
     // Recycler view related variables
     private final ArrayList<Message> messageHistory = new ArrayList<>();
     private RecyclerView messagesRecyclerView;
@@ -30,26 +28,12 @@ public class MessagesFragment extends Fragment {
     private static final String NUMBER_OF_MSGS = "NUMBER_OF_MSGS";
     private static final String TAG = "MessagesFragment";
     String other_username;
-
-    public MessagesFragment() {
-        // Required empty public constructor
-    }
-
-    public static MessagesFragment newInstance(String other_username) {
-        MessagesFragment fragment = new MessagesFragment();
-        fragment.other_username = other_username;
-        return fragment;
-    }
+    private Button back_button;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Initialize our received history size to 0
+        setContentView(R.layout.recycler_message);
         messagesSize = 0;
 
         // get saved state and initialize the recyclerview
@@ -58,11 +42,14 @@ public class MessagesFragment extends Fragment {
         messageHistory.add(new Message("peaches", "this is a test post 2"));
         messageHistory.add(new Message("mangoes", "this is a test post 3"));
         messageHistory.add(new Message("watermelons","this is a test post 4"));
+        createRecyclerView();
+        back_button = findViewById(R.id.back_button);
 
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.recycler_message, container, false);
-        createRecyclerView(view);
-        return view;
+        back_button.setOnClickListener(view -> {
+            // start the new activity
+            // TODO decide how to handle if as activiy or frag for messages
+            startActivity(new Intent(MessagesActivity.this, HomepageActivity.class));
+        });
     }
 
     private void initialMessagesData(Bundle savedInstanceState) {
@@ -85,19 +72,13 @@ public class MessagesFragment extends Fragment {
 
     }
 
-    private void createRecyclerView(View view) {
+    private void createRecyclerView() {
         // Create the recyclerview and populate it with the history
-
-        messagesRecyclerView = view.findViewById(R.id.messages);
+        messagesRecyclerView = findViewById(R.id.messages);
         Log.e(TAG,"messages: " + messagesRecyclerView.toString());
-        messageLayoutManager = new LinearLayoutManager(view.getContext());
+        messageLayoutManager = new LinearLayoutManager(this);
         messagesRecyclerView.setHasFixedSize(true);
         messagesRecyclerView.setAdapter(new MessagesAdapter(messageHistory));
         messagesRecyclerView.setLayoutManager(messageLayoutManager);
     }
-
-
-
-
-
 }

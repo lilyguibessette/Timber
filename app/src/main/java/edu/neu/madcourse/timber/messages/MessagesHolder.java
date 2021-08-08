@@ -11,12 +11,11 @@ import edu.neu.madcourse.timber.R;
 public class MessagesHolder extends RecyclerView.ViewHolder {
 
     public TextView username;
-
     public TextView message;
 
     public MessagesHolder(View messagesView) {
         super(messagesView);
-        username = messagesView.findViewById(R.id.post_username);
-        message = messagesView.findViewById(R.id.post_description);
+        username = messagesView.findViewById(R.id.message_username);
+        message = messagesView.findViewById(R.id.card_message_content);
     }
 }

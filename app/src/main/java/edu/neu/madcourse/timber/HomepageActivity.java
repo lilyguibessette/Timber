@@ -28,7 +28,7 @@ public class HomepageActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         // Getting current username that is logged in
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
         my_username = sharedPreferences.getString("userName", "Not found");
         my_token = sharedPreferences.getString("CLIENT_REGISTRATION_TOKEN", "Not found");
 

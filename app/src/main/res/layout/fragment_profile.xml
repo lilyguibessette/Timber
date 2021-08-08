@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment_profile">
+    tools:context=".profile.ProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/profile"
@@ -58,12 +58,12 @@
             app:layout_constraintTop_toBottomOf="@id/profile_location" />
 
         <TextView
-            android:id="@+id/profile_projects_title"
+            android:id="@+id/active_projects_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="PREVIOUS PROJECTS"
+            android:text="ACTIVE PROJECTS"
             android:textColor="@color/light_green"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,10 +71,32 @@
             app:layout_constraintTop_toBottomOf="@id/profile_details" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/profile_projects_feed"
+            android:id="@+id/active_projects_feed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profile_projects_title" />
+            app:layout_constraintTop_toBottomOf="@id/active_projects_title" />
+
+        <TextView
+            android:id="@+id/completed_projects_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="COMPLETED PROJECTS"
+            android:textColor="@color/light_green"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/active_projects_feed" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/completed_projects_feed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/completed_projects_title"
+            tools:layout_editor_absoluteX="0dp" />
 
         <Button
             android:id="@+id/profile_action_button"

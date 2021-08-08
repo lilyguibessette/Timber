@@ -10,7 +10,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="155dp"
+            android:layout_height="116dp"
             android:layout_margin="5dp">
 
                 <ImageView
@@ -21,10 +21,10 @@
                     android:padding="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.098"
+                    app:layout_constraintHorizontal_bias="0.06"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/match_username"
-                    app:layout_constraintVertical_bias="0.709" />
+                    app:layout_constraintVertical_bias="0.333" />
 
                 <TextView
                     android:id="@+id/match_username"
@@ -37,21 +37,25 @@
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/match_last_message"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.523"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.842" />
 
                 <TextView
                     android:id="@+id/match_last_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="210dp"
+                    android:layout_height="41dp"
                     android:padding="5dp"
                     android:text="last message"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.467"
                     app:layout_constraintStart_toEndOf="@+id/match_image"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.662" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

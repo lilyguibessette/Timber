@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import edu.neu.madcourse.timber.R;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesHolder>{
+    private static final String TAG = "MessagesAdapter";
     private final ArrayList<Message> messagesHistory;
 
     public MessagesAdapter(ArrayList<Message> messagesHistory) {
@@ -27,6 +28,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesHolder>{
     @Override
     public void onBindViewHolder(MessagesHolder holder, int position) {
         Message currentItem = messagesHistory.get(position);
+        Log.e(TAG, currentItem.toString());
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
             holder.username.setText(currentItem.getUsername());
