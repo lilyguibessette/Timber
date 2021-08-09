@@ -5,6 +5,8 @@ import android.location.Location;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Objects;
+
 public class Contractor implements User {
     private String username;
     private String token;
@@ -31,14 +33,28 @@ public class Contractor implements User {
                       String taxID,
                       String email,
                       String zipcode,
-                      String phoneNumber){
+                      String phoneNumber) throws NullPointerException{
         this.username = username;
+        this.username = Objects.requireNonNull(username, "username must not be null");
+
         this.token = token;
+        this.token = Objects.requireNonNull(token, "username must not be null");
+
         this.businessName = businessName;
+        this.businessName = Objects.requireNonNull(businessName, "businessName must not be null");
+
         this.taxID = taxID;
+        this.taxID = Objects.requireNonNull(taxID, "taxID must not be null");
+
         this.email = email;
+        this.email = Objects.requireNonNull(email, "email must not be null");
+
         this.zipcode = zipcode;
+        this.zipcode = Objects.requireNonNull(zipcode, "zipcode must not be null");
+
         this.phoneNumber = phoneNumber;
+        this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber must not be null");
+
         this.activeProjectList = new ArrayList<>();
         this.completedProjectList = new ArrayList<>();
         this.swipedOnList = new ArrayList<>();
