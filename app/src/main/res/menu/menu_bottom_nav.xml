@@ -3,21 +3,21 @@
 
     <item
         android:id="@+id/menu_home"
-        android:icon="@drawable/icon_home"
+        android:icon="@drawable/icon_home2"
         android:title="Home" />
 
     <item
         android:id="@+id/menu_feed"
-        android:icon="@drawable/icon_search"
+        android:icon="@drawable/icon_circles"
         android:title="News Feed" />
 
     <item
         android:id="@+id/menu_messaging"
-        android:icon="@drawable/icon_profile"
+        android:icon="@drawable/icon_messages"
         android:title="Messages" />
 
     <item
         android:id="@+id/menu_profile"
-        android:icon="@drawable/icon_profile"
+        android:icon="@drawable/icon_profile2"
         android:title="Settings" />
 </menu>

@@ -9,7 +9,7 @@
         <item name="colorSecondary">@color/light_blue</item>
         <item name="colorSecondaryVariant">@color/dark_blue</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Customize your theme here. -->
+        <!-- Custom -->
         <item name="android:windowBackground">@color/text</item>
     </style>
 

@@ -9,10 +9,12 @@
         <item name="colorSecondary">@color/light_blue</item>
         <item name="colorSecondaryVariant">@color/dark_blue</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
+        <!-- Custom -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/white</item>
-    </style>
+        <item name="android:windowBackground">@color/light_grey</item>
+
+    </style>e
 
     <style name="Timber.Title" parent="TextAppearance.AppCompat.Title">
         <item name="android:textColor">@color/light_green</item>
