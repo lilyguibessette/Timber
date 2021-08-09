@@ -27,7 +27,7 @@
     </style>
 
     <style name="Timber.BottomNav" parent="Widget.Design.BottomNavigationView">
-        <item name="itemIconTint">@color/light_green</item>
+        <item name="itemIconTint">@color/white</item>
         <item name="itemTextColor">@color/light_green</item>
     </style>
 
