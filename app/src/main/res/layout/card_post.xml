@@ -11,17 +11,26 @@
         android:layout_height="match_parent"
         android:layout_margin="5dp">
 
+        <TextView
+            android:id="@+id/post_type"
+            style="@style/Timber.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="specialty"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
         <ImageView
             android:id="@+id/post_image"
             android:layout_width="match_parent"
             android:layout_height="0.0dp"
-            app:layout_constraintHeight_percent=".85"
+            app:layout_constraintHeight_percent=".7"
             android:padding="5dp"
             android:contentDescription="post image"
-            app:layout_constraintBottom_toTopOf="@id/post_username"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/post_type" />
 
         <TextView
             android:id="@+id/post_username"
