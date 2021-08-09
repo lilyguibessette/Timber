@@ -20,9 +20,9 @@ import edu.neu.madcourse.timber.R;
 
 public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.ViewHolder> {
 
-    private List<ItemModel> items;
+    private List<UserCard> items;
 
-    public CardStackAdapter(List<ItemModel> items) {
+    public CardStackAdapter(List<UserCard> items) {
         this.items = items;
     }
 
@@ -54,7 +54,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
             details = itemView.findViewById(R.id.swipe_details);
         }
 
-        void setData(ItemModel data) {
+        void setData(UserCard data) {
             Log.e(TAG,"setting data");
             Picasso.get()
                     .load(data.getImage())
@@ -66,11 +66,11 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         }
     }
 
-    public List<ItemModel> getItems() {
+    public List<UserCard> getItems() {
         return items;
     }
 
-    public void setItems(List<ItemModel> items) {
+    public void setItems(List<UserCard> items) {
         this.items = items;
     }
 }
