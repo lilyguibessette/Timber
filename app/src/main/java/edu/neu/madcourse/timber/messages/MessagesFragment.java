@@ -190,7 +190,6 @@ public class MessagesFragment extends Fragment {
                 Message message = new Message(my_username, msg);
                 sendMessageToDB(message, project_id);
                 ((EditText) view.findViewById(R.id.message_write)).setText(" ");
-
                 // send message to database
             }
         });
