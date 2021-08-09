@@ -74,7 +74,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
             StorageReference cutePuppyRef = storageReference.child("cute puppy.jpg");
             StorageReference newImageRef = storageReference.child("JPEG_20210808_212600_3026222070829690284.jpg");
-
+/*
 
 
 
@@ -83,13 +83,13 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
 
             // Download directly from StorageReference using Glide
-            // (See MyAppGlideModule for Loader registration)
+            // (See MyAppGlideModule for Loader registration)*/
             Glide.with(view)
                     .asBitmap()
-                    .load(newImageRef)
-                    .into(imageView);
+                    .load(cutePuppyRef)
+                    .into(holder.post_image_id);
 
-            holder.post_image_id.setImageResource(currentItem.getPost_id());
+            //holder.post_image_id.setImageResource(currentItem.getPost_id());
             holder.post_description.setText(currentItem.getDescription());
         }
     }

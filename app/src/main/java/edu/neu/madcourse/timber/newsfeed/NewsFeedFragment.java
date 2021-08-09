@@ -89,7 +89,7 @@ public class NewsFeedFragment extends Fragment {
         createRecyclerView(view);
         Log.e(TAG, "We made it after the recycler view");
 
-        dispatchTakePictureIntent();
+        //dispatchTakePictureIntent();
 
         return view;
     }
