@@ -10,7 +10,7 @@
 
     <string name="textview">TextView</string>
     <string name="description">description</string>
-    <string name="name">name</string>
+    <string name="username">username</string>
     <string name="display_image">display image</string>
     <string name="zipcode">zipcode</string>
     <string name="create_account_error">Error creating account. Try again.</string>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#eeeeee">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/logo"
@@ -32,20 +31,22 @@
 
     <EditText
         android:id="@+id/enter_username"
+        style="@style/Timber.Text"
         android:layout_width="0dp"
+        app:layout_constraintWidth_percent=".6"
         android:layout_height="wrap_content"
         android:autofillHints="Enter your username"
-        android:hint="@string/enter_username"
         android:backgroundTint="@color/hints"
+        android:hint="@string/enter_username"
+        android:inputType="text"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:padding="10dp"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_text"
-        app:layout_constraintWidth_percent=".6"
-        android:inputType="text" />
+         />
 
     <Button
         android:id="@+id/login_button"
@@ -59,19 +60,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/enter_username"
-        />
+        app:layout_constraintTop_toBottomOf="@id/enter_username" />
 
     <Button
         android:id="@+id/create_account_button"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:textStyle="italic"
-        android:textColor="@color/dark_green"
         android:backgroundTint="@android:color/transparent"
         android:text="@string/new_user"
-        style="?android:attr/borderlessButtonStyle"
+        android:textColor="@color/dark_green"
+        android:textSize="10sp"
+        android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

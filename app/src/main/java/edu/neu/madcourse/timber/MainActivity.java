@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
         setContentView(R.layout.login_screen);
+
+        // hide the action bar for aesthetics
+        getSupportActionBar().hide();
+
         login_button = findViewById(R.id.login_button);
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
 
@@ -248,15 +252,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         }).start();
     }
 
-/*
-
-
-        // hide the action bar for aesthetics
-        getSupportActionBar().hide();
-
-
-    }
-*/
 
     private Location getLocation(){
 

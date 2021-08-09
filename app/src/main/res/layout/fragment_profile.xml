@@ -9,19 +9,28 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/profile"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="70dp">
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/profile_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="ACTION BUTTON"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/profile_username"
+            style="@style/Timber.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
             android:text="username"
-            android:textColor="@color/light_green"
-            app:layout_constraintBottom_toTopOf="@id/profile_details"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,46 +38,35 @@
             android:id="@+id/profile_pin"
             android:layout_width="15dp"
             android:layout_height="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
             android:background="@drawable/pin"
-            app:layout_constraintBottom_toTopOf="@id/profile_details"
-            app:layout_constraintEnd_toStartOf="@+id/profile_location"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_username" />
 
         <TextView
             android:id="@+id/profile_location"
+            style="@style/Timber.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:hint="zipcode"
-            app:layout_constraintBottom_toTopOf="@id/profile_details"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/profile_details"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="center"
-            android:hint="profile details"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_location" />
+            app:layout_constraintStart_toEndOf="@id/profile_pin"
+            app:layout_constraintTop_toBottomOf="@id/profile_username" />
 
         <TextView
             android:id="@+id/active_projects_title"
+            style="@style/Timber.Title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_gravity="center"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="ACTIVE PROJECTS"
-            android:textColor="@color/light_green"
-            android:textSize="18sp"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_details" />
+            app:layout_constraintTop_toBottomOf="@id/profile_action_button" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/active_projects_feed"
@@ -78,16 +76,14 @@
 
         <TextView
             android:id="@+id/completed_projects_title"
+            style="@style/Timber.Title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="COMPLETED PROJECTS"
-            android:textColor="@color/light_green"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/active_projects_feed" />
 
@@ -95,19 +91,7 @@
             android:id="@+id/completed_projects_feed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/completed_projects_title"
-            tools:layout_editor_absoluteX="0dp" />
-
-        <Button
-            android:id="@+id/profile_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:text="ACTION BUTTON"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/completed_projects_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
