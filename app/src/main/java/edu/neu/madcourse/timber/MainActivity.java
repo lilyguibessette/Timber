@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +24,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
@@ -44,6 +44,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,16 +134,30 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 Log.e("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             }
         });
+
+        radioGroupUserType = (RadioGroup) findViewById(R.id.login_usertype);
+        int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
+
+        Log.e(TAG," " + selectedUserType);
+
+        radioButtonUserType = (RadioButton) findViewById(selectedUserType);
+
+
         // store the preferences in the username
         my_username = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERNAME, null);
         my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERTYPE, null);
+
+        if(my_usertype == null){
+            my_usertype = radioButtonUserType.getText().toString().toUpperCase();
+        }
+
         Log.e(TAG,"username: " + my_username + " usertype: " + my_usertype);
         // if the username is not null, go to the ReceivedActivity class
         if (my_username != null && my_usertype != null) {
-            Log.e(TAG,"autologin username: " + my_username + " usertype: " + my_usertype);
-            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+            //Log.e(TAG,"autologin username: " + my_username + " usertype: " + my_usertype);
+            //startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
 
         login_button.setOnClickListener(view -> {
@@ -152,6 +168,30 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
+
+            readData(myUserRef, new OnGetDataListener() {
+                @Override
+                public void onSuccess(DataSnapshot dataSnapshot) {
+                    Log.e(TAG,"success");
+                    //got data from database....now you can use the retrieved data
+                    if(!dataSnapshot.exists()){
+                        Toast.makeText(MainActivity.this, "Account does not exist", Toast.LENGTH_SHORT).show();
+                        return;
+                    };
+
+                }
+                @Override
+                public void onStart() {
+                    //when starting
+                    Log.e(TAG, "Started");
+                }
+
+                @Override
+                public void onFailure() {
+                    Log.e(TAG, "Failed");
+                }
+            });
+
 
 
             Log.e(TAG,"myUserRef: " + myUserRef.toString());
@@ -167,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             myEdit.putString(USERTYPE, my_usertype);
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
-
+            Log.e(TAG,"button autologin username: " + my_username + " usertype: " + my_usertype);
             if (my_username != null && my_usertype != null) {
                 Log.e(TAG,"button autologin username: " + my_username + " usertype: " + my_usertype);
                 startActivity(new Intent(MainActivity.this, HomepageActivity.class));
@@ -339,6 +379,22 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             }
         }
         return null;
+    }
+
+    public void readData(DatabaseReference ref, final OnGetDataListener listener) {
+        listener.onStart();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listener.onSuccess(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                listener.onFailure();
+            }
+        });
+
     }
 
 
