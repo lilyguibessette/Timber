@@ -85,7 +85,7 @@
             android:id="@+id/message_send"
             style="@style/Button"
             android:layout_weight="0"
-            android:text=">"
+            android:text="SEND"
             android:textAlignment="center"
             android:textSize="12sp" />
     </LinearLayout>
