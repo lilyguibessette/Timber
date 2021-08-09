@@ -33,7 +33,6 @@ import java.util.Date;
 
 import static android.content.ContentValues.TAG;
 
-import edu.neu.madcourse.timber.HomepageActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.users.Project;
 
@@ -205,7 +204,7 @@ public class NewsFeedFragment extends Fragment {
     private void createRecyclerView(View view) {
         // Create the recyclerview and populate it with the history
 
-        newsFeedRecyclerView = view.findViewById(R.id.news_feed);
+        newsFeedRecyclerView = view.findViewById(R.id.news_feed_recycler);
         Log.e(TAG,"newsFeed: " + newsFeedRecyclerView.toString());
         newsPostLayoutManager = new LinearLayoutManager(view.getContext());
         newsFeedRecyclerView.setHasFixedSize(true);

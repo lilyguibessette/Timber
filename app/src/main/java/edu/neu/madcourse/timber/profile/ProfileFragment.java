@@ -124,15 +124,15 @@ public class ProfileFragment extends Fragment {
         createRecyclerView(view);
         Log.e(TAG, "We made it after the recycler view");
 
-        TextView profile_username = view.findViewById(R.id.profile_username);
-        profile_username.setText(my_username);
+        //TextView profile_username = view.findViewById(R.id.profile_username);
+        //profile_username.setText(my_username);
         action_button = view.findViewById(R.id.profile_action_button);
         if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
             //set text
-            action_button.setText("Add New Project");
+            action_button.setText("+");
 
         } else {
-            action_button.setText("Update Radius");
+            action_button.setText("RADIUS");
         }
         action_button.setOnClickListener(new View.OnClickListener() {
             @Override
