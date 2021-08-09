@@ -137,9 +137,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 USERNAME, null);
         my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERTYPE, null);
-
+        Log.e(TAG,"username: " + my_username + " usertype: " + my_usertype);
         // if the username is not null, go to the ReceivedActivity class
         if (my_username != null && my_usertype != null) {
+            Log.e(TAG,"autologin username: " + my_username + " usertype: " + my_usertype);
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
 
@@ -148,6 +149,12 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
             //TODO VALIDATE LOGIN FROM DB QUERY
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
+
+            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
+                    my_usertype + "/" + my_username);
+
+
+            Log.e(TAG,"myUserRef: " + myUserRef.toString());
 
             // Write a message to the database
             login_user();
@@ -161,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
 
+
+
             // start the new activity
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         });
@@ -173,32 +182,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 startCreateUserDialog();
             }
         });
-
-
-/*
-        Log.e(TAG,"start dispatching take picture intent");
-        dispatchTakePictureIntent();
-        Log.e(TAG,"finish dispatching take picture intent");*/
     }
-
-    public File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        //currentPhotoPath = image.getAbsolutePath();
-        Log.e(TAG,"file is: " + image + " storage dir: " + storageDir);
-        return image;
-    }
-
-
 
     public void startCreateUserDialog() {
         DialogFragment createAccountDialog = new CreateUserDialogFragment();

@@ -1,13 +1,13 @@
 package edu.neu.madcourse.timber.homeswipe;
 
-public class ItemModel {
+public class UserCard {
     private int image;
     private String name, details;
 
-    public ItemModel() {
+    public UserCard() {
     }
 
-    public ItemModel(int image, String name, String details) {
+    public UserCard(int image, String name, String details) {
         this.image = image;
         this.name = name;
         this.details = details;
