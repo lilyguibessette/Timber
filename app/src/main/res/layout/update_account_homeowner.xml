@@ -4,15 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+       <Button
+        android:id="@+id/update_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update picture"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/update_image">
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username" />
 
         <EditText
             android:id="@+id/update_username"
@@ -22,21 +34,39 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="First name" />
+
         <EditText
             android:id="@+id/update_param1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First name / Business name"
+            android:hint="First name"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last name" />
 
         <EditText
             android:id="@+id/update_param2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last name / Tax ID"
+            android:hint="Last name"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zip code" />
 
         <EditText
             android:id="@+id/update_zip"
@@ -46,6 +76,12 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email" />
+
         <EditText
             android:id="@+id/update_email"
             android:layout_width="match_parent"
@@ -54,6 +90,12 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone number" />
+
         <EditText
             android:id="@+id/update_phone"
             android:layout_width="match_parent"
@@ -61,7 +103,6 @@
             android:hint="Phone number"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
-
 
     </LinearLayout>
 
