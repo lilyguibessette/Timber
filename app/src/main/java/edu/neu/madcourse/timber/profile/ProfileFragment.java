@@ -177,7 +177,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
         activeProjectsRecyclerView.setHasFixedSize(true);
         activeProjectsAdapter = new ProjectAdapter(projects);
         activeProjectsRecyclerView.setAdapter(activeProjectsAdapter);
-        activeProjectLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        activeProjectLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         activeProjectsRecyclerView.setLayoutManager(activeProjectLayoutManager);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.DOWN) {
