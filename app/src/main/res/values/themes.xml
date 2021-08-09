@@ -6,8 +6,8 @@
         <item name="colorPrimaryVariant">@color/dark_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/light_blue</item>
-        <item name="colorSecondaryVariant">@color/dark_blue</item>
+        <item name="colorSecondary">@color/dark_green</item>
+        <item name="colorSecondaryVariant">@color/light_green</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Custom -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
@@ -25,6 +25,12 @@
 
     <style name="Timber.Text" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="Timber.Hint" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/hints</item>
         <item name="android:textSize">12sp</item>
         <item name="android:padding">5dp</item>
     </style>

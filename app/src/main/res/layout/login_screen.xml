@@ -23,15 +23,42 @@
         android:text="@string/welcome"
         android:textColor="@color/light_green"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/enter_username"
+        app:layout_constraintBottom_toTopOf="@+id/login_usertype"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
         app:layout_constraintWidth_percent=".6" />
 
+    <RadioGroup
+        android:id="@+id/login_usertype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/login_text"
+        app:layout_constraintBottom_toTopOf="@id/enter_username">
+
+        <RadioButton
+            android:id="@+id/radio_homeowner"
+            style="@style/Timber.Hint"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Homeowner" />
+
+        <RadioButton
+            android:id="@+id/radio_contractor"
+            style="@style/Timber.Hint"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:text="Contractor" />
+    </RadioGroup>
+
     <EditText
         android:id="@+id/enter_username"
-        style="@style/Timber.Text"
+        style="@style/Timber.Hint"
         android:layout_width="0dp"
         app:layout_constraintWidth_percent=".6"
         android:layout_height="wrap_content"
@@ -41,12 +68,12 @@
         android:inputType="text"
         android:textAlignment="center"
         android:padding="10dp"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login_text"
-         />
+        app:layout_constraintTop_toBottomOf="@id/login_usertype"
+        app:layout_constraintBottom_toTopOf="@+id/login_button"
+
+        />
 
     <Button
         android:id="@+id/login_button"
