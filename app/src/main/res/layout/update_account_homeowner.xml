@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Dialog">
 
     <Button
-        android:id="@+id/update_image"
-        style="@style/Button"
-        android:text="Update pic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/logout"
         style="@style/Button"
+        android:layout_width="28dp"
+        android:layout_height="24dp"
         android:layout_marginLeft="10dp"
-        android:text="Logout"
+        android:background="@drawable/icon_logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/update_image"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="75dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/icon_image_placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logout"
+        app:layout_constraintBottom_toTopOf="@id/form"/>
+    <Button
+        android:id="@+id/update_image"
+        style="@style/Button"
+        android:text="Update pic"
+        android:background="@android:color/transparent"
+        android:textColor="@color/light_green"
+        app:layout_constraintStart_toEndOf="@id/image"
+        app:layout_constraintTop_toBottomOf="@id/logout"
+        app:layout_constraintBottom_toTopOf="@id/form"/>
 
     <LinearLayout
         android:id="@+id/form"
