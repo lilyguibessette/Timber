@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     }
 
 
-    private Location getLocation(){
+    public Location getLocation(){
 
         // TODO: can we stick this in the user class and initialize in the onCreate
         //  then save to database?

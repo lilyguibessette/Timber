@@ -3,7 +3,6 @@ package edu.neu.madcourse.timber.profile;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,18 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,12 +29,10 @@ import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 
-import edu.neu.madcourse.timber.CreateUserDialogFragment;
-import edu.neu.madcourse.timber.HomepageActivity;
-import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
+import edu.neu.madcourse.timber.users.Project;
 
 /**
  * A simple {@link Fragment} subclass.

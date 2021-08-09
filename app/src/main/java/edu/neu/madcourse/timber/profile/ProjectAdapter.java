@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
-import edu.neu.madcourse.timber.profile.ProjectHolder;
+import edu.neu.madcourse.timber.users.Project;
 
 public class ProjectAdapter extends RecyclerView.Adapter<ProjectHolder>{
     private final ArrayList<Project> projectList;
@@ -31,7 +31,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectHolder>{
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
             holder.username.setText(currentItem.getUsername());
-            holder.image.setImageResource(currentItem.getImage());
+            String db_image = currentItem.getImage();
+
+            holder.image;
             holder.description.setText(currentItem.getDescription());
         }
     }

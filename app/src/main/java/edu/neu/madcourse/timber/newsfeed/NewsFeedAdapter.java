@@ -39,6 +39,7 @@ import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.users.Project;
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
@@ -46,13 +47,13 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
     private Uri photoURI;
 
     View view;
-    private final ArrayList<NewsFeedPost> newsFeedHistory;
+    private final ArrayList<Project> newsFeedHistory;
 
-    public NewsFeedAdapter(ArrayList<NewsFeedPost> newsFeedHistory) {
+    public NewsFeedAdapter(ArrayList<Project> newsFeedHistory) {
         this.newsFeedHistory = newsFeedHistory;
     }
 
-    public NewsFeedAdapter(ArrayList<NewsFeedPost> newsFeedHistory, Uri photoURI) {
+    public NewsFeedAdapter(ArrayList<Project> newsFeedHistory, Uri photoURI) {
         this.newsFeedHistory = newsFeedHistory;
         this.photoURI = photoURI;
     }
@@ -65,7 +66,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
     @Override
     public void onBindViewHolder(NewsFeedHolder holder, int position) {
-        NewsFeedPost currentItem = newsFeedHistory.get(position);
+        Project currentItem = newsFeedHistory.get(position);
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
             holder.post_username.setText(currentItem.getUsername());
