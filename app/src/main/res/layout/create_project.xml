@@ -1,75 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    style="@style/Dialog">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/form"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:layout_margin="10dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/create_project_name"
+        <TextView
+            style="@style/Timber.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Project Name"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:gravity="center"
+            android:text="Create a Project" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username" />
+
+        <EditText
+            android:id="@+id/create_project_name"
+            style="@style/Timber.Hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Project Name" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Project Type" />
 
         <EditText
             android:id="@+id/create_project_type"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Project Type"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Project Type" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Budget" />
 
         <EditText
             android:id="@+id/create_budget"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Budget"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Budget" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Project Description" />
 
         <EditText
             android:id="@+id/create_project_description"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Project description"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Project description" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Image" />
 
         <EditText
             android:id="@+id/create_project_image"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Image address"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
-
-
-        <Button
-            android:id="@+id/create_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create Project" />
-
-        <Button
-            android:id="@+id/cancel_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cancel" />
-
-
-
+            android:hint="Image address" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/create_button"
+        style="@style/Button"
+        android:layout_gravity="center"
+        android:text="Create"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/form" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/Button"
+        android:layout_gravity="center"
+        android:text="Cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/create_button"
+        app:layout_constraintTop_toBottomOf="@id/form" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
