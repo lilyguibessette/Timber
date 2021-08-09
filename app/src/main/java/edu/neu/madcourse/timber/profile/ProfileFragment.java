@@ -1,7 +1,5 @@
 package edu.neu.madcourse.timber.profile;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,23 +32,24 @@ import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment implements CreateActionDialogListener{
+public class ProfileFragment extends Fragment implements CreateActionDialogListener {
     //TODO Listeners aren't working !!!
     // Recycler view related variables
-    private final ArrayList<Project> completedProjects = new ArrayList<>();
-    private final ArrayList<Project> activeProjects = new ArrayList<>();
+    private final ArrayList<Project> projects = new ArrayList<>();
     private RecyclerView activeProjectsRecyclerView;
     private LinearLayoutManager activeProjectLayoutManager;
-    private  ProjectAdapter activeProjectsAdapter;
-    private int activeProjectSize = 0;
+    private ProjectAdapter activeProjectsAdapter;
+    private int projectSize = 0;
     private RecyclerView completedProjectsRecyclerView;
     private LinearLayoutManager completedProjectLayoutManager;
-    private  ProjectAdapter completedProjectsAdapter;
+    private ProjectAdapter completedProjectsAdapter;
     private int completedProjectSize = 0;
     public String my_username;
     public String my_usertype;
@@ -84,6 +83,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,20 +91,17 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
         // connect to the database and look at the users
         my_username = sharedPreferences.getString(USERNAME, null);
         my_usertype = sharedPreferences.getString(USERTYPE, null);
+
         // Initialize our received history size to 0
-        activeProjectSize = 0;
-        completedProjectSize = 0;
+        projectSize = 0;
+
         // get saved state and initialize the recyclerview
         initialProjectsData(savedInstanceState);
-        activeProjects.add(new Project("apples", "image placeholder.PNG", "activeProjectsthis is a test post 1", "TYPE PLUMBING"));
-        activeProjects.add(new Project("peaches", "image placeholder.PNG", "activeProjectsthis is a test post 2", "TYPE PLUMBING"));
-        activeProjects.add(new Project("mangoes", "image placeholder.PNG", "activeProjectsthis is a test post 3", "TYPE PLUMBING"));
-        activeProjects.add(new Project("watermelons", "image placeholder.PNG", "activeProjectsthis is a test post 4", "TYPE PLUMBING"));
 
-        completedProjects.add(new Project("apples", "image placeholder.PNG", "completedProjectsthis is a test post 1", "TYPE PLUMBING"));
-        completedProjects.add(new Project("peaches", "image placeholder.PNG", "completedProjectsthis is a test post 2", "TYPE PLUMBING"));
-        completedProjects.add(new Project("mangoes", "image placeholder.PNG", "completedProjectsthis is a test post 3", "TYPE PLUMBING"));
-        completedProjects.add(new Project("watermelons", "image placeholder.PNG", "completedProjectsthis is a test post 4", "TYPE PLUMBING"));
+        projects.add(new Project("apples", "image placeholder.PNG", "completedProjectsthis is a test post 1", "TYPE PLUMBING"));
+        projects.add(new Project("peaches", "image placeholder.PNG", "completedProjectsthis is a test post 2", "TYPE PLUMBING"));
+        projects.add(new Project("mangoes", "image placeholder.PNG", "completedProjectsthis is a test post 3", "TYPE PLUMBING"));
+        projects.add(new Project("watermelons", "image placeholder.PNG", "completedProjectsthis is a test post 4", "TYPE PLUMBING"));
 
 
         // Inflate the layout for this fragment
@@ -115,7 +112,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
         Log.e(TAG, "We made it after the recycler view");
 
         action_button = view.findViewById(R.id.profile_action_button);
-        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
+        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
             //set text
             action_button.setText("Add New Project");
 
@@ -130,7 +127,6 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
             }
         });
 
-
         return view;
     }
 
@@ -138,24 +134,24 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
 
         // recreate the sticker history on orientation change or open
         if (savedInstanceState != null && savedInstanceState.containsKey(NUMBER_OF_MATCHES)) {
-            if (activeProjects == null || activeProjects.size() == 0) {
+            if (projects == null || projects.size() == 0) {
                 int size = savedInstanceState.getInt(NUMBER_OF_MATCHES + "_ACTIVE");
                 // Retrieve keys we stored in the instance
                 for (int i = 0; i < size; i++) {
-                    String username = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
+                    String username = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "0");
                     String description = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
                             + i + "1");
-                    String image = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
+                    String image = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "2");
                     String type = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
                             + i + "3");
-                    activeProjects.add(new Project(username,image,
+                    projects.add(new Project(username,image,
                             description, type));
                 }
             }
 
-            if (completedProjects == null || completedProjects.size() == 0) {
+            if (projects == null || projects.size() == 0) {
                 int size = savedInstanceState.getInt(NUMBER_OF_MATCHES + "_COMPLETED");
                 // Retrieve keys we stored in the instance
                 for (int i = 0; i < size; i++) {
@@ -163,10 +159,10 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                             + i + "0");
                     String description = savedInstanceState.getString(KEY_OF_MATCH+ "_COMPLETED"
                             + i + "1");
-                    String image = savedInstanceState.getString(KEY_OF_MATCH+ "_COMPLETED"
+                    String image = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "2");
                     String type = savedInstanceState.getString(KEY_OF_MATCH +"_COMPLETED"+i + "3" );
-                    completedProjects.add(new Project(username,image,
+                    projects.add(new Project(username,image,
                             description, type));
                 }
             }
@@ -175,15 +171,17 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
 
     private void createRecyclerView(View view) {
         // Create the recyclerview and populate it with the history
-        activeProjectsRecyclerView = view.findViewById(R.id.active_projects_feed);
-        Log.e(TAG,"Profile projects: " + activeProjectsRecyclerView.toString());
+        activeProjectsRecyclerView = view.findViewById(R.id.projects_feed);
+        Log.e(TAG, "Profile projects: " + activeProjectsRecyclerView.toString());
         activeProjectLayoutManager = new LinearLayoutManager(view.getContext());
         activeProjectsRecyclerView.setHasFixedSize(true);
-        activeProjectsAdapter = new ProjectAdapter(activeProjects);
+        activeProjectsAdapter = new ProjectAdapter(projects);
         activeProjectsRecyclerView.setAdapter(activeProjectsAdapter);
         activeProjectLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         activeProjectsRecyclerView.setLayoutManager(activeProjectLayoutManager);
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.DOWN) {
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -193,8 +191,8 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 Toast.makeText(getContext(), "Project Complete!", Toast.LENGTH_SHORT).show();
                 int position = viewHolder.getLayoutPosition();
-                Project project = activeProjects.get(position);
-                activeProjects.remove(position);
+                Project project = projects.get(position);
+                projects.remove(position);
                 activeProjectsAdapter.notifyItemRemoved(position);
                 // project change status in database
                 // get project id do stuff etc
@@ -202,21 +200,12 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
             }
         });
         itemTouchHelper.attachToRecyclerView(activeProjectsRecyclerView);
-
-        completedProjectsRecyclerView = view.findViewById(R.id.completed_projects_feed);
-        Log.e(TAG,"Profile projects: " + completedProjectsRecyclerView.toString());
-        completedProjectLayoutManager = new LinearLayoutManager(view.getContext());
-        completedProjectsRecyclerView.setHasFixedSize(true);
-        completedProjectsAdapter = new ProjectAdapter(completedProjects);
-        completedProjectsRecyclerView.setAdapter(completedProjectsAdapter);
-        completedProjectLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        completedProjectsRecyclerView.setLayoutManager(completedProjectLayoutManager);
     }
 
     public void startActionDialog() {
-        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
-        DialogFragment createProjectDialogFragment = new CreateProjectDialogFragment();
-        createProjectDialogFragment.show(getChildFragmentManager(), "createProjectDialogFragment");
+        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
+            DialogFragment createProjectDialogFragment = new CreateProjectDialogFragment();
+            createProjectDialogFragment.show(getChildFragmentManager(), "createProjectDialogFragment");
         } else {
             DialogFragment updateProfileDialogFragment = new UpdateProfileDialogFragment();
             updateProfileDialogFragment.show(getChildFragmentManager(), "updateProfileDialogFragment");
@@ -224,7 +213,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
     }
 
     public void onDialogPositiveClick(DialogFragment actionDialogFragment) {
-        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)){
+        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
             // change to projects
             Dialog actionDialog = actionDialogFragment.getDialog();
             //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
@@ -310,7 +299,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                         }
 
                     } else {
-                        if (my_usertype.equals(HOMEOWNERS) ){
+                        if (my_usertype.equals(HOMEOWNERS)) {
                             myUserRef.setValue(new Homeowner(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
                                     my_param1,
@@ -360,7 +349,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                     if (dataSnapshot.exists()) {
                         //my_user = dataSnapshot.getValue(User.class);
                     } else {
-                        if (my_usertype.equals(HOMEOWNERS) ){
+                        if (my_usertype.equals(HOMEOWNERS)) {
                             myUserRef.setValue(new Homeowner(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
                                     my_param1,

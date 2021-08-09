@@ -44,11 +44,10 @@
 
         <EditText
             android:id="@+id/create_username"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Username" />
 
         <TextView
             style="@style/Timber.Text"
@@ -58,11 +57,10 @@
 
         <EditText
             android:id="@+id/create_param1"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First name / Business name"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="First name / Business name" />
 
         <TextView
             style="@style/Timber.Text"
@@ -72,11 +70,10 @@
 
         <EditText
             android:id="@+id/create_param2"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last name / Tax ID"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Last name / Tax ID" />
 
         <TextView
             style="@style/Timber.Text"
@@ -86,11 +83,10 @@
 
         <EditText
             android:id="@+id/create_zip"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Zip code"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Zip code" />
 
         <TextView
             style="@style/Timber.Text"
@@ -100,11 +96,10 @@
 
         <EditText
             android:id="@+id/create_email"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Email" />
 
         <TextView
             style="@style/Timber.Text"
@@ -114,11 +109,10 @@
 
         <EditText
             android:id="@+id/create_phone"
+            style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone number"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:hint="Phone number" />
 
     </LinearLayout>
 
