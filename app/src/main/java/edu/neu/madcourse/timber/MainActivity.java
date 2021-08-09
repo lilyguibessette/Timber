@@ -150,9 +150,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERTYPE, null);
 
-        if(my_usertype == null){
-            my_usertype = radioButtonUserType.getText().toString().toUpperCase();
-        }
+        my_usertype = radioButtonUserType.getText().toString().toUpperCase();
+
 
         // if the username is not null, go to the ReceivedActivity class
         if (my_username != null && my_usertype != null) {
@@ -259,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                     MODE_PRIVATE);
             SharedPreferences.Editor myEdit = sharedPreferences.edit();
             myEdit.putString(USERNAME, my_username);
+            myEdit.putString(USERTYPE, my_usertype);
             // connect to the database and look at the users
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
@@ -269,10 +269,12 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
                         Log.e(TAG,"login_user: User exists in DB");
+                        Log.e(TAG,"login_user: " + my_usertype);
                         startActivity(new Intent(MainActivity.this, HomepageActivity.class));
                     } else {
                         Log.e(TAG,"login_user: User does not exist in DB");
-                        if (my_usertype == HOMEOWNERS) {
+                        Log.e(TAG,"login_user: " + my_usertype);
+                        if (my_usertype.equals(HOMEOWNERS)) {
                             try {
                                 myUserRef.setValue(new Homeowner(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
