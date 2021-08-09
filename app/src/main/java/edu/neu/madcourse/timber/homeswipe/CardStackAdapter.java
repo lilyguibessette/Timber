@@ -22,6 +22,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
     private List<UserCard> items;
 
+    public CardStackAdapter() { }
     public CardStackAdapter(List<UserCard> items) {
         this.items = items;
     }
@@ -66,11 +67,15 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         }
     }
 
-    public List<UserCard> getItems() {
+    public List<UserCard> getCardStack() {
         return items;
     }
 
-    public void setItems(List<UserCard> items) {
+    public void addCardToBack(UserCard newCard) {
+        items.add(newCard);
+    }
+
+    public void setCardStack(List<UserCard> items) {
         this.items = items;
     }
 }
