@@ -168,7 +168,7 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // use dialog for add link
-
+                // remove this match from match lists so they don't communicate anymore
             }
         });
         markComplete = view.findViewById(R.id.complete_button);
