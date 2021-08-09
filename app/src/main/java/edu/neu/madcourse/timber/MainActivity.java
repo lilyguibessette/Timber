@@ -231,6 +231,13 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 && my_param1 != null && my_param2 != null
                 && my_email != null && my_zip != null && my_phone != null) {
             createUserDialog.dismiss();
+            SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref",
+                    MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putString(USERNAME, my_username);
+            myEdit.putString(USERTYPE, my_usertype);
+            myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
+            myEdit.commit();
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();

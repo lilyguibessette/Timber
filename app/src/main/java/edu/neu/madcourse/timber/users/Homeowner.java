@@ -17,10 +17,10 @@ public class Homeowner implements User {
     private String email;
     private String phoneNumber;
     private String image;
-    private List<String> activeProjectList;
-    private List<String> completedProjectList;
-    private List<String> swipedOnList;
-    private List<String> matchList;
+    private List<String> activeProjectList = new ArrayList<>();
+    private List<String> completedProjectList= new ArrayList<>();
+    private List<String> swipedOnList= new ArrayList<>();
+    private List<String> matchList= new ArrayList<>();
 
     public Homeowner(){
     }
@@ -53,11 +53,8 @@ public class Homeowner implements User {
 
         this.phoneNumber = phoneNumber;
         this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber must not be null");
-        this.activeProjectList = new ArrayList<>();
-        this.completedProjectList = new ArrayList<>();
-        this.swipedOnList = new ArrayList<>();
-        this.matchList = new ArrayList<>();
         this.image = "default_profile_pic.PNG";
+
     }
 
     public Homeowner(String username,
