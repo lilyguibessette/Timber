@@ -23,6 +23,7 @@
             <RadioButton
                 android:id="@+id/radio_homeowner"
                 style="@style/Timber.Text"
+                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="Homeowner" />
