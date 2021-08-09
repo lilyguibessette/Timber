@@ -1,7 +1,9 @@
 package edu.neu.madcourse.timber;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.app.Dialog;
 import android.content.Intent;
@@ -9,8 +11,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,9 +26,13 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,9 +41,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
+
+import static android.content.ContentValues.TAG;
 
 //TODO NOTES
 /*
@@ -74,7 +94,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     private static Button createUserButton;
     private RadioGroup radioGroupUserType;
     private RadioButton radioButtonUserType;
-
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private String currentPhotoPath;
+    private Uri photoURI;
 
     // GPS variables
     private LocationManager locationManager;
@@ -119,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
         login_button.setOnClickListener(view -> {
 
+
             //TODO VALIDATE LOGIN FROM DB QUERY
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
 
@@ -146,7 +169,31 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 startCreateUserDialog();
             }
         });
+
+
+/*
+        Log.e(TAG,"start dispatching take picture intent");
+        dispatchTakePictureIntent();
+        Log.e(TAG,"finish dispatching take picture intent");*/
     }
+
+    public File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        //currentPhotoPath = image.getAbsolutePath();
+        Log.e(TAG,"file is: " + image + " storage dir: " + storageDir);
+        return image;
+    }
+
 
 
     public void startCreateUserDialog() {
