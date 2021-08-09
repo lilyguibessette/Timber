@@ -1,10 +1,12 @@
 package edu.neu.madcourse.timber.newsfeed;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +14,16 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +49,7 @@ public class NewsFeedFragment extends Fragment {
     private RecyclerView newsFeedRecyclerView;
     private RecyclerView.LayoutManager newsPostLayoutManager;
     private int newsFeedSize = 0;
-    private Uri photoURI;
+    public Uri photoURI;
 
     private static final String KEY_OF_STICKER = "KEY_OF_POST";
     private static final String NUMBER_OF_POSTS = "NUMBER_OF_POSTS";
@@ -128,6 +137,47 @@ public class NewsFeedFragment extends Fragment {
         return image;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("result");
+
+                File f = new File(photoURI.getPath());
+                Log.e(TAG,"What is immediate filesize? " + f.length());
+
+
+                Log.e(TAG,"what is file? " + DocumentFile.fromSingleUri(getActivity(),photoURI).getName());
+
+                f = new File(photoURI.getPath());
+                Log.e(TAG,"what is upload filesize? " + f.length());
+
+                Log.e(TAG,"starting file upload");
+
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                StorageReference mainActivityImageRef = storageReference.child(photoURI.getLastPathSegment());
+
+                UploadTask uploadTask = mainActivityImageRef.putFile(photoURI);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.e(TAG,"finish file upload");
+                    }
+                });
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
+        }
+    } //onActivityResult
+
     private void initialNewsFeedData(Bundle savedInstanceState) {
 
         // recreate the sticker history on orientation change or open
@@ -156,7 +206,7 @@ public class NewsFeedFragment extends Fragment {
         Log.e(TAG,"newsFeed: " + newsFeedRecyclerView.toString());
         newsPostLayoutManager = new LinearLayoutManager(view.getContext());
         newsFeedRecyclerView.setHasFixedSize(true);
-        newsFeedRecyclerView.setAdapter(new NewsFeedAdapter(newsFeedHistory));
+        newsFeedRecyclerView.setAdapter(new NewsFeedAdapter(newsFeedHistory,photoURI));
         newsFeedRecyclerView.setLayoutManager(newsPostLayoutManager);
     }
 

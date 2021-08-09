@@ -102,46 +102,7 @@ public class HomepageActivity extends AppCompatActivity {
             };
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("result");
-
-                File f = new File(photoURI.getPath());
-                Log.e(TAG,"What is immediate filesize? " + f.length());
-
-
-                Log.e(TAG,"what is file? " + DocumentFile.fromSingleUri(this,photoURI).getName());
-
-                f = new File(photoURI.getPath());
-                Log.e(TAG,"what is upload filesize? " + f.length());
-
-                Log.e(TAG,"starting file upload");
-
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                StorageReference mainActivityImageRef = storageReference.child(photoURI.getLastPathSegment());
-
-                UploadTask uploadTask = mainActivityImageRef.putFile(photoURI);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.e(TAG,"finish file upload");
-                    }
-                });
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
-            }
-        }
-    } //onActivityResult
 
 /* // Might be useful, scales an image to an imageview; from https://developer.android.com/training/camera/photobasics#java
     private void setPic() {
