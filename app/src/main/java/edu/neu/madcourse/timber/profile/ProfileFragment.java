@@ -1,7 +1,9 @@
 package edu.neu.madcourse.timber.profile;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -10,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +32,9 @@ import com.google.firebase.firestore.auth.User;
 import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.profile.create_project.CreateProjectDialogFragment;
+import edu.neu.madcourse.timber.profile.update.UpdateContractorProfileDialogFragment;
+import edu.neu.madcourse.timber.profile.update.UpdateHomeownerProfileDialogFragment;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
@@ -39,7 +46,7 @@ import static android.content.Context.MODE_PRIVATE;
  * Use the {@link ProfileFragment} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment implements CreateActionDialogListener {
+public class ProfileFragment extends Fragment {
     //TODO Listeners aren't working !!!
     // Recycler view related variables
     private final ArrayList<Project> projects = new ArrayList<>();
@@ -69,6 +76,11 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
     private static final String TAG = "MatchesFragment";
     String other_username;
     Button action_button;
+    Button profile_settings;
+    int discrete;
+    int start = 0; //you need to give starting value of SeekBar
+    int end = 1000; //you need to give end value of SeekBar
+    int start_pos = 20; //you need to give starting position value of SeekBar
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -97,11 +109,11 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
 
         // get saved state and initialize the recyclerview
         initialProjectsData(savedInstanceState);
-
-        projects.add(new Project("apples", "image placeholder.PNG", "completedProjectsthis is a test post 1", "TYPE PLUMBING"));
-        projects.add(new Project("peaches", "image placeholder.PNG", "completedProjectsthis is a test post 2", "TYPE PLUMBING"));
-        projects.add(new Project("mangoes", "image placeholder.PNG", "completedProjectsthis is a test post 3", "TYPE PLUMBING"));
-        projects.add(new Project("watermelons", "image placeholder.PNG", "completedProjectsthis is a test post 4", "TYPE PLUMBING"));
+        Project test_project = new Project("mangoes", "TEST","PLUMBING",7000,"image placeholder.PNG", "completedProjectsthis is a test post 3");
+        projects.add(test_project);
+        projects.add(test_project);
+        projects.add(test_project);
+        projects.add(test_project);
 
 
         // Inflate the layout for this fragment
@@ -117,13 +129,78 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
             action_button.setText("Add New Project");
 
         } else {
-            action_button.setText("Update Profile");
+            action_button.setText("Update Radius");
         }
         action_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(my_usertype.equals(HOMEOWNERS)){
+                    Log.e("ProfileFragment", "ProfileFragment to update homeowner");
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, new CreateProjectDialogFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }else{
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                        View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
+                        SeekBar seek = (SeekBar) updateRadiusView.findViewById(R.id.seekBar);
+                        int start_position = (int)(((start_pos - start) / (end - start)) * 100);
+                        discrete = start_pos;
+                        seek.setProgress(start_position);
+                        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                // TODO Auto-generated method stub
+                                Log.e(TAG, "discrete = " + String.valueOf(discrete));
+                                Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
+                            }
+
+
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
+                            }
+
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                float temp = progress;
+                                float dis = end - start;
+                                discrete = (int) (start + ((temp / 100) * dis));
+                            }
+                        });
+                        Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
+
+                        dialogBuilder.setView(updateRadiusView);
+                        AlertDialog dialog = dialogBuilder.create();
+                        dialog.show();
+                        confirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+
+                }
+            });
+        profile_settings = view.findViewById(R.id.profile_settings);
+        profile_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(my_usertype.equals(HOMEOWNERS)){
+                    Log.e("ProfileFragment", "ProfileFragment to update homeowner");
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, new UpdateHomeownerProfileDialogFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }else{
+                    Log.e("ProfileFragment", "ProfileFragment to update contractor");
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, new UpdateContractorProfileDialogFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
                 // use dialog for add link
-                startActionDialog();
+
             }
         });
 
@@ -146,8 +223,8 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                             + i + "2");
                     String type = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
                             + i + "3");
-                    projects.add(new Project(username,image,
-                            description, type));
+                    projects.add(new Project(username,type,image,
+                            description));
                 }
             }
 
@@ -162,8 +239,8 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                     String image = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "2");
                     String type = savedInstanceState.getString(KEY_OF_MATCH +"_COMPLETED"+i + "3" );
-                    projects.add(new Project(username,image,
-                            description, type));
+                    projects.add(new Project(username,type,image,
+                            description));
                 }
             }
         }
@@ -202,76 +279,6 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
         itemTouchHelper.attachToRecyclerView(activeProjectsRecyclerView);
     }
 
-    public void startActionDialog() {
-        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
-            DialogFragment createProjectDialogFragment = new CreateProjectDialogFragment();
-            createProjectDialogFragment.show(getChildFragmentManager(), "createProjectDialogFragment");
-        } else {
-            DialogFragment updateProfileDialogFragment = new UpdateProfileDialogFragment();
-            updateProfileDialogFragment.show(getChildFragmentManager(), "updateProfileDialogFragment");
-        }
-    }
-
-    public void onDialogPositiveClick(DialogFragment actionDialogFragment) {
-        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
-            // change to projects
-            Dialog actionDialog = actionDialogFragment.getDialog();
-            //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
-            //int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
-            Log.e(TAG, " ondialog pos click");
-
-            my_username = ((EditText) actionDialog.findViewById(R.id.update_username)).getText().toString();
-            my_param1 = ((EditText) actionDialog.findViewById(R.id.update_param1)).getText().toString();
-            my_param2 = ((EditText) actionDialog.findViewById(R.id.update_param2)).getText().toString();
-            my_email = ((EditText) actionDialog.findViewById(R.id.update_email)).getText().toString();
-            my_zip = ((EditText) actionDialog.findViewById(R.id.update_zip)).getText().toString();
-            my_phone = ((EditText) actionDialog.findViewById(R.id.update_phone)).getText().toString();
-            //TODO SET IMAGE HERE?
-
-            if (my_usertype != null && my_username != null
-                    && my_param1 != null && my_param2 != null
-                    && my_email != null && my_zip != null && my_phone != null) {
-                actionDialog.dismiss();
-                update_profile();
-                Toast.makeText(getContext(), "Project Created!", Toast.LENGTH_SHORT).show();
-                // move to swipe screen for contractors?
-            } else {
-                Toast.makeText(getActivity(), R.string.create_project_error, Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            //TODO
-            Dialog actionDialog = actionDialogFragment.getDialog();
-            //radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
-            //int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
-            Log.e(TAG, " ondialog pos click");
-
-            my_username = ((EditText) actionDialog.findViewById(R.id.update_username)).getText().toString();
-            my_param1 = ((EditText) actionDialog.findViewById(R.id.update_param1)).getText().toString();
-            my_param2 = ((EditText) actionDialog.findViewById(R.id.update_param2)).getText().toString();
-            my_email = ((EditText) actionDialog.findViewById(R.id.update_email)).getText().toString();
-            my_zip = ((EditText) actionDialog.findViewById(R.id.update_zip)).getText().toString();
-            my_phone = ((EditText) actionDialog.findViewById(R.id.update_phone)).getText().toString();
-            //TODO SET IMAGE HERE?
-
-            if (my_usertype != null && my_username != null
-                    && my_param1 != null && my_param2 != null
-                    && my_email != null && my_zip != null && my_phone != null) {
-                actionDialog.dismiss();
-                update_profile();
-                Toast.makeText(getContext(), "Profile Updated!", Toast.LENGTH_SHORT).show();
-                // move to swipe screen for contractors?
-            } else {
-                Toast.makeText(getActivity(), R.string.update_account_error, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment updateAccountDialog) {
-        updateAccountDialog.dismiss();
-    }
-
-
     private void update_profile() {
         new Thread(() -> {
             SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
@@ -302,6 +309,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                         if (my_usertype.equals(HOMEOWNERS)) {
                             myUserRef.setValue(new Homeowner(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
+                                  //  location,
                                     my_param1,
                                     my_param2,
                                     my_email,
@@ -310,6 +318,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                         } else {
                             myUserRef.setValue(new Contractor(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
+                             //       location,
                                     my_param1,
                                     my_param2,
                                     my_email,

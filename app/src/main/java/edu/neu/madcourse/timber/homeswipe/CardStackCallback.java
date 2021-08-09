@@ -6,9 +6,9 @@ import java.util.List;
 
 public class CardStackCallback extends DiffUtil.Callback {
 
-    private List<UserCard> old, baru;
+    private List<SwipeCard> old, baru;
 
-    public CardStackCallback(List<UserCard> old, List<UserCard> baru) {
+    public CardStackCallback(List<SwipeCard> old, List<SwipeCard> baru) {
         this.old = old;
         this.baru = baru;
     }

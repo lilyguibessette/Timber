@@ -2,6 +2,12 @@ package edu.neu.madcourse.timber.users;
 
 import android.location.Location;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import edu.neu.madcourse.timber.messages.Message;
+
 public class Project {
     public String username;
     public String image;
@@ -11,43 +17,47 @@ public class Project {
     public int budget;
     public String project_type;
     public Location location;
+    public boolean completed;
+    private List<String> swipedByList= new ArrayList<>();
+    private List<String> matchList= new ArrayList<>();
+    private HashMap<String, List<Message>> messageThreads = new HashMap<>();// from contractor, messagethread
 
     public Project() {
     }
 
-    // make project
-    // project name
-    // image
-    // budget
-    // location
 
-    public Project(String username, String image, String description, String project_type) {
+// for completed recycler view newsfeed
+    public Project(String username, String project_type, String image, String description) {
         this.username = username;
         this.image = image;
         this.description = description;
         this.project_type = project_type;
+        this.completed = true;
+        this.project_id = username + "_" + project_name;
     }
 
-    public Project(String username, String project_name, String image, int budget, String description, String project_type) {
+    public Project(String username, String project_name, String project_type, int budget, String image, String description) {
         this.username = username;
         this.image = image;
         this.description = description;
         this.project_id = username + "_" + project_name;
         this.budget = budget;
         this.project_type = project_type;
+        this.completed = false;
     }
 
-    public Project(String username, String project_name,  int budget, String description, String project_type) {
+    public Project(String username, String project_name, String project_type, int budget, String description) {
         this.username = username;
         this.image = "image placeholder.PNG";
         this.description = description;
         this.project_id = username + "_" + project_name;
         this.budget = budget;
         this.project_type = project_type;
+        this.completed = false;
 
     }
 
-    public Project(String username, String project_name, String image, int budget, String description, String project_type, Location location) {
+    public Project(String username, String project_name, String project_type, int budget, String image, String description, Location location) {
         this.username = username;
         this.image = image;
         this.description = description;
@@ -55,6 +65,18 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.location = location;
+        this.completed = false;
+    }
+
+    public Project(String username, String project_name, String project_type, int budget, String image, String description, Location location, boolean completed) {
+        this.username = username;
+        this.image = image;
+        this.description = description;
+        this.project_id = username + "_" + project_name;
+        this.budget = budget;
+        this.project_type = project_type;
+        this.location = location;
+        this.completed = completed;
     }
 
     public String getUsername() {
@@ -72,11 +94,21 @@ public class Project {
     public String getProject_id()
     {return this.project_id;}
 
+
     public String getProject_type(){
         return this.project_type;
     }
     public String getProject_name(){
         return this.project_name;
+    }
+    public void setCompleted(boolean completed){
+        this.completed = completed;
+    }
+    public List<String> getSwipedByList(){
+        return this.swipedByList;
+    }
+    public List<String> getMatchList(){
+        return this.matchList;
     }
 
 }

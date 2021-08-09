@@ -67,10 +67,12 @@ import static android.content.ContentValues.TAG;
 - Create better project class
 - Photo upload
 - Ugh Messaging is 'set up', but can't transition from Matches fragment to Messages (made both activity and fragment to see)
+    - Messaging is  better, need to pass user name clicked from MatchesFrag to MessagesFrag
 - Finalize database structures
    - Need to plug everything in
 - GPS and filtering
 - Match notifications
+- login is still wonky - need to be careful and clean up where shared prefs are used
 
  */
 
@@ -110,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        my_username = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
+                USERNAME, null);
+        my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
+                USERTYPE, null);
+        if (my_username != null && my_usertype != null && my_username != "LOGOUT") {
+            Log.e(TAG,"start activity 114");
+            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+        }
         if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
             Log.e(TAG,"start activity 114");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
@@ -262,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             // connect to the database and look at the users
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
-
+            location = getLocation();
             myUserRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -278,6 +288,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                             try {
                                 myUserRef.setValue(new Homeowner(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
+                                        location.getLatitude(),
+                                        location.getLongitude(),
                                         my_param1,
                                         my_param2,
                                         my_email,
@@ -290,6 +302,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                             try {
                                 myUserRef.setValue(new Contractor(my_username,
                                         CLIENT_REGISTRATION_TOKEN,
+                                        location.getLatitude(),
+                                        location.getLongitude(),
                                         my_param1,
                                         my_param2,
                                         my_email,
@@ -312,6 +326,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
         }).start();
     }
+
+
 
 
     public Location getLocation(){
@@ -352,20 +368,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                         (LocationManager.GPS_PROVIDER);
                 return location;
 
-                /*
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                // if there is a location, update TextView to include lat and long coordinates
-                if (location != null) {
-                    double distance = Utils.findDistance(latitude,longitude,38.89511, -77.03637);
-                    Toast.makeText(this, "Latitude: " + latitude + "\nLongitude: " +
-                                    longitude + "\nDistance from Washington, DC: " + distance,
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    // if there is no location, send error to the user
-                    Toast.makeText(this,
-                            "Unable to find location data", Toast.LENGTH_SHORT).show();
-                }*/
             }
         }
         return null;
@@ -386,49 +388,4 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         });
 
     }
-
-
-    //}
-
-    /*
-    // from previous app
-    private void login_user() {
-        new Thread(() -> {
-            // connect to the database and look at the users
-            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
-                    "Users/" + my_username);
-
-            myUserRef.addValueEventListener(new ValueEventListener() {
-
-                public User my_user;
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // if the user exists, get their data
-                    if (dataSnapshot.exists()) {
-                        my_user = dataSnapshot.getValue(User.class);
-                    } else {
-                        // else create a new user and store their token
-                        myUserRef.setValue(new User(my_username, CLIENT_REGISTRATION_TOKEN));
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // if getting post failed, log a message
-                    Log.w(TAG, "my_user start login onCancelled",
-                            databaseError.toException());
-                }
-            });
-
-        }).start();
-    }
-    */
-
-    // math supplemented by these posts:
-    // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
-    // https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
-
-    // if we want an adjustable radius -> public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
-
 }

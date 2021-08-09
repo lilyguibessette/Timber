@@ -30,10 +30,9 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
         Match currentItem = matchesHistory.get(position);
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
-            Log.e("onBindViewHolder", currentItem.getUsername());
-            //Log.e("onBindViewHolder", currentItem.getImage());
+            Log.e("onBindViewHolder", currentItem.getProjectName());
             Log.e("onBindViewHolder", currentItem.getLast_message());
-            holder.username.setText(currentItem.getUsername());
+            holder.projectName.setText(currentItem.getProjectName());
             holder.image.setImageResource(currentItem.getImage());
             holder.last_message.setText(currentItem.getLast_message());
         }

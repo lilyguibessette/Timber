@@ -12,12 +12,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <Button
-        android:id="@+id/update_radius"
+        android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="update radius"
+        android:text="Logout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/update_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -126,7 +129,17 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <Button
+            android:id="@+id/update_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Account" />
 
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

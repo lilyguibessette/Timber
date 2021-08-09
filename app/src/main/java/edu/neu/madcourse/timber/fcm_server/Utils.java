@@ -1,5 +1,17 @@
 package edu.neu.madcourse.timber.fcm_server;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.provider.Settings;
+
+import androidx.core.app.ActivityCompat;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -69,6 +81,7 @@ public class Utils {
     }
 
 
+
     /**
     Checking Distance between two points
      */
@@ -91,5 +104,49 @@ public class Utils {
 
         // return (distance <= searchRadius);
         return (distance); // to approx. convert to miles
+    }
+
+
+
+    public static Location getLocation(Activity activity, Context context){
+
+        // TODO: can we stick this in the user class and initialize in the onCreate
+        //  then save to database?
+
+        // define the location manager
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
+        // if the location manager permissions are not enabled, request access from user
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            final AlertDialog.Builder alert = new AlertDialog.Builder(
+                    context);
+            alert.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes",
+                    (dialog, which) -> context.startActivity(new Intent
+                            (Settings.ACTION_LOCATION_SOURCE_SETTINGS))).
+                    setNegativeButton("No", (dialog, which) -> dialog.cancel());
+            alert.create().show();
+        } else {
+            // otherwise move forward by checking permissions again
+            if (ActivityCompat.checkSelfPermission(
+                    activity,
+                    Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(
+                    activity,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                // if permissions aren't enabled, request from user
+                ActivityCompat.requestPermissions(
+                        activity,
+                        new String[]{Manifest.permission.
+                                ACCESS_FINE_LOCATION}, 1);
+            } else {
+                // if permissions are granted, find the last location
+                Location location = locationManager.getLastKnownLocation
+                        (LocationManager.GPS_PROVIDER);
+                return location;
+            }
+        }
+        return null;
     }
 }

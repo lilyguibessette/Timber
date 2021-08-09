@@ -14,78 +14,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RadioGroup
-            android:id="@+id/radiogroup_usertype"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radio_homeowner"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Homeowner"
-                android:textColor="@color/light_grey"
-                android:textSize="12sp" />
-
-            <RadioButton
-                android:id="@+id/radio_contractor"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="15dp"
-                android:text="Contractor"
-                android:textColor="@color/light_grey"
-                android:textSize="12sp" />
-        </RadioGroup>
-
         <EditText
-            android:id="@+id/create_username"
+            android:id="@+id/create_project_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="Project Name"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/create_param1"
+            android:id="@+id/create_project_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First name / Business name"
+            android:hint="Project Type"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/create_param2"
+            android:id="@+id/create_budget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last name / Tax ID"
+            android:hint="Budget"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/create_zip"
+            android:id="@+id/create_project_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Zip code"
+            android:hint="Project description"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/create_email"
+            android:id="@+id/create_project_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="Image address"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
-        <EditText
-            android:id="@+id/create_phone"
+
+        <Button
+            android:id="@+id/create_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone number"
-            android:textColor="@color/light_grey"
-            android:textSize="12sp" />
+            android:text="Create Project" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+
 
 
     </LinearLayout>

@@ -11,13 +11,13 @@ import edu.neu.madcourse.timber.R;
 
 public class MatchesHolder extends RecyclerView.ViewHolder {
 
-    public TextView username;
+    public TextView projectName;
     public ImageView image;
     public TextView last_message;
 
     public MatchesHolder(View matchesView, MatchClickListener matchClickListener) {
         super(matchesView);
-        username = matchesView.findViewById(R.id.match_username);
+        projectName = matchesView.findViewById(R.id.match_username);
         Log.e("MatchesHolder", "MatchesHolder  findview username");
         image = matchesView.findViewById(R.id.match_image);
         last_message = matchesView.findViewById(R.id.match_last_message);
@@ -28,8 +28,8 @@ public class MatchesHolder extends RecyclerView.ViewHolder {
                 if (matchClickListener != null) {
                     int position = getLayoutPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        matchClickListener.onMatchClick(username.getText().toString());
-                        Log.e("matchClickListener", "MatchesHolder onClick" + username.getText().toString());
+                        matchClickListener.onMatchClick(projectName.getText().toString());
+                        Log.e("matchClickListener", "MatchesHolder onClick" + projectName.getText().toString());
                     }
                 }
             }

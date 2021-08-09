@@ -10,7 +10,8 @@ import java.util.Objects;
 public class Contractor implements User {
     private String username;
     private String token;
-    private Location location;
+    private double latitude;
+    private double longitude;
     private String businessName;
     private String taxID;
     private String email;
@@ -27,6 +28,49 @@ public class Contractor implements User {
 
     public Contractor(){
     }
+
+    public Contractor(String username,
+                      String token,
+                      double latitude,
+                      double longitude,
+                      String businessName,
+                      String taxID,
+                      String email,
+                      String zipcode,
+                      String phoneNumber) throws NullPointerException{
+        this.username = username;
+        this.username = Objects.requireNonNull(username, "username must not be null");
+
+        this.token = token;
+        this.token = Objects.requireNonNull(token, "username must not be null");
+
+        this.latitude = latitude;
+        this.longitude = longitude;
+
+        this.businessName = businessName;
+        this.businessName = Objects.requireNonNull(businessName, "businessName must not be null");
+
+        this.taxID = taxID;
+        this.taxID = Objects.requireNonNull(taxID, "taxID must not be null");
+
+        this.email = email;
+        this.email = Objects.requireNonNull(email, "email must not be null");
+
+        this.zipcode = zipcode;
+        this.zipcode = Objects.requireNonNull(zipcode, "zipcode must not be null");
+
+        this.phoneNumber = phoneNumber;
+        this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber must not be null");
+
+        this.activeProjectList = new ArrayList<>();
+        this.completedProjectList = new ArrayList<>();
+        this.swipedOnList = new ArrayList<>();
+        this.matchList = new ArrayList<>();
+        this.workRadius = 20;
+        this.image = "default_profile_pic.PNG";
+        this.specialty = "No specialties added.";
+    }
+
 
     public Contractor(String username,
                       String token,
@@ -61,33 +105,10 @@ public class Contractor implements User {
         this.swipedOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
         this.workRadius = 20;
-        this.specialty = "No specialties added.";
-    }
-
-    public Contractor(String username,
-                      String token,
-                      Location location,
-                      String businessName,
-                      String taxID,
-                      String email,
-                      String zipcode,
-                      String phoneNumber){
-        this.username = username;
-        this.token = token;
-        this.location = location;
-        this.businessName = businessName;
-        this.taxID = taxID;
-        this.email = email;
-        this.zipcode = zipcode;
-        this.phoneNumber = phoneNumber;
-        this.activeProjectList = new ArrayList<>();
-        this.completedProjectList = new ArrayList<>();
-        this.swipedOnList = new ArrayList<>();
-        this.matchList = new ArrayList<>();
-        this.workRadius = 20;
         this.image = "default_profile_pic.PNG";
         this.specialty = "No specialties added.";
     }
+
 
     public String getUsername() {
         return this.username;
@@ -95,9 +116,14 @@ public class Contractor implements User {
 
     public String getToken() { return this.token; }
 
-    public Location getLocation(){return this.location; }
+    public double getLatitude(){return this.latitude; }
+    public double getLongitude(){return this.longitude; }
+    //public void setLatitude(Location location){this.latitude = location.getLatitude();}
+    //public void setLongitude(Location location){ this.longitude  = location.getLongitude() ;}
 
-    public void setLocation(Location location){this.location = location; }
+    public void setLatitude(double latitude){this.latitude =latitude;}
+    public void setLongitude(double longitude){ this.longitude  = longitude;}
+
 
     public String getBusinessName() { return businessName; }
 
@@ -112,4 +138,19 @@ public class Contractor implements User {
     public void setImage(String image) { this.image = image;}
 
     public String getImage() { return this.image;}
+    public List<String> getActiveProjectList(){
+        return this.activeProjectList;
+    }
+
+    public List<String> getMatchList(){
+        return this.matchList;
+    }
+    public List<String> getCompletedProjectList(){
+        return this.completedProjectList;
+    }
+
+    public List<String> getSwipedOnList(){
+        return this.swipedOnList;
+    }
+
 }

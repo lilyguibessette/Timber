@@ -214,3 +214,8 @@ public class NewsFeedFragment extends Fragment {
     }
 
 }
+
+//TODO - getting ERROR on this page for images
+//  StorageException has occurred.
+//    Object does not exist at location.
+//     Code: -13010 HttpResult: 404

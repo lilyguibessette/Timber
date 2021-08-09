@@ -12,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -34,7 +37,10 @@ public class MessagesFragment extends Fragment {
     private static final String NUMBER_OF_MSGS = "NUMBER_OF_MSGS";
     private static final String TAG = "MessagesFragment";
     String other_username;
-    Button back;
+    private Button back;
+    private Button sendMessage;
+    private FloatingActionButton markComplete;
+    private FloatingActionButton unMatch;
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -117,6 +123,33 @@ public class MessagesFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+        unMatch = view.findViewById(R.id.unmatch_button);
+        unMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // use dialog for add link
+
+            }
+        });
+        markComplete = view.findViewById(R.id.complete_button);
+        markComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // use dialog for add link
+
+            }
+        });
+
+        sendMessage = view.findViewById(R.id.message_send);
+        sendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // use dialog for add link
+                String message = ((EditText) view.findViewById(R.id.message_write)).getText().toString();
+                // send message to database
+            }
+        });
+
     }
 
 
