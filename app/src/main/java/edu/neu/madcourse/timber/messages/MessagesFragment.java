@@ -3,6 +3,7 @@ package edu.neu.madcourse.timber.messages;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,10 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.matches.MatchesFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,8 +34,15 @@ public class MessagesFragment extends Fragment {
     private static final String NUMBER_OF_MSGS = "NUMBER_OF_MSGS";
     private static final String TAG = "MessagesFragment";
     String other_username;
+    Button back;
 
     public MessagesFragment() {
+        // Required empty public constructor
+    }
+
+
+    public MessagesFragment(String other_username) {
+        this.other_username = other_username;
         // Required empty public constructor
     }
 
@@ -94,6 +105,18 @@ public class MessagesFragment extends Fragment {
         messagesRecyclerView.setHasFixedSize(true);
         messagesRecyclerView.setAdapter(new MessagesAdapter(messageHistory));
         messagesRecyclerView.setLayoutManager(messageLayoutManager);
+        back = view.findViewById(R.id.back_button);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("Messages", "createrecyclerview back_button click");
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, new MatchesFragment());
+                fragmentTransaction.addToBackStack(null);
+                Toast.makeText(getActivity(), "going to matches from msgs" , Toast.LENGTH_SHORT).show();
+                fragmentTransaction.commit();
+            }
+        });
     }
 
 

@@ -22,6 +22,7 @@ public class Contractor implements User {
     private List<String> swipedOnList;
     private List<String> matchList;
     private int workRadius;
+    private String specialty;
 
 
     public Contractor(){
@@ -60,6 +61,7 @@ public class Contractor implements User {
         this.swipedOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
         this.workRadius = 20;
+        this.specialty = "No specialties added.";
     }
 
     public Contractor(String username,
@@ -84,6 +86,7 @@ public class Contractor implements User {
         this.matchList = new ArrayList<>();
         this.workRadius = 20;
         this.image = "default_profile_pic.PNG";
+        this.specialty = "No specialties added.";
     }
 
     public String getUsername() {

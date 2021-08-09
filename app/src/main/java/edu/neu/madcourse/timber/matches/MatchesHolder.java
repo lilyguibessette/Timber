@@ -29,7 +29,7 @@ public class MatchesHolder extends RecyclerView.ViewHolder {
                     int position = getLayoutPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         matchClickListener.onMatchClick(username.getText().toString());
-                        Log.e("matchClickListener", "MatchesHolder onClick");
+                        Log.e("matchClickListener", "MatchesHolder onClick" + username.getText().toString());
                     }
                 }
             }

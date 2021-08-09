@@ -1,26 +1,20 @@
 package edu.neu.madcourse.timber.matches;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import edu.neu.madcourse.timber.HomepageActivity;
-import edu.neu.madcourse.timber.MainActivity;
-import edu.neu.madcourse.timber.matches.Match;
 import edu.neu.madcourse.timber.R;
-import edu.neu.madcourse.timber.messages.MessagesActivity;
 import edu.neu.madcourse.timber.messages.MessagesFragment;
 
 
@@ -113,11 +107,12 @@ public class MatchesFragment extends Fragment {
             public void onMatchClick(String username) {
 
                 Log.e("MatchesFragment", "createrecyclerview onMatchClick");
-                switchFragment(MessagesFragment.newInstance(username));
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, new MessagesFragment(other_username));
+                fragmentTransaction.addToBackStack(null);
+                Toast.makeText(getActivity(), "going to msgs from" + other_username, Toast.LENGTH_SHORT).show();
+                fragmentTransaction.commit();
 
-                //Intent intent = new Intent(getActivity(), MessagesActivity.class);
-                //Intent intent = new Intent(getActivity(), MainActivity.class);
-                //startActivity(intent);
             }
         };
         matchesAdapter.setOnMatchClickListener(matchClickListener);
@@ -126,6 +121,7 @@ public class MatchesFragment extends Fragment {
 
     }
 
+    //not used
     private FragmentTransaction switchFragment(Fragment targetFragment) {
        /* new Runnable() {
             @Override
