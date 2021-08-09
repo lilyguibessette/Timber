@@ -16,7 +16,9 @@ public class Project {
     public String project_name;
     public int budget;
     public String project_type;
-    public Location location;
+
+    private double latitude;
+    private double longitude;
     public boolean completed;
     private List<String> swipedByList= new ArrayList<>();
     private List<String> matchList= new ArrayList<>();
@@ -34,6 +36,10 @@ public class Project {
         this.project_type = project_type;
         this.completed = true;
         this.project_id = username + "_" + project_name;
+        this.swipedByList = new ArrayList<>();
+        this.matchList = new ArrayList<>();
+        this.swipedByList.add("EMPTY");
+        this.matchList.add("EMPTY");
     }
 
     public Project(String username, String project_name, String project_type, int budget, String image, String description) {
@@ -44,6 +50,11 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.completed = false;
+        this.swipedByList = new ArrayList<>();
+        this.matchList = new ArrayList<>();
+
+        this.swipedByList.add("EMPTY");
+        this.matchList.add("EMPTY");
     }
 
     public Project(String username, String project_name, String project_type, int budget, String description) {
@@ -55,28 +66,51 @@ public class Project {
         this.project_type = project_type;
         this.completed = false;
 
+        this.swipedByList = new ArrayList<>();
+        this.matchList = new ArrayList<>();
+
+        this.swipedByList.add("EMPTY");
+        this.matchList.add("EMPTY");
+
     }
 
-    public Project(String username, String project_name, String project_type, int budget, String image, String description, Location location) {
+    public Project(String username, String project_name, String project_type, int budget, String image, String description, double latitude,
+                   double longitude) {
         this.username = username;
         this.image = image;
         this.description = description;
         this.project_id = username + "_" + project_name;
         this.budget = budget;
         this.project_type = project_type;
-        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
+
         this.completed = false;
+
+        this.swipedByList = new ArrayList<>();
+        this.matchList = new ArrayList<>();
+
+        this.swipedByList.add("EMPTY");
+        this.matchList.add("EMPTY");
     }
 
-    public Project(String username, String project_name, String project_type, int budget, String image, String description, Location location, boolean completed) {
+    public Project(String username, String project_name, String project_type, int budget, String image, String description, double latitude,
+                   double longitude, boolean completed) {
         this.username = username;
         this.image = image;
         this.description = description;
         this.project_id = username + "_" + project_name;
         this.budget = budget;
         this.project_type = project_type;
-        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.completed = completed;
+
+        this.swipedByList = new ArrayList<>();
+        this.matchList = new ArrayList<>();
+
+        this.swipedByList.add("EMPTY");
+        this.matchList.add("EMPTY");
     }
 
     public String getUsername() {
@@ -110,5 +144,9 @@ public class Project {
     public List<String> getMatchList(){
         return this.matchList;
     }
+    public double getLatitude(){return this.latitude; }
+    public double getLongitude(){return this.longitude; }
+    public void setLatitude(double latitude){this.latitude =latitude;}
+    public void setLongitude(double longitude){ this.longitude  = longitude;}
 
 }

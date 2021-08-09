@@ -18,10 +18,10 @@ public class Homeowner implements User {
     private String email;
     private String phoneNumber;
     private String image;
-    private List<String> activeProjectList;
-    private List<String> completedProjectList;
-    private List<String> swipedOnList;
-    private List<String> matchList;
+    private ArrayList<String> activeProjectList;
+    private ArrayList<String> completedProjectList;
+    private ArrayList<String> swipedOnList;
+    private ArrayList<String> matchList;
 
     public Homeowner(){
     }
@@ -66,6 +66,12 @@ public class Homeowner implements User {
         this.completedProjectList = new ArrayList<>();
         this.swipedOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+
+
+        this.activeProjectList.add("EMPTY");
+        this.completedProjectList.add("EMPTY");
+        this.swipedOnList.add("EMPTY");
+        this.matchList.add("EMPTY");
     }
 
     public Homeowner(String username,
@@ -134,6 +140,9 @@ public class Homeowner implements User {
     public String getImage() { return this.image;}
 
     public void addActiveProject(String project_id){
+        if (activeProjectList == null){
+            activeProjectList = new ArrayList<>();
+        }
         this.activeProjectList.add(project_id);
     }
     public void addCompleteProject(String project_id){
@@ -149,18 +158,18 @@ public class Homeowner implements User {
         matchList.add(username);
     }
 
-    public List<String> getActiveProjectList(){
+    public ArrayList<String> getActiveProjectList(){
         return this.activeProjectList;
     }
 
-    public List<String> getMatchList(){
+    public ArrayList<String> getMatchList(){
         return this.matchList;
     }
-    public List<String> getCompletedProjectList(){
+    public ArrayList<String> getCompletedProjectList(){
         return this.completedProjectList;
     }
 
-    public List<String> getSwipedOnList(){
+    public ArrayList<String> getSwipedOnList(){
         return this.swipedOnList;
     }
 }

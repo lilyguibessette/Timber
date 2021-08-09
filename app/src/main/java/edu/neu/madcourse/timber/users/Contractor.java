@@ -18,10 +18,10 @@ public class Contractor implements User {
     private String zipcode;
     private String phoneNumber;
     private String image;
-    private List<String> activeProjectList;
-    private List<String> completedProjectList;
-    private List<String> swipedOnList;
-    private List<String> matchList;
+    private ArrayList<String> activeProjectList;
+    private ArrayList<String> completedProjectList;
+    private ArrayList<String> swipedOnList;
+    private ArrayList<String> matchList;
     private int workRadius;
     private String specialty;
 
@@ -104,6 +104,12 @@ public class Contractor implements User {
         this.completedProjectList = new ArrayList<>();
         this.swipedOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+
+        this.activeProjectList.add("EMPTY");
+        this.completedProjectList.add("EMPTY");
+        this.swipedOnList.add("EMPTY");
+        this.matchList.add("EMPTY");
+
         this.workRadius = 20;
         this.image = "default_profile_pic.PNG";
         this.specialty = "No specialties added.";
@@ -138,18 +144,18 @@ public class Contractor implements User {
     public void setImage(String image) { this.image = image;}
 
     public String getImage() { return this.image;}
-    public List<String> getActiveProjectList(){
+    public ArrayList<String> getActiveProjectList(){
         return this.activeProjectList;
     }
 
-    public List<String> getMatchList(){
+    public ArrayList<String> getMatchList(){
         return this.matchList;
     }
-    public List<String> getCompletedProjectList(){
+    public ArrayList<String> getCompletedProjectList(){
         return this.completedProjectList;
     }
 
-    public List<String> getSwipedOnList(){
+    public ArrayList<String> getSwipedOnList(){
         return this.swipedOnList;
     }
 
