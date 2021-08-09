@@ -7,13 +7,18 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
-import edu.neu.madcourse.timber.profile.ProjectHolder;
+import edu.neu.madcourse.timber.users.Project;
 
 public class ProjectAdapter extends RecyclerView.Adapter<ProjectHolder>{
     private final ArrayList<Project> projectList;
+    View view;
 
     public ProjectAdapter(ArrayList<Project> projectList) {
         this.projectList = projectList;
@@ -21,7 +26,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectHolder>{
 
     @Override
     public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_post, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_post, parent, false);
         return new ProjectHolder(view);
     }
 
@@ -31,7 +36,12 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectHolder>{
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
             holder.username.setText(currentItem.getUsername());
-            holder.image.setImageResource(currentItem.getImage());
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference imageRef = storageReference.child(currentItem.getImage());
+            Glide.with(view)
+                    .asBitmap()
+                    .load(imageRef)
+                    .into(holder.image);
             holder.description.setText(currentItem.getDescription());
         }
     }

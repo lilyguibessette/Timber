@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
+import edu.neu.madcourse.timber.users.Project;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -97,10 +98,11 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
         // get saved state and initialize the recyclerview
         initialProjectsData(savedInstanceState);
 
-        projects.add(new Project("apples", R.drawable.timber_full, "this is a test post 1 in activeProject"));
-        projects.add(new Project("peaches", R.drawable.timber_icon, "this is a test post 2in activeProject"));
-        projects.add(new Project("mangoes", R.drawable.timber_full, "this is a test post 3in activeProject"));
-        projects.add(new Project("watermelons", R.drawable.timber_icon, "this is a test post 4in activeProject"));
+        projects.add(new Project("apples", "image placeholder.PNG", "completedProjectsthis is a test post 1", "TYPE PLUMBING"));
+        projects.add(new Project("peaches", "image placeholder.PNG", "completedProjectsthis is a test post 2", "TYPE PLUMBING"));
+        projects.add(new Project("mangoes", "image placeholder.PNG", "completedProjectsthis is a test post 3", "TYPE PLUMBING"));
+        projects.add(new Project("watermelons", "image placeholder.PNG", "completedProjectsthis is a test post 4", "TYPE PLUMBING"));
+
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -138,12 +140,14 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                 for (int i = 0; i < size; i++) {
                     String username = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "0");
-                    String last_message = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
+                    String description = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
                             + i + "1");
                     String image = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "2");
-                    projects.add(new Project(username, Integer.parseInt(image),
-                            last_message));
+                    String type = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
+                            + i + "3");
+                    projects.add(new Project(username,image,
+                            description, type));
                 }
             }
 
@@ -153,12 +157,13 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                 for (int i = 0; i < size; i++) {
                     String username = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "0");
-                    String last_message = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
+                    String description = savedInstanceState.getString(KEY_OF_MATCH+ "_COMPLETED"
                             + i + "1");
                     String image = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "2");
-                    projects.add(new Project(username, Integer.parseInt(image),
-                            last_message));
+                    String type = savedInstanceState.getString(KEY_OF_MATCH +"_COMPLETED"+i + "3" );
+                    projects.add(new Project(username,image,
+                            description, type));
                 }
             }
         }
@@ -228,7 +233,7 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                     && my_email != null && my_zip != null && my_phone != null) {
                 actionDialog.dismiss();
                 update_profile();
-                Toast.makeText(getContext(), "Project Createdd!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Project Created!", Toast.LENGTH_SHORT).show();
                 // move to swipe screen for contractors?
             } else {
                 Toast.makeText(getActivity(), R.string.create_project_error, Toast.LENGTH_SHORT).show();
@@ -283,7 +288,16 @@ public class ProfileFragment extends Fragment implements CreateActionDialogListe
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        //my_user = dataSnapshot.getValue(User.class);
+                        if (my_usertype.equals(HOMEOWNERS) ){
+                            Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
+                            //my_user.setImage();
+                            // add setters to my_user
+                            myUserRef.setValue(my_user);
+                        } else{
+                            Contractor my_user = dataSnapshot.getValue(Contractor.class);
+                            myUserRef.setValue(my_user);
+                        }
+
                     } else {
                         if (my_usertype.equals(HOMEOWNERS)) {
                             myUserRef.setValue(new Homeowner(my_username,

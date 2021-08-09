@@ -35,6 +35,7 @@ import static android.content.ContentValues.TAG;
 
 import edu.neu.madcourse.timber.HomepageActivity;
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.users.Project;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,13 +46,13 @@ public class NewsFeedFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     // Recycler view related variables
-    private final ArrayList<NewsFeedPost> newsFeedHistory = new ArrayList<>();
+    private final ArrayList<Project> newsFeedHistory = new ArrayList<>();
     private RecyclerView newsFeedRecyclerView;
     private RecyclerView.LayoutManager newsPostLayoutManager;
     private int newsFeedSize = 0;
     public Uri photoURI;
 
-    private static final String KEY_OF_STICKER = "KEY_OF_POST";
+    private static final String KEY_OF_POST = "KEY_OF_POST";
     private static final String NUMBER_OF_POSTS = "NUMBER_OF_POSTS";
 
     public NewsFeedFragment() {
@@ -77,10 +78,10 @@ public class NewsFeedFragment extends Fragment {
         // get saved state and initialize the recyclerview
         initialNewsFeedData(savedInstanceState);
 
-        newsFeedHistory.add(new NewsFeedPost("apples", R.drawable.timber_full, "this is a test post 1"));
-        newsFeedHistory.add(new NewsFeedPost("peaches", R.drawable.timber_icon, "this is a test post 2"));
-        newsFeedHistory.add(new NewsFeedPost("mangoes", R.drawable.timber_full, "this is a test post 3"));
-        newsFeedHistory.add(new NewsFeedPost("watermelons", R.drawable.timber_icon, "this is a test post 4"));
+        newsFeedHistory.add(new Project("apples", "image placeholder.PNG", "this is a test post 1", "TYPE PLUMBING"));
+        newsFeedHistory.add(new Project("peaches", "image placeholder.PNG", "this is a test post 2", "TYPE PLUMBING"));
+        newsFeedHistory.add(new Project("mangoes", "image placeholder.PNG", "this is a test post 3", "TYPE PLUMBING"));
+        newsFeedHistory.add(new Project("watermelons", "image placeholder.PNG", "this is a test post 4", "TYPE PLUMBING"));
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
@@ -186,14 +187,16 @@ public class NewsFeedFragment extends Fragment {
                 int size = savedInstanceState.getInt(NUMBER_OF_POSTS);
                 // Retrieve keys we stored in the instance
                 for (int i = 0; i < size; i++) {
-                    String post_username = savedInstanceState.getString(KEY_OF_STICKER
+                    String post_username = savedInstanceState.getString(KEY_OF_POST
                             + i + "0");
-                    String post_image = savedInstanceState.getString(KEY_OF_STICKER
+                    String post_image = savedInstanceState.getString(KEY_OF_POST
                             + i + "1");
-                    String post_description = savedInstanceState.getString(KEY_OF_STICKER
+                    String post_description = savedInstanceState.getString(KEY_OF_POST
                             + i + "2");
-                    newsFeedHistory.add(new NewsFeedPost(post_username,
-                            Integer.parseInt(post_image), post_description));
+                    String post_type = savedInstanceState.getString(KEY_OF_POST +i + "3");
+                    newsFeedHistory.add(new Project(
+                            post_username, post_image, post_description, post_type
+                    ));
                 }
             }
         }
