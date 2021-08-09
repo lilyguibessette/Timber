@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
+            Log.e(TAG,"start activity 114");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
         setContentView(R.layout.login_screen);
@@ -153,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             my_usertype = radioButtonUserType.getText().toString().toUpperCase();
         }
 
-        Log.e(TAG,"username: " + my_username + " usertype: " + my_usertype);
         // if the username is not null, go to the ReceivedActivity class
         if (my_username != null && my_usertype != null) {
             //Log.e(TAG,"autologin username: " + my_username + " usertype: " + my_usertype);
@@ -169,33 +169,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
 
-            readData(myUserRef, new OnGetDataListener() {
-                @Override
-                public void onSuccess(DataSnapshot dataSnapshot) {
-                    Log.e(TAG,"success");
-                    //got data from database....now you can use the retrieved data
-                    if(!dataSnapshot.exists()){
-                        Toast.makeText(MainActivity.this, "Account does not exist", Toast.LENGTH_SHORT).show();
-                        return;
-                    };
-
-                }
-                @Override
-                public void onStart() {
-                    //when starting
-                    Log.e(TAG, "Started");
-                }
-
-                @Override
-                public void onFailure() {
-                    Log.e(TAG, "Failed");
-                }
-            });
-
-
-
-            Log.e(TAG,"myUserRef: " + myUserRef.toString());
-
             // Write a message to the database
             login_user();
 
@@ -207,10 +180,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             myEdit.putString(USERTYPE, my_usertype);
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
-            Log.e(TAG,"button autologin username: " + my_username + " usertype: " + my_usertype);
             if (my_username != null && my_usertype != null) {
-                Log.e(TAG,"button autologin username: " + my_username + " usertype: " + my_usertype);
-                startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+                login_user();
             }
         });
 
@@ -290,24 +261,34 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        Log.e(TAG,"User exists in DB");
+                        Log.e(TAG,"login_user: User exists in DB");
+                        startActivity(new Intent(MainActivity.this, HomepageActivity.class));
                     } else {
+                        Log.e(TAG,"login_user: User does not exist in DB");
                         if (my_usertype == HOMEOWNERS) {
-                            myUserRef.setValue(new Homeowner(my_username,
-                                    CLIENT_REGISTRATION_TOKEN,
-                                    my_param1,
-                                    my_param2,
-                                    my_email,
-                                    my_zip,
-                                    my_phone));
+                            try {
+                                myUserRef.setValue(new Homeowner(my_username,
+                                        CLIENT_REGISTRATION_TOKEN,
+                                        my_param1,
+                                        my_param2,
+                                        my_email,
+                                        my_zip,
+                                        my_phone));
+                            } catch(NullPointerException exc){
+                                Toast.makeText(MainActivity.this, "Invalid login, please check username", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            myUserRef.setValue(new Contractor(my_username,
-                                    CLIENT_REGISTRATION_TOKEN,
-                                    my_param1,
-                                    my_param2,
-                                    my_email,
-                                    my_zip,
-                                    my_phone));
+                            try {
+                                myUserRef.setValue(new Contractor(my_username,
+                                        CLIENT_REGISTRATION_TOKEN,
+                                        my_param1,
+                                        my_param2,
+                                        my_email,
+                                        my_zip,
+                                        my_phone));
+                            } catch(NullPointerException exc){
+                                Toast.makeText(MainActivity.this, "Invalid login, please check username", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 }

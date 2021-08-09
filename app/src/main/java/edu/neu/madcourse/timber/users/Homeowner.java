@@ -2,6 +2,8 @@ package edu.neu.madcourse.timber.users;
 
 import android.location.Location;
 
+import java.util.Objects;
+
 public class Homeowner implements User {
     private String username;
     private String token;
@@ -13,23 +15,34 @@ public class Homeowner implements User {
     private String phoneNumber;
     private String image;
 
-    public Homeowner(){
-    }
-
     public Homeowner(String username,
                      String token,
                      String firstName,
                      String lastName,
                      String email,
                      String zipcode,
-                     String phoneNumber){
+                     String phoneNumber) throws NullPointerException{
+
         this.username = username;
+        this.username = Objects.requireNonNull(username, "username must not be null");
+
         this.token = token;
+        this.token = Objects.requireNonNull(token, "username must not be null");
+
         this.firstName = firstName;
+        this.firstName = Objects.requireNonNull(firstName, "businessName must not be null");
+
         this.lastName = lastName;
+        this.lastName = Objects.requireNonNull(lastName, "taxID must not be null");
+
         this.email = email;
+        this.email = Objects.requireNonNull(email, "email must not be null");
+
         this.zipcode = zipcode;
+        this.zipcode = Objects.requireNonNull(zipcode, "zipcode must not be null");
+
         this.phoneNumber = phoneNumber;
+        this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber must not be null");
     }
 
     public Homeowner(String username,
