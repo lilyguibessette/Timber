@@ -96,7 +96,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
             //holder.post_image_id.setImageResource(currentItem.getPost_id()); */
             holder.post_description.setText(currentItem.getDescription());
-            holder.post_type.setText(currentItem.getProgect_type());
+            holder.post_type.setText(currentItem.getProject_type());
         }
     }
 

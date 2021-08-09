@@ -70,7 +70,7 @@ public class Project {
     }
 
     public String getProject_id()
-    {return this.project_id}
+    {return this.project_id;}
 
     public String getProject_type(){
         return this.project_type;
