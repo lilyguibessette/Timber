@@ -1,5 +1,8 @@
 package edu.neu.madcourse.timber.matches;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,13 +107,17 @@ public class MatchesFragment extends Fragment {
         matchesAdapter = new MatchesAdapter(matchesHistory);
         MatchClickListener matchClickListener = new MatchClickListener() {
             @Override
-            public void onMatchClick(String username) {
-
+            public void onMatchClick(String project_id) {
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref",
+                        MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("MSGPROJID", project_id);
+                myEdit.commit();
                 Log.e("MatchesFragment", "createrecyclerview onMatchClick");
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, new MessagesFragment(other_username));
+                fragmentTransaction.replace(R.id.container, new MessagesFragment(project_id));
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to msgs from" + other_username, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "going to msgs from" + project_id, Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
 
             }

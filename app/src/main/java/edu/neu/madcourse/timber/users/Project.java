@@ -2,6 +2,7 @@ package edu.neu.madcourse.timber.users;
 
 import android.location.Location;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,13 +17,12 @@ public class Project {
     public String project_name;
     public int budget;
     public String project_type;
-
     private double latitude;
     private double longitude;
     public boolean completed;
     private List<String> swipedByList= new ArrayList<>();
     private List<String> matchList= new ArrayList<>();
-    private HashMap<String, List<Message>> messageThreads = new HashMap<>();// from contractor, messagethread
+    private HashMap<String, ArrayList<Message>> messageThreads = new HashMap<>();// from contractor, messagethread
 
     public Project() {
     }
@@ -40,6 +40,9 @@ public class Project {
         this.matchList = new ArrayList<>();
         this.swipedByList.add("EMPTY");
         this.matchList.add("EMPTY");
+        ArrayList<Message> welcome = new ArrayList<>();
+        welcome.add(new Message("WELCOME","Welcome to Timber!"));
+        this.messageThreads.put("WELCOME", welcome);
     }
 
     public Project(String username, String project_name, String project_type, int budget, String image, String description) {
@@ -52,9 +55,11 @@ public class Project {
         this.completed = false;
         this.swipedByList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-
         this.swipedByList.add("EMPTY");
         this.matchList.add("EMPTY");
+        ArrayList<Message> welcome = new ArrayList<>();
+        welcome.add(new Message("WELCOME","Welcome to Timber!"));
+        this.messageThreads.put("WELCOME", welcome);
     }
 
     public Project(String username, String project_name, String project_type, int budget, String description) {
@@ -65,12 +70,13 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.completed = false;
-
         this.swipedByList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-
         this.swipedByList.add("EMPTY");
         this.matchList.add("EMPTY");
+        ArrayList<Message> welcome = new ArrayList<>();
+        welcome.add(new Message("WELCOME","Welcome to Timber!"));
+        this.messageThreads.put("WELCOME", welcome);
 
     }
 
@@ -84,14 +90,14 @@ public class Project {
         this.project_type = project_type;
         this.latitude = latitude;
         this.longitude = longitude;
-
         this.completed = false;
-
         this.swipedByList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-
         this.swipedByList.add("EMPTY");
         this.matchList.add("EMPTY");
+        ArrayList<Message> welcome = new ArrayList<>();
+        welcome.add(new Message("WELCOME","Welcome to Timber!"));
+        this.messageThreads.put("WELCOME", welcome);
     }
 
     public Project(String username, String project_name, String project_type, int budget, String image, String description, double latitude,
@@ -111,6 +117,9 @@ public class Project {
 
         this.swipedByList.add("EMPTY");
         this.matchList.add("EMPTY");
+        ArrayList<Message> welcome = new ArrayList<>();
+        welcome.add(new Message("WELCOME","Welcome to Timber!"));
+        this.messageThreads.put("WELCOME", welcome);
     }
 
     public String getUsername() {
@@ -149,4 +158,18 @@ public class Project {
     public void setLatitude(double latitude){this.latitude =latitude;}
     public void setLongitude(double longitude){ this.longitude  = longitude;}
 
+    public HashMap<String, ArrayList<Message>> getMessageThreads(){
+        return this.messageThreads;
+    }
+
+    public void addMessage(String username, Message message){
+         if(this.messageThreads.containsKey(username)) {
+             ArrayList<Message> msgs = this.messageThreads.get(username);
+             msgs.add(message);
+         } else{
+             ArrayList<Message> msgs = new ArrayList<Message>();
+             msgs.add(message);
+             this.messageThreads.put(username, msgs);
+         }
+    }
 }
