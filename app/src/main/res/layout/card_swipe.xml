@@ -13,37 +13,31 @@
 
         <TextView
             android:id="@+id/swipe_username"
+            style="@style/Timber.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/name"
-            android:textColor="@color/light_green"
-            android:textSize="12sp"
-            android:textStyle="bold"
+            android:text="@string/username"
             app:layout_constraintBottom_toTopOf="@+id/swipe_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/swipe_details"
+            style="@style/Timber.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:text="@string/description"
-            android:textColor="@color/text"
-            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/swipe_image"
             app:layout_constraintStart_toEndOf="@id/swipe_username"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/swipe_zipcode"
+            style="@style/Timber.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:text="@string/zipcode"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/swipe_image"
+              app:layout_constraintBottom_toTopOf="@+id/swipe_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
