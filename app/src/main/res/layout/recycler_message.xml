@@ -7,18 +7,15 @@
     <LinearLayout
         android:id="@+id/messages_header"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp"
         app:layout_constraintBottom_toTopOf="@id/messages"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/Button"
             android:text="Matches"
             android:textSize="12sp" />
 
@@ -26,66 +23,54 @@
             android:id="@+id/project_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
             android:text="project_name"
             android:textSize="12sp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <Button
             android:id="@+id/complete_button"
-            android:layout_marginLeft="60dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/light_green"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            android:text="Complete Project" />
+            style="@style/Button"
+            android:text="Complete" />
 
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <Button
             android:id="@+id/unmatch_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:backgroundTint="@color/light_green"
-
-            app:srcCompat="@android:drawable/ic_delete"
-            android:text="Unmatch" />
+            style="@style/Button"
+            android:text="UNMATCH" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/messages_header" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="75dp"
         android:orientation="horizontal"
+        android:weightSum="10"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintStart_toStartOf="parent">
 
         <EditText
             android:id="@+id/message_write"
-            android:layout_width="323dp"
-            android:layout_height="46dp"
-            android:backgroundTint="@color/light_grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:layout_marginLeft="5dp"
+            android:backgroundTint="@color/hints"
             android:hint="Write your message here"
-            android:padding="5dp"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/message_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5dp"
+            style="@style/Button"
+            android:layout_weight="0"
             android:text=">"
             android:textAlignment="center"
             android:textSize="12sp" />

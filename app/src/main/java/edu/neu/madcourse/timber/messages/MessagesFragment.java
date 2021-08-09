@@ -54,8 +54,8 @@ public class MessagesFragment extends Fragment {
     String my_usertype;
     private Button back;
     private Button sendMessage;
-    private FloatingActionButton markComplete;
-    private FloatingActionButton unMatch;
+    private Button markComplete;
+    private Button unMatch;
 
 
     public MessagesFragment() {
