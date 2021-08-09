@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -52,10 +53,10 @@ public class MessagesFragment extends Fragment {
     public String project_id;
     String my_username;
     String my_usertype;
-    private Button back;
+    private ImageView back;
     private Button sendMessage;
-    private Button markComplete;
-    private Button unMatch;
+    private ImageView markComplete;
+    private ImageView unMatch;
 
 
     public MessagesFragment() {

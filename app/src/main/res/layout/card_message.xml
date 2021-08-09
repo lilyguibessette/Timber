@@ -21,6 +21,7 @@
         <TextView
             android:id="@+id/card_message_content"
             style="@style/Timber.Text"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="message goes here" />

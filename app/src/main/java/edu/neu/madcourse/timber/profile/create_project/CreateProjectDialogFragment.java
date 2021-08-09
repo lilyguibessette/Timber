@@ -87,7 +87,8 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 } catch(Exception e){
                     budget = 0;
                 }
-                project_image = ((EditText) view.findViewById(R.id.create_project_image)).getText().toString();
+                // TODO: this might need to be a button to launch the photo library or something
+                //project_image = ((EditText) view.findViewById(R.id.update_image)).getText().toString();
                 project_description = ((EditText) view.findViewById(R.id.create_project_description)).getText().toString();
                 //new Project(my_username, project_name, project_type, budget, project_image, project_description);
                 Log.e(TAG, "attempting location");
