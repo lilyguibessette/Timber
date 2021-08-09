@@ -21,6 +21,13 @@ public class Project {
     // budget
     // location
 
+    public Project(String username, String image, String description, String project_type) {
+        this.username = username;
+        this.image = image;
+        this.description = description;
+        this.project_type = project_type;
+    }
+
     public Project(String username, String project_name, String image, int budget, String description, String project_type) {
         this.username = username;
         this.image = image;
@@ -28,12 +35,11 @@ public class Project {
         this.project_id = username + "_" + project_name;
         this.budget = budget;
         this.project_type = project_type;
-
     }
 
     public Project(String username, String project_name,  int budget, String description, String project_type) {
         this.username = username;
-        this.image = "image placeholder.PNG";;
+        this.image = "image placeholder.PNG";
         this.description = description;
         this.project_id = username + "_" + project_name;
         this.budget = budget;
@@ -49,7 +55,6 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.location = location;
-
     }
 
     public String getUsername() {
@@ -63,4 +68,15 @@ public class Project {
     public String getDescription() {
         return this.description;
     }
+
+    public String getProject_id()
+    {return this.project_id}
+
+    public String getProject_type(){
+        return this.project_type;
+    }
+    public String getProject_name(){
+        return this.project_name;
+    }
+
 }

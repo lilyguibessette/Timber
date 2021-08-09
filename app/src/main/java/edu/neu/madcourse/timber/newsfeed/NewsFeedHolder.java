@@ -13,11 +13,13 @@ public class NewsFeedHolder extends RecyclerView.ViewHolder {
     public TextView post_username;
     public ImageView post_image_id;
     public TextView post_description;
+    public TextView post_type;
 
     public NewsFeedHolder(View newsFeedView) {
         super(newsFeedView);
         post_username = newsFeedView.findViewById(R.id.post_username);
         post_image_id = newsFeedView.findViewById(R.id.post_image);
         post_description = newsFeedView.findViewById(R.id.post_description);
+        post_type = newsFeedView.findViewById(R.id.post_type);
     }
 }

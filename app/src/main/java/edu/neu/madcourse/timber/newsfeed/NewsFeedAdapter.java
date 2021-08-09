@@ -70,12 +70,16 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
             holder.post_username.setText(currentItem.getUsername());
-
             // Reference to an image file in Cloud Storage
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-            StorageReference cutePuppyRef = storageReference.child("cute puppy.jpg");
+            StorageReference imageRef = storageReference.child(currentItem.getImage());
+            Glide.with(view)
+                    .asBitmap()
+                    .load(imageRef)
+                    .into(holder.post_image_id);
+/*            StorageReference cutePuppyRef = storageReference.child("cute puppy.jpg");
             StorageReference newImageRef = storageReference.child("JPEG_20210808_212600_3026222070829690284.jpg");
-/*
+
 
 
 
@@ -84,14 +88,15 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
 
             // Download directly from StorageReference using Glide
-            // (See MyAppGlideModule for Loader registration)*/
+            // (See MyAppGlideModule for Loader registration)
             Glide.with(view)
                     .asBitmap()
                     .load(cutePuppyRef)
                     .into(holder.post_image_id);
 
-            //holder.post_image_id.setImageResource(currentItem.getPost_id());
+            //holder.post_image_id.setImageResource(currentItem.getPost_id()); */
             holder.post_description.setText(currentItem.getDescription());
+            holder.post_type.setText(currentItem.getProgect_type());
         }
     }
 
