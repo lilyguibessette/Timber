@@ -176,7 +176,7 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO figure out all the movems for the marking of complete and what info we need here
-               // markProjectCompleteToDB(project_id, my_username, contractor);
+               markProjectCompleteToDB(project_id, my_username);
 
             }
         });
@@ -197,36 +197,37 @@ public class MessagesFragment extends Fragment {
     }
 
 
-
+    // need to iterate over the match lsit for the project and complete for each user?
     // send a sticker to another user's entry in the realtime db
-    private void markProjectCompleteToDB(Project project, String my_username) {
+    private void markProjectCompleteToDB(String proj_id, String my_username) {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final Project[] projectToMove = new Project[1];
                 // get references to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 // Update user stats for sending message
-                DatabaseReference projectRef = database.getReference("ACTIVE_PROJECTS/"+project.getProject_id());
-                projectRef.addValueEventListener(new ValueEventListener() {
+                DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/"+proj_id);
+                activeProjectRef.addValueEventListener(new ValueEventListener() {
                     public Project proj;
                     public Boolean first_change = true;
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other project so we can add a new message
-                        proj = dataSnapshot.getValue(Project.class);
-                        if (projectRef != null && first_change){
+                        projectToMove[0] = dataSnapshot.getValue(Project.class);
+                        if (activeProjectRef != null && proj != null && first_change){
                             // add message to project
                             // set other project to the newly updates other project
-                            projectRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            activeProjectRef.setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received new project: " + project.toString());
+                                    Log.w(TAG, "Update received removed project from active: " + proj_id);
                                 }
                             })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + project.toString());
+                                            Log.w(TAG, "FAILED to update project list: " + proj_id);
                                         }
                                     });
                         }
@@ -240,37 +241,25 @@ public class MessagesFragment extends Fragment {
                     }
 
                 });
-
-                DatabaseReference userRef = database.getReference("HOMEOWNERS/"+my_username);
-                // update other user's message history with new message
-                userRef.addValueEventListener(new ValueEventListener() {
-                    public Homeowner user;
+                DatabaseReference completedProjectRef = database.getReference("COMPLETED_PROJECTS/"+proj_id);
+                completedProjectRef.addValueEventListener(new ValueEventListener() {
                     public Boolean first_change = true;
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other user so we can add a new message
-                        user = dataSnapshot.getValue(Homeowner.class);
-                        if (userRef != null && dataSnapshot != null && first_change && user != null){
-                            // add message to user
-                            ArrayList<String> test = user.getActiveProjectList();
-                            Log.w(TAG, "test proj to user list: " + user.toString());
-                            Log.w(TAG, "test proj to user list: " + user.getUsername());
-                            Log.w(TAG, "test proj to user list: " + test.toString());
-                            Log.w(TAG, "test proj to user list: " + project.getProject_id());
-                            user.addActiveProject(project.getProject_id());
-                            Log.w(TAG, "added proj to user list: " + user.toString());
-                            //TODO fix -  not adding to db yet...
-                            userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        if (completedProjectRef != null && dataSnapshot != null && first_change ){
+                            Log.w(TAG, "added proj to completed list: " + proj_id);
+                            completedProjectRef.setValue(projectToMove[0]).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received new project: " + user.toString());
+                                    Log.w(TAG, "Update received added completed project: " + projectToMove[0].toString());
 
                                 }
                             })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + user.toString());
+                                            Log.w(TAG, "FAILED to update project list: " +"completed not changed");
                                         }
                                     });
                             first_change = false;
@@ -285,7 +274,48 @@ public class MessagesFragment extends Fragment {
                     }
 
                 });
+                if (my_usertype.equals("HOMEOWNERS")) {
+                    DatabaseReference userRef = database.getReference("HOMEOWNERS/" + my_username);
+                    userRef.addValueEventListener(new ValueEventListener() {
+                        public Homeowner user;
+                        public Boolean first_change = true;
 
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // get other user so we can add a new message
+                            user = dataSnapshot.getValue(Homeowner.class);
+                            if (userRef != null && dataSnapshot != null && first_change && user != null) {
+                                // add message to user
+                                Log.w(TAG, "test proj to user list: " + user.toString());
+                                Log.w(TAG, "test proj to user list: " + user.getUsername());
+                                user.removeActiveProject(proj_id);
+                                user.addCompleteProject(proj_id);
+                                Log.w(TAG, "added proj to user list: " + user.toString());
+                                userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.w(TAG, "Update received removed and added (moved) project: " + user.toString());
+                                    }
+                                })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "FAILED to update project list: " + user.toString());
+                                            }
+                                        });
+                                first_change = false;
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Getting Post failed, log a message
+                            Log.w(TAG, "user ref add proj onCancelled", databaseError.toException());
+                        }
+
+                    });
+                }
 
 
             }

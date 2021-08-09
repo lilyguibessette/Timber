@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
@@ -123,6 +124,8 @@ public class ProfileFragment extends Fragment {
         createRecyclerView(view);
         Log.e(TAG, "We made it after the recycler view");
 
+        TextView profile_username = view.findViewById(R.id.profile_username);
+        profile_username.setText(my_username);
         action_button = view.findViewById(R.id.profile_action_button);
         if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
             //set text

@@ -140,9 +140,6 @@ public class Homeowner implements User {
     public String getImage() { return this.image;}
 
     public void addActiveProject(String project_id){
-        if (activeProjectList == null){
-            activeProjectList = new ArrayList<>();
-        }
         this.activeProjectList.add(project_id);
     }
     public void addCompleteProject(String project_id){
@@ -151,6 +148,7 @@ public class Homeowner implements User {
     public void removeActiveProject(String project_id){
         activeProjectList.remove(project_id);
     }
+
     public void addSwipedOn(String username){
         swipedOnList.add(username);
     }

@@ -66,6 +66,12 @@ public class Contractor implements User {
         this.completedProjectList = new ArrayList<>();
         this.swipedOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+        this.activeProjectList.add("EMPTY");
+        this.completedProjectList.add("EMPTY");
+        this.swipedOnList.add("EMPTY");
+        this.matchList.add("EMPTY");
+
+
         this.workRadius = 20;
         this.image = "default_profile_pic.PNG";
         this.specialty = "No specialties added.";

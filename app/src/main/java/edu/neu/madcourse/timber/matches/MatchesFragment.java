@@ -62,9 +62,9 @@ public class MatchesFragment extends Fragment {
         initialMatchesData(savedInstanceState);
 
         matchesHistory.add(new Match("apples", R.drawable.timber_full, "this is a test post 1 in matches"));
-        matchesHistory.add(new Match("peaches", R.drawable.timber_icon, "this is a test post 2in matches"));
+        matchesHistory.add(new Match("HOMEL_peaches", R.drawable.timber_icon, "this is a test post 2in matches"));
         matchesHistory.add(new Match("mangoes", R.drawable.timber_full, "this is a test post 3in matches"));
-        matchesHistory.add(new Match("watermelons", R.drawable.timber_icon, "this is a test post 4in matches"));
+        matchesHistory.add(new Match("HOMEL_watermelons", R.drawable.timber_icon, "this is a test post 4in matches"));
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_matches, container, false);

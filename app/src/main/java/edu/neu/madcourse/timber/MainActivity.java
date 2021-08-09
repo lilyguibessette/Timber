@@ -162,7 +162,12 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
         my_usertype = radioButtonUserType.getText().toString().toUpperCase();
 
-
+        SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref",
+                MODE_PRIVATE);
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+        myEdit.putString(USERNAME, my_username);
+        myEdit.putString(USERTYPE, my_usertype);
+        myEdit.commit();
         // if the username is not null, go to the ReceivedActivity class
         if (my_username != null && my_usertype != null) {
             //Log.e(TAG,"autologin username: " + my_username + " usertype: " + my_usertype);
@@ -182,13 +187,14 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             login_user();
 
             // Store the username in shared preferences to skip login if already done
-            SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref",
+            SharedPreferences sharedPreferences2 = getSharedPreferences("TimberSharedPref",
                     MODE_PRIVATE);
-            SharedPreferences.Editor myEdit = sharedPreferences.edit();
-            myEdit.putString(USERNAME, my_username);
-            myEdit.putString(USERTYPE, my_usertype);
-            myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
-            myEdit.commit();
+            SharedPreferences.Editor myEdit2 = sharedPreferences2.edit();
+            myEdit2.putString(USERNAME, my_username);
+            myEdit2.putString(USERTYPE, my_usertype);
+            myEdit2.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
+            myEdit2.commit();
+
             if (my_username != null && my_usertype != null) {
                 login_user();
             }
