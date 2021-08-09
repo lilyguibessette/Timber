@@ -168,10 +168,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             myEdit.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
             myEdit.commit();
 
-
-
-            // start the new activity
-            startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+            if (my_username != null && my_usertype != null) {
+                Log.e(TAG,"button autologin username: " + my_username + " usertype: " + my_usertype);
+                startActivity(new Intent(MainActivity.this, HomepageActivity.class));
+            }
         });
 
         createUserButton = findViewById(R.id.create_account_button);

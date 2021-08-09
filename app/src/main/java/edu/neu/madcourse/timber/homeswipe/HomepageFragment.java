@@ -190,7 +190,7 @@ public class HomepageFragment extends Fragment {
         return items;
     }
 
-    private ArrayList<> collectUsers(Map<String,Object> users) {
+    private void collectUsers(Map<String,Object> users) {
 
         ArrayList<String> userNames = new ArrayList<>();
 
