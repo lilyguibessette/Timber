@@ -84,11 +84,11 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:clickable="true"
             android:background="@drawable/icon_image_placeholder"
+            android:clickable="true"
+            app:layout_constraintBottom_toTopOf="@id/form"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/logout"
-            app:layout_constraintBottom_toTopOf="@id/form"/>
+            app:layout_constraintTop_toBottomOf="@id/logout" />
 
     </LinearLayout>
 
@@ -96,7 +96,9 @@
         android:id="@+id/create_button"
         style="@style/Button"
         android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
         android:text="Create"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/form" />
 
@@ -104,7 +106,9 @@
         android:id="@+id/cancel_button"
         style="@style/Button"
         android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
         android:text="Cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/create_button"
         app:layout_constraintTop_toBottomOf="@id/form" />
