@@ -6,8 +6,8 @@
         <item name="colorPrimaryVariant">@color/dark_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/light_blue</item>
-        <item name="colorSecondaryVariant">@color/dark_blue</item>
+        <item name="colorSecondary">@color/light_green</item>
+        <item name="colorSecondaryVariant">@color/dark_green</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Custom -->
         <item name="android:windowBackground">@color/text</item>
@@ -31,4 +31,9 @@
         <item name="itemTextColor">@color/light_green</item>
     </style>
 
+    <style name="Timber.Hint" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:padding">5dp</item>
+    </style>
 </resources>
