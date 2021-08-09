@@ -7,7 +7,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,21 +22,25 @@
 
             <RadioButton
                 android:id="@+id/radio_homeowner"
+                style="@style/Timber.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Homeowner"
-                android:textColor="@color/light_grey"
-                android:textSize="12sp" />
+                android:text="Homeowner" />
 
             <RadioButton
                 android:id="@+id/radio_contractor"
+                style="@style/Timber.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="15dp"
-                android:text="Contractor"
-                android:textColor="@color/light_grey"
-                android:textSize="12sp" />
+                android:text="Contractor" />
         </RadioGroup>
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username" />
 
         <EditText
             android:id="@+id/create_username"
@@ -47,6 +50,12 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="First name / Business name" />
+
         <EditText
             android:id="@+id/create_param1"
             android:layout_width="match_parent"
@@ -54,6 +63,12 @@
             android:hint="First name / Business name"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last name / Tax ID" />
 
         <EditText
             android:id="@+id/create_param2"
@@ -63,6 +78,12 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zip code" />
+
         <EditText
             android:id="@+id/create_zip"
             android:layout_width="match_parent"
@@ -70,6 +91,12 @@
             android:hint="Zip code"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
+
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email" />
 
         <EditText
             android:id="@+id/create_email"
@@ -79,6 +106,12 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <TextView
+            style="@style/Timber.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone number" />
+
         <EditText
             android:id="@+id/create_phone"
             android:layout_width="match_parent"
@@ -87,6 +120,12 @@
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 
+        <Button
+            android:id="@+id/create_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Update image" />
 
     </LinearLayout>
 
