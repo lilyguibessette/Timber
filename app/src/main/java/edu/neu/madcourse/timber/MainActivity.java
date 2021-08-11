@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 
@@ -59,15 +60,9 @@ import static android.content.ContentValues.TAG;
 
 //TODO NOTES
 /*
-- Add empty lists to users for
-    - ActiveProjectList IDs
-    - CompletedProjectList IDs
-    - SwipedOn List - T/F for all projects (for contractors) and all contractors for homeowners
-    - Matched List - T/F as swipes are recorded in DB
-- Create better project class
 - Photo upload
-- Ugh Messaging is 'set up', but can't transition from Matches fragment to Messages (made both activity and fragment to see)
-    - Messaging is  better, need to pass user name clicked from MatchesFrag to MessagesFrag
+- fix login issues?
+- Messaging  notifications and read in recycler views from database
 - Finalize database structures
    - Need to plug everything in
 - GPS and filtering
@@ -280,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             // connect to the database and look at the users
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
-            location = getLocation();
+            location = Utils.getLocation(this, this.getBaseContext());
             myUserRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -293,6 +288,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                         Log.e(TAG,"login_user: User does not exist in DB");
                         Log.e(TAG,"login_user: " + my_usertype);
                         Log.e(TAG,location.toString());
+                       // Log.e(TAG,location.getLatitude());
+                        Log.e(TAG,String.valueOf(location.getLongitude()));
                         if (my_usertype.equals(HOMEOWNERS)) {
                             try {
                                 myUserRef.setValue(new Homeowner(my_username,
@@ -338,49 +335,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
 
 
-
-    public Location getLocation(){
-
-        // TODO: can we stick this in the user class and initialize in the onCreate
-        //  then save to database?
-
-        // define the location manager
-        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        // if the location manager permissions are not enabled, request access from user
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            final AlertDialog.Builder alert = new AlertDialog.Builder(
-                    edu.neu.madcourse.timber.MainActivity.this);
-            alert.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes",
-                    (dialog, which) -> startActivity(new Intent
-                            (Settings.ACTION_LOCATION_SOURCE_SETTINGS))).
-                    setNegativeButton("No", (dialog, which) -> dialog.cancel());
-            alert.create().show();
-        } else {
-            // otherwise move forward by checking permissions again
-            if (ActivityCompat.checkSelfPermission(
-                    edu.neu.madcourse.timber.MainActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(
-                    edu.neu.madcourse.timber.MainActivity.this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED) {
-                // if permissions aren't enabled, request from user
-                ActivityCompat.requestPermissions(
-                        edu.neu.madcourse.timber.MainActivity.this,
-                        new String[]{Manifest.permission.
-                                ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-            } else {
-                // if permissions are granted, find the last location
-                location = locationManager.getLastKnownLocation
-                        (LocationManager.GPS_PROVIDER);
-                return location;
-
-            }
-        }
-        return null;
-    }
 
     public void readData(DatabaseReference ref, final OnGetDataListener listener) {
         listener.onStart();
