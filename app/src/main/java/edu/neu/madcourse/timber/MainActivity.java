@@ -256,7 +256,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
+            Log.e(TAG,"pre login");
             login_user();
+            Log.e(TAG,"post login");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         } else {
             Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
@@ -290,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                     } else {
                         Log.e(TAG,"login_user: User does not exist in DB");
                         Log.e(TAG,"login_user: " + my_usertype);
+                        Log.e(TAG,location.toString());
                         if (my_usertype.equals(HOMEOWNERS)) {
                             try {
                                 myUserRef.setValue(new Homeowner(my_username,

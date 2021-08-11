@@ -43,6 +43,7 @@ public class Homeowner implements User {
         this.token = Objects.requireNonNull(token, "username must not be null");
 
         this.latitude = latitude;
+
         this.longitude = longitude;
 
         this.firstName = firstName;
