@@ -1,7 +1,5 @@
 package edu.neu.madcourse.timber.profile.update;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,13 +21,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 
-import edu.neu.madcourse.timber.HomepageActivity;
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.ProfileFragment;
 import edu.neu.madcourse.timber.users.Homeowner;
 
-public class UpdateContractorProfileDialogFragment extends  DialogFragment{
+import static android.content.Context.MODE_PRIVATE;
+
+public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
     private Button cancelButton;
     private Button updateButton;
@@ -77,7 +76,7 @@ public class UpdateContractorProfileDialogFragment extends  DialogFragment{
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "Update complete" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
 
             }
@@ -91,7 +90,7 @@ public class UpdateContractorProfileDialogFragment extends  DialogFragment{
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to cancel" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "going to cancel", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });

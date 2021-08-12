@@ -1,10 +1,6 @@
 package edu.neu.madcourse.timber.users;
 
-import android.location.Location;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.Objects;
 
 public class Contractor implements User {
@@ -26,7 +22,7 @@ public class Contractor implements User {
     private String specialty;
 
 
-    public Contractor(){
+    public Contractor() {
     }
 
     public Contractor(String username,
@@ -37,7 +33,7 @@ public class Contractor implements User {
                       String taxID,
                       String email,
                       String zipcode,
-                      String phoneNumber) throws NullPointerException{
+                      String phoneNumber) throws NullPointerException {
         this.username = username;
         this.username = Objects.requireNonNull(username, "username must not be null");
 
@@ -71,7 +67,6 @@ public class Contractor implements User {
         this.swipedOnList.add("EMPTY");
         this.matchList.add("EMPTY");
 
-
         this.workRadius = 20;
         this.image = "default_profile_pic.PNG";
         this.specialty = "No specialties added.";
@@ -84,7 +79,7 @@ public class Contractor implements User {
                       String taxID,
                       String email,
                       String zipcode,
-                      String phoneNumber) throws NullPointerException{
+                      String phoneNumber) throws NullPointerException {
         this.username = username;
         this.username = Objects.requireNonNull(username, "username must not be null");
 
@@ -126,42 +121,78 @@ public class Contractor implements User {
         return this.username;
     }
 
-    public String getToken() { return this.token; }
+    public String getToken() {
+        return this.token;
+    }
 
-    public double getLatitude(){return this.latitude; }
-    public double getLongitude(){return this.longitude; }
+    public double getLatitude() {
+        return this.latitude;
+    }
+
+    public double getLongitude() {
+        return this.longitude;
+    }
     //public void setLatitude(Location location){this.latitude = location.getLatitude();}
     //public void setLongitude(Location location){ this.longitude  = location.getLongitude() ;}
 
-    public void setLatitude(double latitude){this.latitude =latitude;}
-    public void setLongitude(double longitude){ this.longitude  = longitude;}
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
 
-    public String getBusinessName() { return businessName; }
+    public String getBusinessName() {
+        return businessName;
+    }
 
-    public String getTaxID() { return taxID; }
+    public String getTaxID() {
+        return taxID;
+    }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getZipcode() { return zipcode; }
+    public String getZipcode() {
+        return zipcode;
+    }
 
-    public String getPhoneNumber() {return phoneNumber; }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public void setImage(String image) { this.image = image;}
+    public void setRadius(int workRadius) {
+        this.workRadius = workRadius;
+    }
 
-    public String getImage() { return this.image;}
-    public ArrayList<String> getActiveProjectList(){
+    public int getRadius() {
+        return workRadius;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return this.image;
+    }
+
+    public ArrayList<String> getMatchList() {
+        return this.matchList;
+    }
+
+    public ArrayList<String> getActiveProjectList() {
         return this.activeProjectList;
     }
 
-    public ArrayList<String> getMatchList(){
-        return this.matchList;
-    }
-    public ArrayList<String> getCompletedProjectList(){
+    public ArrayList<String> getCompletedProjectList() {
         return this.completedProjectList;
     }
 
-    public ArrayList<String> getSwipedOnList(){
+    public ArrayList<String> getSwipedOnList() {
         return this.swipedOnList;
     }
 

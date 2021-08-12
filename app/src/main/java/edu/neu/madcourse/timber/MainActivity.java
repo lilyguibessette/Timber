@@ -65,8 +65,8 @@ import static android.content.ContentValues.TAG;
 - Messaging  notifications and read in recycler views from database
 - Finalize database structures
    - Need to plug everything in
-- GPS and filtering
-- Match notifications
+- GPS and filtering > dvt - updated the radius for the contractor user... need to put GPS into matching criteria
+- Match notifications > dvt -
 - login is still wonky - need to be careful and clean up where shared prefs are used
 
  */
