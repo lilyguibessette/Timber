@@ -1,17 +1,22 @@
 package edu.neu.madcourse.timber.homeswipe;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,14 +37,27 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.OnGetDataListener;
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.users.Contractor;
+import edu.neu.madcourse.timber.users.Homeowner;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class HomepageFragment extends Fragment {
 
     private static final String TAG = "HomepageFragment";
     private CardStackLayoutManager manager;
     private CardStackAdapter adapter;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference contractorsRef = database.getReference("CONTRACTORS/");
+    DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/");
+    DatabaseReference currentContractorCardRef;
+    DataSnapshot contractorData;
+    String swipedName;
+
+
     public HomepageFragment() {
         // Required empty public constructor
     }
@@ -57,6 +75,9 @@ public class HomepageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // get Username
+        String thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         CardStackView cardStackView = view.findViewById(R.id.homepage);
@@ -73,6 +94,55 @@ public class HomepageFragment extends Fragment {
                 Log.d(TAG, "onCardSwiped: p=" + manager.getTopPosition() + " d=" + direction);
                 if (direction == Direction.Right){
                     Log.d(TAG, "Swipe Direction Right");
+                    swipedName = adapter.getFirstCard().getUsername();
+                    Log.e(TAG,"right swipe username is " + swipedName);
+
+                    // ASYNC OPERATIONS BABY
+                    new Thread(() -> {
+                        Log.e(TAG,"starting a thread for right swipe");
+                        currentContractorCardRef = contractorsRef.child(swipedName);
+
+                        currentContractorCardRef.get();
+
+                        currentContractorCardRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                               public Contractor contractor;
+
+                               @Override
+                               public void onDataChange(DataSnapshot dataSnapshot) {
+                                   // get other user so we can add a new message
+                                   contractor = dataSnapshot.getValue(Contractor.class);
+                                   if (contractor != null && dataSnapshot != null) {
+                                       // add message to user
+                                       Log.w(TAG, "attempting to add: " + thisUser);
+                                       contractor.getSwipedOnList().add(thisUser);
+                                       currentContractorCardRef.setValue(contractor).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                           @Override
+                                           public void onSuccess(Void aVoid) {
+                                               Log.w(TAG, "updated contractor on swipe list");
+                                           }
+                                       })
+                                       .addOnFailureListener(new OnFailureListener() {
+                                           @Override
+                                           public void onFailure(@NonNull Exception e) {
+                                               Log.w(TAG, "FAILED to update contactor on swipe list");
+                                           }
+                                       });
+                                   }
+                               }
+
+                               @Override
+                               public void onCancelled
+                                       (DatabaseError error) {
+                                   // Getting Post failed, log a message
+                                   Log.w(TAG, "update contractor swipedby failed", error.toException());
+
+                               }
+                           });
+
+                        Log.e(TAG,"ending a thread for right swipe");
+                    }).start();
+
+
                     //Toast.makeText(HomepageFragment.this, "Direction Right", Toast.LENGTH_SHORT).show();
                 }
                 if (direction == Direction.Top){
@@ -90,7 +160,11 @@ public class HomepageFragment extends Fragment {
 
                 // Paginating
                 if (manager.getTopPosition() == adapter.getItemCount() - 5){
-                    paginate();
+                    //paginate();
+                }
+
+                if (manager.getTopPosition() == adapter.getItemCount()){
+                    Toast.makeText(getActivity(), "No more cards available", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -107,8 +181,7 @@ public class HomepageFragment extends Fragment {
 
             @Override
             public void onCardAppeared(View view, int position) {
-                //TextView tv = view.findViewById(R.id.item_name);
-                //Log.d(TAG, "onCardAppeared: " + position + ", nama: " + tv.getText());
+                Log.e(TAG, "onCardAppeared: " + position);
             }
 
             @Override
@@ -130,6 +203,7 @@ public class HomepageFragment extends Fragment {
         manager.setCanScrollVertical(false);
         manager.setSwipeableMethod(SwipeableMethod.Manual);
         manager.setOverlayInterpolator(new LinearInterpolator());
+        manager.setAutoMeasureEnabled(false);
 
         adapter = new CardStackAdapter();
 
@@ -166,10 +240,10 @@ public class HomepageFragment extends Fragment {
         Log.e(TAG,"populateList called");
         List<SwipeCard> cardStack= new ArrayList<>();
         final ArrayList<String>[] userNames = new ArrayList[]{new ArrayList<String>()};
-/*
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference(
-                "HOMEOWNERS");
 
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference(
+                "CONTRACTORS");
+/*
         readData(usersRef, new OnGetDataListener() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
@@ -179,7 +253,7 @@ public class HomepageFragment extends Fragment {
 
                 for(int i = 0; i < userNames[0].size();i++){
                     Log.e(TAG,"for loop: " + userNames[0].get(i));
-                    cardStack.add(new UserCard(R.drawable.sample1, userNames[0].get(i), "24"));
+                    cardStack.add(new SwipeCard(R.drawable.sample1, userNames[0].get(i), "24"));
                 }
 
             }
@@ -193,7 +267,7 @@ public class HomepageFragment extends Fragment {
             public void onFailure() {
                 Log.e("onFailure", "Failed");
             }
-        });
+        });*/
 
 
 
@@ -201,8 +275,30 @@ public class HomepageFragment extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String,Object> userData = (Map<String,Object>) dataSnapshot.getValue();
                         //Get map of users in datasnapshot
-                        userNames[0] = collectUsers((Map<String,Object>) dataSnapshot.getValue());
+                        for (Map.Entry<String, Object> entry : userData.entrySet()){
+
+                            //Get user map
+                            Map singleUser = (Map) entry.getValue();
+                            //Get phone field and append to list
+
+                            Log.e(TAG,"collectUsers called");
+                            Log.e(TAG,entry.toString());
+
+                            // Add them all at once?
+                            cardStack.add(new SwipeCard(
+                                    (String) singleUser.get("image"),
+                                    (String) singleUser.get("username"),
+                                    "Default description text here"));
+/*
+                            // add cards as they load (ish, basically the same result as above anyways)
+                            adapter.addCardToBack(new SwipeCard(
+                                    (String) singleUser.get("image"),
+                                    (String) singleUser.get("username"),
+                                    "Default description text here"));*/
+                            adapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override
@@ -210,19 +306,15 @@ public class HomepageFragment extends Fragment {
                         //handle databaseError
                     }
                 });
-        Log.e(TAG,"start for loop");
-        for(int i = 0; i < userNames[0].size();i++){
-            Log.e(TAG,"for loop: " + userNames[0].get(i));
-            adapter.addCardToBack(new UserCard(R.drawable.sample1, userNames[0].get(i), "24"));
-        }
-        Log.e(TAG,"end for loop");*/
 
-        cardStack.add(new SwipeCard(R.drawable.sample1, "Markonah", "24"));
-        cardStack.add(new SwipeCard(R.drawable.sample2, "Marpuah", "20"));
-        cardStack.add(new SwipeCard(R.drawable.sample3, "Sukijah", "27"));
-        cardStack.add(new SwipeCard(R.drawable.sample4, "Markobar", "19"));
-        cardStack.add(new SwipeCard(R.drawable.sample5, "Marmut", "25"));
+        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 1", "24"));
+        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 2", "20"));
+        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 3", "27"));
+        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 4", "19"));
+        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 5", "25"));
+
         Log.e(TAG,"returning cardstack");
+
         return cardStack;
     }
 
@@ -235,15 +327,24 @@ public class HomepageFragment extends Fragment {
         final ArrayList<String>[] userNames = new ArrayList[]{new ArrayList<String>()};
 
         //assuming you have already called firebase initialization code for admin sdk, android etc
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("HOMEOWNERS");
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("CONTRACTORS");
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             public void onDataChange(DataSnapshot dataSnapshot) {
-                userNames[0] = collectUsers((Map<String,Object>) dataSnapshot.getValue());
-                for(int i = 0; i < userNames[0].size();i++){
-                    Log.e(TAG,"for loop: " + userNames[0].get(i));
-                    cardStack.add(new SwipeCard(R.drawable.sample1, userNames[0].get(i), "24"));
+                Map<String,Object> userData = (Map<String,Object>) dataSnapshot.getValue();
+
+                //iterate through each user, ignoring their UID
+                for (Map.Entry<String, Object> entry : userData.entrySet()){
+
+                    //Get user map
+                    Map singleUser = (Map) entry.getValue();
+                    //Get phone field and append to list
+                    cardStack.add(new SwipeCard(
+                            (String) singleUser.get("image"),
+                            (String) singleUser.get("username"),
+                            "Default description text here"));
                 }
+
                 done.set(true);
             }
 
@@ -262,7 +363,7 @@ public class HomepageFragment extends Fragment {
 
         return cardStack;
     }
-
+/*
     // Doesn't work
     private void addCards() {
         new Thread(() -> {
@@ -292,16 +393,16 @@ public class HomepageFragment extends Fragment {
 
             for(int i = 0; i < userNames[0].size();i++){
                 Log.e(TAG,"for loop: " + userNames[0].get(i));
-                adapter.addCardToBack(new SwipeCard(R.drawable.sample1, userNames[0].get(i), "24"));
+                adapter.addCardToBack(new SwipeCard("default_profile_pic.PNG", userNames[0].get(i), "24"));
             }
             Log.e(TAG,"end for loop");
         }).start();
-    }
-
-    private ArrayList<String> collectUsers(Map<String,Object> users) {
+    }*/
+/*
+    private ArrayList<String[]> collectUsers(Map<String,Object> users) {
         Log.e(TAG,"collectUsers called");
 
-        ArrayList<String> userNames = new ArrayList<>();
+        ArrayList<String[]> userData = new ArrayList<>();
 
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : users.entrySet()){
@@ -309,11 +410,11 @@ public class HomepageFragment extends Fragment {
             //Get user map
             Map singleUser = (Map) entry.getValue();
             //Get phone field and append to list
-            userNames.add((String) singleUser.get("username"));
+            userData.add((String) singleUser.get("username"));
         }
 
-        return userNames;
-    }
+        return userData;
+    }*/
 
     public void readData(DatabaseReference ref, final OnGetDataListener listener) {
         listener.onStart();

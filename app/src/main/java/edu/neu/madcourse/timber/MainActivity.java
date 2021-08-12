@@ -52,10 +52,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 
 import static android.content.ContentValues.TAG;
+import static java.security.AccessController.getContext;
 
 //TODO NOTES
 /*
@@ -125,6 +127,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
         setContentView(R.layout.login_screen);
+
+
+        location = getLocation();
 
         // hide the action bar for aesthetics
         getSupportActionBar().hide();
@@ -280,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             // connect to the database and look at the users
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
-            location = getLocation();
             myUserRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -292,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                     } else {
                         Log.e(TAG,"login_user: User does not exist in DB");
                         Log.e(TAG,"login_user: " + my_usertype);
-                        Log.e(TAG,location.toString());
                         if (my_usertype.equals(HOMEOWNERS)) {
                             try {
                                 myUserRef.setValue(new Homeowner(my_username,
@@ -306,6 +309,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                                         my_phone));
                             } catch(NullPointerException exc){
                                 Toast.makeText(MainActivity.this, "Invalid login, please check username", Toast.LENGTH_SHORT).show();
+                                Log.e(TAG,"null pointer exception");
+                                Log.e(TAG,exc.getMessage());
                             }
                         } else {
                             try {
@@ -320,6 +325,8 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                                         my_phone));
                             } catch(NullPointerException exc){
                                 Toast.makeText(MainActivity.this, "Invalid login, please check username", Toast.LENGTH_SHORT).show();
+                                Log.e(TAG,"null pointer exception");
+                                Log.e(TAG,exc.getMessage());
                             }
                         }
                     }

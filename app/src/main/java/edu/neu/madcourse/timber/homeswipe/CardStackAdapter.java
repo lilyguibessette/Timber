@@ -1,5 +1,6 @@
 package edu.neu.madcourse.timber.homeswipe;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,6 +25,11 @@ import edu.neu.madcourse.timber.R;
 public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.ViewHolder> {
 
     private List<SwipeCard> items;
+    View view;
+    private Integer counter = 0;
+    private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+
+
 
     public CardStackAdapter() { }
     public CardStackAdapter(List<SwipeCard> items) {
@@ -31,7 +40,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.card_swipe, parent, false);
+        view = inflater.inflate(R.layout.card_swipe, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,6 +59,8 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         TextView username, details;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            Log.e(TAG,"Called ViewHolder");
             image = itemView.findViewById(R.id.swipe_image);
             username = itemView.findViewById(R.id.swipe_username);
             details = itemView.findViewById(R.id.swipe_details);
@@ -57,10 +68,9 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
         void setData(SwipeCard data) {
             Log.e(TAG,"setting data");
-            Picasso.get()
-                    .load(data.getImage())
-                    .fit()
-                    .centerCrop()
+            StorageReference imageRef = storageReference.child(data.getImage());
+            Glide.with(view)
+                    .load(imageRef)
                     .into(image);
             username.setText(data.getUsername());
             details.setText(data.getDetails());
@@ -78,4 +88,11 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
     public void setCardStack(List<SwipeCard> items) {
         this.items = items;
     }
+
+    public SwipeCard getFirstCard() {
+        counter += 1;
+
+        return this.items.get(counter-1);
+    }
+
 }
