@@ -1,9 +1,7 @@
 package edu.neu.madcourse.timber.profile;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -78,6 +73,7 @@ public class ProfileFragment extends Fragment {
     String other_username;
     Button action_button;
     Button profile_settings;
+
     int discrete;
     int start = 0; //you need to give starting value of SeekBar
     int end = 1000; //you need to give end value of SeekBar
@@ -110,7 +106,7 @@ public class ProfileFragment extends Fragment {
 
         // get saved state and initialize the recyclerview
         initialProjectsData(savedInstanceState);
-        Project test_project = new Project("mangoes", "TEST","PLUMBING",7000,"image placeholder.PNG", "completedProjectsthis is a test post 3");
+        Project test_project = new Project("mangoes", "TEST", "PLUMBING", 7000, "image placeholder.PNG", "completedProjectsthis is a test post 3");
         projects.add(test_project);
         projects.add(test_project);
         projects.add(test_project);
@@ -137,65 +133,66 @@ public class ProfileFragment extends Fragment {
         action_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(my_usertype.equals(HOMEOWNERS)){
+                if (my_usertype.equals(HOMEOWNERS)) {
                     Log.e("ProfileFragment", "ProfileFragment to update homeowner");
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container, new CreateProjectDialogFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
-                }else{
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                        View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
-                        SeekBar seek = (SeekBar) updateRadiusView.findViewById(R.id.seekBar);
-                        int start_position = (int)(((start_pos - start) / (end - start)) * 100);
-                        discrete = start_pos;
-                        seek.setProgress(start_position);
-                        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-                                // TODO Auto-generated method stub
-                                Log.e(TAG, "discrete = " + String.valueOf(discrete));
-                                Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
-                            }
+                } else {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                    View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
+                    SeekBar seek = (SeekBar) updateRadiusView.findViewById(R.id.seekBar);
+                    int start_position = (int) (((start_pos - start) / (end - start)) * 100);
+                    discrete = start_pos;
+                    seek.setProgress(start_position);
+                    seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            // TODO Auto-generated method stub
+                            Log.e(TAG, "discrete = " + String.valueOf(discrete));
+                            Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
+                        }
 
 
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
-                            }
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                        }
 
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                float temp = progress;
-                                float dis = end - start;
-                                discrete = (int) (start + ((temp / 100) * dis));
-                            }
-                        });
-                        Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            float temp = progress;
+                            float dis = end - start;
+                            discrete = (int) (start + ((temp / 100) * dis));
+                        }
+                    });
+                    Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
 
-                        dialogBuilder.setView(updateRadiusView);
-                        AlertDialog dialog = dialogBuilder.create();
-                        dialog.show();
-                        confirm.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                    }
-
+                    dialogBuilder.setView(updateRadiusView);
+                    AlertDialog dialog = dialogBuilder.create();
+                    dialog.show();
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            update_profile();
+                            dialog.dismiss();
+                        }
+                    });
                 }
-            });
+
+            }
+        });
         profile_settings = view.findViewById(R.id.profile_settings);
         profile_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(my_usertype.equals(HOMEOWNERS)){
+                if (my_usertype.equals(HOMEOWNERS)) {
                     Log.e("ProfileFragment", "ProfileFragment to update homeowner");
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container, new UpdateHomeownerProfileDialogFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
-                }else{
+                } else {
                     Log.e("ProfileFragment", "ProfileFragment to update contractor");
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container, new UpdateContractorProfileDialogFragment());
@@ -220,13 +217,13 @@ public class ProfileFragment extends Fragment {
                 for (int i = 0; i < size; i++) {
                     String username = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "0");
-                    String description = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
+                    String description = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "1");
                     String image = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "2");
-                    String type = savedInstanceState.getString(KEY_OF_MATCH+ "_ACTIVE"
+                    String type = savedInstanceState.getString(KEY_OF_MATCH + "_ACTIVE"
                             + i + "3");
-                    projects.add(new Project(username,type,image,
+                    projects.add(new Project(username, type, image,
                             description));
                 }
             }
@@ -237,12 +234,12 @@ public class ProfileFragment extends Fragment {
                 for (int i = 0; i < size; i++) {
                     String username = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "0");
-                    String description = savedInstanceState.getString(KEY_OF_MATCH+ "_COMPLETED"
+                    String description = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "1");
                     String image = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED"
                             + i + "2");
-                    String type = savedInstanceState.getString(KEY_OF_MATCH +"_COMPLETED"+i + "3" );
-                    projects.add(new Project(username,type,image,
+                    String type = savedInstanceState.getString(KEY_OF_MATCH + "_COMPLETED" + i + "3");
+                    projects.add(new Project(username, type, image,
                             description));
                 }
             }
@@ -298,13 +295,17 @@ public class ProfileFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        if (my_usertype.equals(HOMEOWNERS) ){
+                        if (my_usertype.equals(HOMEOWNERS)) {
                             Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
                             //my_user.setImage();
                             // add setters to my_user
                             myUserRef.setValue(my_user);
-                        } else{
+                        } else {
                             Contractor my_user = dataSnapshot.getValue(Contractor.class);
+                            my_user.setRadius(discrete);
+                            Toast.makeText(getActivity(), "Discrete is " + discrete
+                                    + " so changed radius to " + my_user.getRadius(),
+                                    Toast.LENGTH_SHORT).show();
                             myUserRef.setValue(my_user);
                         }
 
@@ -312,16 +313,17 @@ public class ProfileFragment extends Fragment {
                         if (my_usertype.equals(HOMEOWNERS)) {
                             myUserRef.setValue(new Homeowner(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
-                                  //  location,
+                                    //  location,
                                     my_param1,
                                     my_param2,
                                     my_email,
                                     my_zip,
                                     my_phone));
+
                         } else {
                             myUserRef.setValue(new Contractor(my_username,
                                     CLIENT_REGISTRATION_TOKEN,
-                             //       location,
+                                    //       location,
                                     my_param1,
                                     my_param2,
                                     my_email,
