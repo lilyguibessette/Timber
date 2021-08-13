@@ -1,6 +1,7 @@
 package edu.neu.madcourse.timber.homeswipe;
 
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.OnGetDataListener;
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
@@ -54,11 +56,16 @@ public class HomepageFragment extends Fragment {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference contractorsRef = database.getReference("CONTRACTORS/");
     DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/");
+    DatabaseReference homeownersRef = database.getReference("HOMEOWNERS/");
     DatabaseReference currentCardRef;
     DataSnapshot contractorData;
     String swipedName;
     String thisUserType;
     String thisUser;
+    Location location;
+    double thisLatitude;
+    double thisLongitude;
+    double distanceLimit = 20.0;
 
     public HomepageFragment() {
         // Required empty public constructor
@@ -80,6 +87,11 @@ public class HomepageFragment extends Fragment {
         // get Username
         thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
+
+
+        Location location = Utils.getLocation(this.getActivity(), this.getContext());
+        thisLatitude = location.getLatitude();
+        thisLongitude = location.getLongitude();
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
@@ -104,7 +116,7 @@ public class HomepageFragment extends Fragment {
                     new Thread(() -> {
                         Log.e(TAG,"starting a thread for right swipe");
 
-                        if(thisUserType.equals("HOMEOWNER")) {
+                        if(thisUserType.equals("HOMEOWNERS")) {
                             swipedOnContractorHandler("Right", swipedName);
                         } else {
                             swipedOnProjectHandler("Right", swipedName);
@@ -129,7 +141,7 @@ public class HomepageFragment extends Fragment {
                     new Thread(() -> {
                         Log.e(TAG,"starting a thread for left swipe");
 
-                        if(thisUserType.equals("HOMEOWNER")) {
+                        if(thisUserType.equals("HOMEOWNERS")) {
                             swipedOnContractorHandler("Left", swipedName);
                         } else {
                             swipedOnProjectHandler("Left", swipedName);
@@ -144,7 +156,7 @@ public class HomepageFragment extends Fragment {
                 }
 
                 if (manager.getTopPosition() == adapter.getItemCount()){
-                    if(thisUserType.equals("HOMEOWNER")) {
+                    if(thisUserType.equals("HOMEOWNERS")) {
                         Toast.makeText(getActivity(), "No more contactors available", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getActivity(), "No more projects available", Toast.LENGTH_LONG).show();
@@ -194,14 +206,15 @@ public class HomepageFragment extends Fragment {
 
         Log.e(TAG,"adding initial cardstack with userType: " + thisUserType);
 
-        if(thisUserType.equals("HOMEOWNER")) {
+        Log.e(TAG,"I am: " + thisUserType + " " + thisUser);
+        if(thisUserType.equals("HOMEOWNERS")) {
             adapter.setCardStack(populateContractorsList());
         } else{
             adapter.setCardStack(populateProjectsList());
         }
 
+
         Log.e(TAG,"create adapter");
-        Log.e(TAG,"I am: " + thisUserType + " " + thisUser);
         cardStackView.setLayoutManager(manager);
 
         Log.e(TAG,"set manager");
@@ -231,15 +244,23 @@ public class HomepageFragment extends Fragment {
                             //Get user map
                             Map singleUser = (Map) entry.getValue();
                             //Get phone field and append to list
-                            Log.e(TAG,entry.toString());
-                            try{
-                                if(((ArrayList<String>) singleUser.get("swipedRightOnList")).contains(thisUser) ||
-                                        ((ArrayList<String>) singleUser.get("swipedLeftOnList")).contains(thisUser)){
-                                    continue;
-                                }
-                            } catch(NullPointerException exc){
-                                Log.e(TAG,"null pointer on" + entry.getKey());
+                            //Log.e(TAG,entry.toString());
+
+                            // skip cards which we already swiped
+                            if(checkIfAlreadySwiped(singleUser,thisUser)){
+                                Log.e(TAG,"continue, swiped");
+                                continue;
                             }
+
+                            // skip if too far
+                            if(!checkIfLocal(thisLatitude,thisLongitude,(Double) singleUser.get("latitude"),(Double) singleUser.get("longitude"))){
+                                Log.e(TAG,"continue, too far");
+                                continue;
+                            }
+
+
+                            // Add them all at once?
+                            Log.e(TAG,"adding new card?");
                             // Add them all at once?
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -282,16 +303,24 @@ public class HomepageFragment extends Fragment {
                             Map singleUser = (Map) entry.getValue();
                             //Get phone field and append to list
 
-                            Log.e(TAG,entry.getKey());
-                            try{
-                                if(((ArrayList<String>) singleUser.get("swipedRightOnList")).contains(thisUser) ||
-                                    ((ArrayList<String>) singleUser.get("swipedLeftOnList")).contains(thisUser)){
-                                    continue;
-                                }
-                            } catch(NullPointerException exc){
-                                Log.e(TAG,"null pointer on" + entry.getKey());
+                            //Log.e(TAG,entry.getKey());
+
+                            // skip cards which we already swiped
+                            if(checkIfAlreadySwiped(singleUser,thisUser)){
+                                Log.e(TAG,"continue, swiped");
+                                continue;
                             }
+
+                            // skip if too far
+                            if(!checkIfLocal(thisLatitude,thisLongitude,(Double) singleUser.get("latitude"),(Double) singleUser.get("longitude"))){
+                                Log.e(TAG,"continue, too far");
+                                continue;
+                            }
+
+
                             // Add them all at once?
+                            Log.e(TAG,"adding new card?");
+
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
                                     (String) entry.getKey(),
@@ -404,5 +433,41 @@ public class HomepageFragment extends Fragment {
 
             }
         });
+    }
+
+    private boolean checkIfAlreadySwiped(Map currentUser, String userName) throws NullPointerException {
+        try{
+            if(((ArrayList<String>) currentUser.get("swipedRightOnList")).contains(userName) ||
+                    ((ArrayList<String>) currentUser.get("swipedLeftOnList")).contains(userName)){
+                return true;
+            } else{
+                return false;
+            }
+        } catch(NullPointerException exc){
+            Log.e(TAG,exc.getMessage());
+        }
+        return false;
+    }
+
+    private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude){
+        Log.e(TAG,"myLat: " + myLatitude);
+        Log.e(TAG,"myLong: " + myLongitude);
+        Log.e(TAG,"otherLat: " + otherLatitude);
+        Log.e(TAG,"otherLong: " + otherLongitude);
+        Log.e(TAG,"distance in miles: " + Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude));
+
+        try{
+            if(Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude) <= distanceLimit){
+
+                Log.e(TAG,"returning true");
+                return true;
+            } else{
+                Log.e(TAG,"returning false");
+                return false;
+            }
+        } catch(NullPointerException exc){
+            Log.e(TAG,exc.getMessage());
+        }
+        return false;
     }
 }
