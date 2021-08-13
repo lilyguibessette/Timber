@@ -1,16 +1,17 @@
 package edu.neu.madcourse.timber.profile.update;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
@@ -26,13 +27,15 @@ import com.google.firebase.firestore.auth.User;
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.ProfileFragment;
-import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 
-public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
+import static android.content.Context.MODE_PRIVATE;
+
+public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
     private Button updateButton;
     private Button createButton;
+    private Button updatePicButton;
     private Button logout;
     public String my_username;
     public String my_usertype = "HOMEOWNERS";
@@ -41,6 +44,11 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
     public String my_email;
     public String my_zip;
     public String my_phone;
+
+    private static final int RESULT_OK = -1;
+    private static int RESULT_LOAD_IMAGE = 1;
+    private static final int PICK_IMAGE = 100;
+    Uri imageUri;
 
     public UpdateHomeownerProfileDialogFragment() {
         // Required empty public constructor
@@ -61,6 +69,7 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.update_account_homeowner, container, false);
 
+
         createButton = view.findViewById(R.id.update_account);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,11 +86,22 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "Update complete" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
 
 
             }
+        });
+
+        // https://www.tutorialspoint.com/how-to-pick-an-image-from-image-gallery-in-android
+        updatePicButton = view.findViewById(R.id.update_image);
+        updatePicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(gallery, PICK_IMAGE);
+            }
+
         });
 
         updateButton = view.findViewById(R.id.cancel_button);
@@ -92,7 +112,7 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to cancel" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "going to cancel", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
@@ -149,9 +169,17 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
             });
 
         }).start();
+
     }
 
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data, View view) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            imageUri = data.getData();
+            ImageView image = (ImageView) view.findViewById(R.id.image);
+            image.setImageURI(imageUri);
+        }
+    }
 }
 
 

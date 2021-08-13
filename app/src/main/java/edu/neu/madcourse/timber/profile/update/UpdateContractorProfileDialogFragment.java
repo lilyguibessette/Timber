@@ -1,14 +1,21 @@
 package edu.neu.madcourse.timber.profile.update;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
@@ -32,6 +39,7 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
     private Button cancelButton;
     private Button updateButton;
+    private Button updatePicButton;
     private Button logout;
     public String my_username;
     public String my_usertype = "CONTRACTORS";
@@ -40,6 +48,11 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     public String my_email;
     public String my_zip;
     public String my_phone;
+
+    private static final int RESULT_OK = -1;
+    private static int RESULT_LOAD_IMAGE = 1;
+    private static final int PICK_IMAGE = 100;
+    Uri imageUri;
 
     public UpdateContractorProfileDialogFragment() {
         // Required empty public constructor
@@ -59,6 +72,17 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.update_account_contractor, container, false);
+
+        // https://www.tutorialspoint.com/how-to-pick-an-image-from-image-gallery-in-android
+        updatePicButton = view.findViewById(R.id.update_image);
+        updatePicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(gallery, PICK_IMAGE);
+            }
+
+        });
 
         updateButton = view.findViewById(R.id.update_account);
         updateButton.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +134,7 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
                 startActivity(new Intent(getActivity(), MainActivity.class));
             }
         });
+
         return view;
     }
 
@@ -151,6 +176,14 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
         }).start();
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data, View view){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
+            imageUri = data.getData();
+            ImageView image = (ImageView) view.findViewById(R.id.image);
+            image.setImageURI(imageUri);
+        }
+    }
 }
 
 

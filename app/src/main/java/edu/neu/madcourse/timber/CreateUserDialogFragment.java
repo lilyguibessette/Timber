@@ -13,8 +13,10 @@ public class CreateUserDialogFragment extends DialogFragment {
 
     public interface CreateUserDialogListener {
         void onDialogPositiveClick(DialogFragment linkDialog);
+
         void onDialogNegativeClick(DialogFragment linkDialog);
     }
+
     CreateUserDialogListener listener;
 
     @Override

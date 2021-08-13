@@ -1,21 +1,12 @@
 package edu.neu.madcourse.timber;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,38 +17,21 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
-import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
-
-import static android.content.ContentValues.TAG;
-import static java.security.AccessController.getContext;
 
 //TODO NOTES
 /*
@@ -113,17 +87,17 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERTYPE, null);
         if (my_username != null && my_usertype != null && my_username != "LOGOUT") {
-            Log.e(TAG,"start activity 114");
+            Log.e(TAG, "start activity 114");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
         if (savedInstanceState != null && savedInstanceState.containsKey(USERNAME)) {
-            Log.e(TAG,"start activity 114");
+            Log.e(TAG, "start activity 114");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         }
         setContentView(R.layout.login_screen);
 
 
-        location = getLocation();
+        // location = getLocation();
 
         // hide the action bar for aesthetics
         getSupportActionBar().hide();
@@ -148,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         radioGroupUserType = (RadioGroup) findViewById(R.id.login_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
 
-        Log.e(TAG," " + selectedUserType);
+        Log.e(TAG, " " + selectedUserType);
 
         radioButtonUserType = (RadioButton) findViewById(selectedUserType);
 
@@ -219,18 +193,18 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         radioGroupUserType = (RadioGroup) createUserDialog.findViewById(R.id.radiogroup_usertype);
         int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
 
-        Log.e(TAG," " + selectedUserType);
+        Log.e(TAG, " " + selectedUserType);
 
         radioButtonUserType = (RadioButton) createUserDialog.findViewById(selectedUserType);
         String usertype = radioButtonUserType.getText().toString();
 
-        Log.e(TAG,usertype);
+        Log.e(TAG, usertype);
 
         if (usertype.equals("Homeowner")) {
-            Log.e(TAG,"entered if");
+            Log.e(TAG, "entered if");
             my_usertype = HOMEOWNERS;
         } else {
-            Log.e(TAG,"entered else");
+            Log.e(TAG, "entered else");
             my_usertype = CONTRACTORS;
         }
 
@@ -255,9 +229,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             View parentLayout = findViewById(android.R.id.content);
             Snackbar.make(parentLayout, R.string.new_account_confirm, Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            Log.e(TAG,"pre login");
+            Log.e(TAG, "pre login");
             login_user();
-            Log.e(TAG,"post login");
+            Log.e(TAG, "post login");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
         } else {
             Toast.makeText(MainActivity.this, R.string.create_account_error, Toast.LENGTH_SHORT).show();
@@ -285,15 +259,15 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        Log.e(TAG,"login_user: User exists in DB");
-                        Log.e(TAG,"login_user: " + my_usertype);
+                        Log.e(TAG, "login_user: User exists in DB");
+                        Log.e(TAG, "login_user: " + my_usertype);
                         startActivity(new Intent(MainActivity.this, HomepageActivity.class));
                     } else {
-                        Log.e(TAG,"login_user: User does not exist in DB");
-                        Log.e(TAG,"login_user: " + my_usertype);
-                        Log.e(TAG,location.toString());
-                       // Log.e(TAG,location.getLatitude());
-                        Log.e(TAG,String.valueOf(location.getLongitude()));
+                        Log.e(TAG, "login_user: User does not exist in DB");
+                        Log.e(TAG, "login_user: " + my_usertype);
+                        Log.e(TAG, location.toString());
+                        // Log.e(TAG,location.getLatitude());
+                        Log.e(TAG, String.valueOf(location.getLongitude()));
                         if (my_usertype.equals(HOMEOWNERS)) {
                             try {
                                 myUserRef.setValue(new Homeowner(my_username,
@@ -305,10 +279,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                                         my_email,
                                         my_zip,
                                         my_phone));
-                            } catch(NullPointerException exc){
+                            } catch (NullPointerException exc) {
                                 Toast.makeText(MainActivity.this, "Invalid login, please check username", Toast.LENGTH_SHORT).show();
-                                Log.e(TAG,"null pointer exception");
-                                Log.e(TAG,exc.getMessage());
+                                Log.e(TAG, "null pointer exception");
+                                Log.e(TAG, exc.getMessage());
                             }
                         } else {
                             try {
@@ -321,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                                         my_email,
                                         my_zip,
                                         my_phone));
-                            } catch(NullPointerException exc){
+                            } catch (NullPointerException exc) {
                                 Toast.makeText(MainActivity.this, "Invalid login, please check username", Toast.LENGTH_SHORT).show();
-                                Log.e(TAG,"null pointer exception");
-                                Log.e(TAG,exc.getMessage());
+                                Log.e(TAG, "null pointer exception");
+                                Log.e(TAG, exc.getMessage());
                             }
                         }
                     }
@@ -340,8 +314,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
         }).start();
     }
-
-
 
 
     public void readData(DatabaseReference ref, final OnGetDataListener listener) {
