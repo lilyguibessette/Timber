@@ -20,7 +20,8 @@ public class Project {
     private double latitude;
     private double longitude;
     public boolean completed;
-    private List<String> swipedByList= new ArrayList<>();
+    private ArrayList<String> swipedRightOnList;
+    private ArrayList<String> swipedLeftOnList;
     private List<String> matchList= new ArrayList<>();
     private HashMap<String, ArrayList<Message>> messageThreads = new HashMap<>();// from contractor, messagethread
 
@@ -36,9 +37,11 @@ public class Project {
         this.project_type = project_type;
         this.completed = true;
         this.project_id = username + "_" + project_name;
-        this.swipedByList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-        this.swipedByList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME","Welcome to Timber!"));
@@ -53,9 +56,11 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.completed = false;
-        this.swipedByList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-        this.swipedByList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME","Welcome to Timber!"));
@@ -70,9 +75,11 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.completed = false;
-        this.swipedByList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-        this.swipedByList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME","Welcome to Timber!"));
@@ -91,9 +98,11 @@ public class Project {
         this.latitude = latitude;
         this.longitude = longitude;
         this.completed = false;
-        this.swipedByList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
-        this.swipedByList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME","Welcome to Timber!"));
@@ -112,10 +121,12 @@ public class Project {
         this.longitude = longitude;
         this.completed = completed;
 
-        this.swipedByList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
 
-        this.swipedByList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME","Welcome to Timber!"));
@@ -147,8 +158,11 @@ public class Project {
     public void setCompleted(boolean completed){
         this.completed = completed;
     }
-    public List<String> getSwipedByList(){
-        return this.swipedByList;
+    public ArrayList<String> getSwipedRightOnList(){
+        return this.swipedRightOnList;
+    }
+    public ArrayList<String> getSwipedLeftOnList(){
+        return this.swipedLeftOnList;
     }
     public List<String> getMatchList(){
         return this.matchList;
@@ -157,6 +171,11 @@ public class Project {
     public double getLongitude(){return this.longitude; }
     public void setLatitude(double latitude){this.latitude =latitude;}
     public void setLongitude(double longitude){ this.longitude  = longitude;}
+
+    public void addRightSwipedOn(String username){ swipedRightOnList.add(username); }
+    public void addLeftSwipedOn(String username){
+        swipedLeftOnList.add(username);
+    }
 
     public HashMap<String, ArrayList<Message>> getMessageThreads(){
         return this.messageThreads;

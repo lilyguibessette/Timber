@@ -122,9 +122,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         }
         setContentView(R.layout.login_screen);
 
-
-        location = getLocation();
-
         // hide the action bar for aesthetics
         getSupportActionBar().hide();
 
@@ -174,21 +171,26 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         }
 
         login_button.setOnClickListener(view -> {
-
+            SharedPreferences sharedPreferences2 = getSharedPreferences("TimberSharedPref",
+                    MODE_PRIVATE);
+            SharedPreferences.Editor myEdit2 = sharedPreferences2.edit();
 
             //TODO VALIDATE LOGIN FROM DB QUERY
-            my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
+            int radioUserType = radioGroupUserType.getCheckedRadioButtonId();
+            radioButtonUserType = (RadioButton) findViewById(radioUserType);
 
+            my_usertype = radioButtonUserType.getText().toString().toUpperCase();
+            my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
+            Log.e(TAG,"181, my_usertype is "+ my_usertype);
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
-
+            myEdit2.putString(USERNAME, my_username);
+            myEdit2.putString(USERTYPE, my_usertype);
             // Write a message to the database
             login_user();
 
             // Store the username in shared preferences to skip login if already done
-            SharedPreferences sharedPreferences2 = getSharedPreferences("TimberSharedPref",
-                    MODE_PRIVATE);
-            SharedPreferences.Editor myEdit2 = sharedPreferences2.edit();
+
             myEdit2.putString(USERNAME, my_username);
             myEdit2.putString(USERTYPE, my_usertype);
             myEdit2.putString("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);

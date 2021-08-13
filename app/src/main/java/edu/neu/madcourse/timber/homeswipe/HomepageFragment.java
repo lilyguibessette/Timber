@@ -42,6 +42,7 @@ import edu.neu.madcourse.timber.OnGetDataListener;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
+import edu.neu.madcourse.timber.users.Project;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -53,10 +54,11 @@ public class HomepageFragment extends Fragment {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference contractorsRef = database.getReference("CONTRACTORS/");
     DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/");
-    DatabaseReference currentContractorCardRef;
+    DatabaseReference currentCardRef;
     DataSnapshot contractorData;
     String swipedName;
-
+    String thisUserType;
+    String thisUser;
 
     public HomepageFragment() {
         // Required empty public constructor
@@ -76,7 +78,8 @@ public class HomepageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // get Username
-        String thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
+        thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
+        thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
@@ -100,44 +103,12 @@ public class HomepageFragment extends Fragment {
                     // ASYNC OPERATIONS BABY
                     new Thread(() -> {
                         Log.e(TAG,"starting a thread for right swipe");
-                        currentContractorCardRef = contractorsRef.child(swipedName);
 
-                        currentContractorCardRef.get();
-
-                        currentContractorCardRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                               public Contractor contractor;
-
-                               @Override
-                               public void onDataChange(DataSnapshot dataSnapshot) {
-                                   // get other user so we can add a new message
-                                   contractor = dataSnapshot.getValue(Contractor.class);
-                                   if (contractor != null && dataSnapshot != null) {
-                                       // add message to user
-                                       Log.w(TAG, "attempting to add: " + thisUser);
-                                       contractor.getSwipedOnList().add(thisUser);
-                                       currentContractorCardRef.setValue(contractor).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                           @Override
-                                           public void onSuccess(Void aVoid) {
-                                               Log.w(TAG, "updated contractor on swipe list");
-                                           }
-                                       })
-                                       .addOnFailureListener(new OnFailureListener() {
-                                           @Override
-                                           public void onFailure(@NonNull Exception e) {
-                                               Log.w(TAG, "FAILED to update contactor on swipe list");
-                                           }
-                                       });
-                                   }
-                               }
-
-                               @Override
-                               public void onCancelled
-                                       (DatabaseError error) {
-                                   // Getting Post failed, log a message
-                                   Log.w(TAG, "update contractor swipedby failed", error.toException());
-
-                               }
-                           });
+                        if(thisUserType.equals("HOMEOWNER")) {
+                            swipedOnContractorHandler("Right", swipedName);
+                        } else {
+                            swipedOnProjectHandler("Right", swipedName);
+                        }
 
                         Log.e(TAG,"ending a thread for right swipe");
                     }).start();
@@ -151,20 +122,34 @@ public class HomepageFragment extends Fragment {
                 }
                 if (direction == Direction.Left){
                     Log.d(TAG, "Swipe Direction Left");
-                    //Toast.makeText(HomepageFragment.this, "Direction Left", Toast.LENGTH_SHORT).show();
+                    swipedName = adapter.getFirstCard().getUsername();
+                    Log.e(TAG,"left swipe username is " + swipedName);
+
+                    // ASYNC OPERATIONS BABY
+                    new Thread(() -> {
+                        Log.e(TAG,"starting a thread for left swipe");
+
+                        if(thisUserType.equals("HOMEOWNER")) {
+                            swipedOnContractorHandler("Left", swipedName);
+                        } else {
+                            swipedOnProjectHandler("Left", swipedName);
+                        }
+
+                        Log.e(TAG,"ending a thread for left swipe");
+                    }).start();
                 }
                 if (direction == Direction.Bottom){
                     Log.d(TAG, "Swipe Direction Bottom");
                     // Toast.makeText(HomepageFragment.this, "Direction Bottom", Toast.LENGTH_SHORT).show();
                 }
 
-                // Paginating
-                if (manager.getTopPosition() == adapter.getItemCount() - 5){
-                    //paginate();
-                }
-
                 if (manager.getTopPosition() == adapter.getItemCount()){
-                    Toast.makeText(getActivity(), "No more cards available", Toast.LENGTH_LONG).show();
+                    if(thisUserType.equals("HOMEOWNER")) {
+                        Toast.makeText(getActivity(), "No more contactors available", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "No more projects available", Toast.LENGTH_LONG).show();
+                    }
+
                 }
 
             }
@@ -207,12 +192,16 @@ public class HomepageFragment extends Fragment {
 
         adapter = new CardStackAdapter();
 
-        Log.e(TAG,"adding initial cardstack");
+        Log.e(TAG,"adding initial cardstack with userType: " + thisUserType);
 
-        adapter.setCardStack(populateList());
+        if(thisUserType.equals("HOMEOWNER")) {
+            adapter.setCardStack(populateContractorsList());
+        } else{
+            adapter.setCardStack(populateProjectsList());
+        }
 
         Log.e(TAG,"create adapter");
-
+        Log.e(TAG,"I am: " + thisUserType + " " + thisUser);
         cardStackView.setLayoutManager(manager);
 
         Log.e(TAG,"set manager");
@@ -226,52 +215,62 @@ public class HomepageFragment extends Fragment {
         return view;
     }
 
-    private void paginate() {
-        List<SwipeCard> old = adapter.getCardStack();
-        List<SwipeCard> fresh = new ArrayList<>(populateList());
-        CardStackCallback callback = new CardStackCallback(old, fresh);
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
-        adapter.setCardStack(fresh);
-        result.dispatchUpdatesTo(adapter);
-    }
-
-    private List<SwipeCard> populateList() {
+    private List<SwipeCard> populateContractorsList() {
         // This might work? https://stackoverflow.com/questions/64655837/cards-stack-swipe-add-card-in-the-back-after-swiping-removing-top-card
         Log.e(TAG,"populateList called");
         List<SwipeCard> cardStack= new ArrayList<>();
-        final ArrayList<String>[] userNames = new ArrayList[]{new ArrayList<String>()};
 
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference(
-                "CONTRACTORS");
-/*
-        readData(usersRef, new OnGetDataListener() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
+        contractorsRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String,Object> userData = (Map<String,Object>) dataSnapshot.getValue();
+                        //Get map of users in datasnapshot
+                        for (Map.Entry<String, Object> entry : userData.entrySet()){
 
-                //got data from database....now you can use the retrieved data
-                userNames[0] = collectUsers((Map<String,Object>) dataSnapshot.getValue());
+                            //Get user map
+                            Map singleUser = (Map) entry.getValue();
+                            //Get phone field and append to list
+                            Log.e(TAG,entry.toString());
+                            try{
+                                if(((ArrayList<String>) singleUser.get("swipedRightOnList")).contains(thisUser) ||
+                                        ((ArrayList<String>) singleUser.get("swipedLeftOnList")).contains(thisUser)){
+                                    continue;
+                                }
+                            } catch(NullPointerException exc){
+                                Log.e(TAG,"null pointer on" + entry.getKey());
+                            }
+                            // Add them all at once?
+                            cardStack.add(new SwipeCard(
+                                    (String) singleUser.get("image"),
+                                    (String) singleUser.get("username"),
+                                    "Default description text here"));
+                            /*
+                            // add cards as they load (ish, basically the same result as above anyways)
+                            adapter.addCardToBack(new SwipeCard(
+                                    (String) singleUser.get("image"),
+                                    (String) singleUser.get("username"),
+                                    "Default description text here"));
+                            */
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
 
-                for(int i = 0; i < userNames[0].size();i++){
-                    Log.e(TAG,"for loop: " + userNames[0].get(i));
-                    cardStack.add(new SwipeCard(R.drawable.sample1, userNames[0].get(i), "24"));
-                }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //handle databaseError
+                    }
+                });
+        Log.e(TAG,"returning cardstack");
+        return cardStack;
+    }
 
-            }
-            @Override
-            public void onStart() {
-                //when starting
-                Log.e("ONSTART", "Started");
-            }
+    private List<SwipeCard> populateProjectsList() {
+        // This might work? https://stackoverflow.com/questions/64655837/cards-stack-swipe-add-card-in-the-back-after-swiping-removing-top-card
+        Log.e(TAG,"populateProjectsList called");
+        List<SwipeCard> cardStack= new ArrayList<>();
 
-            @Override
-            public void onFailure() {
-                Log.e("onFailure", "Failed");
-            }
-        });*/
-
-
-
-        usersRef.addListenerForSingleValueEvent(
+        activeProjectRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -283,20 +282,27 @@ public class HomepageFragment extends Fragment {
                             Map singleUser = (Map) entry.getValue();
                             //Get phone field and append to list
 
-                            Log.e(TAG,"collectUsers called");
-                            Log.e(TAG,entry.toString());
-
+                            Log.e(TAG,entry.getKey());
+                            try{
+                                if(((ArrayList<String>) singleUser.get("swipedRightOnList")).contains(thisUser) ||
+                                    ((ArrayList<String>) singleUser.get("swipedLeftOnList")).contains(thisUser)){
+                                    continue;
+                                }
+                            } catch(NullPointerException exc){
+                                Log.e(TAG,"null pointer on" + entry.getKey());
+                            }
                             // Add them all at once?
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
-                                    (String) singleUser.get("username"),
+                                    (String) entry.getKey(),
                                     "Default description text here"));
-/*
+                            /*
                             // add cards as they load (ish, basically the same result as above anyways)
                             adapter.addCardToBack(new SwipeCard(
                                     (String) singleUser.get("image"),
                                     (String) singleUser.get("username"),
-                                    "Default description text here"));*/
+                                    "Default description text here"));
+                            */
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -306,131 +312,97 @@ public class HomepageFragment extends Fragment {
                         //handle databaseError
                     }
                 });
-
-        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 1", "24"));
-        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 2", "20"));
-        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 3", "27"));
-        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 4", "19"));
-        //cardStack.add(new SwipeCard("default_profile_pic.PNG", "Manual test 5", "25"));
-
         Log.e(TAG,"returning cardstack");
-
         return cardStack;
     }
 
+    private void swipedOnContractorHandler(String direction, String swipedName) {
+        currentCardRef = contractorsRef.child(swipedName);
 
-    // This doesn't work
-    public List<SwipeCard> atomicPopulateList(){
-        List<SwipeCard> cardStack= new ArrayList<>();
-        final AtomicBoolean done = new AtomicBoolean(false);
-        final AtomicReference<String> userName = new AtomicReference<>();
-        final ArrayList<String>[] userNames = new ArrayList[]{new ArrayList<String>()};
+        currentCardRef.get();
 
-        //assuming you have already called firebase initialization code for admin sdk, android etc
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("CONTRACTORS");
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        currentCardRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            public Contractor contractor;
 
+            @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String,Object> userData = (Map<String,Object>) dataSnapshot.getValue();
-
-                //iterate through each user, ignoring their UID
-                for (Map.Entry<String, Object> entry : userData.entrySet()){
-
-                    //Get user map
-                    Map singleUser = (Map) entry.getValue();
-                    //Get phone field and append to list
-                    cardStack.add(new SwipeCard(
-                            (String) singleUser.get("image"),
-                            (String) singleUser.get("username"),
-                            "Default description text here"));
-                }
-
-                done.set(true);
-            }
-
-            public void onCancelled(DatabaseError error) {
-                
-            }
-        });
-        while (!done.get()){
-            Log.e(TAG,"not done");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        };
-
-        return cardStack;
-    }
-/*
-    // Doesn't work
-    private void addCards() {
-        new Thread(() -> {
-            Log.e(TAG,"trying to add testman");
-            adapter.addCardToBack(new SwipeCard(R.drawable.sample1, "testman", "24"));
-            Log.e(TAG,"add testman done");
-            Log.e(TAG,"addCards called");
-            final ArrayList<String>[] userNames = new ArrayList[]{new ArrayList<String>()};
-
-            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference(
-                    "CONTRACTORS");
-
-            usersRef.addListenerForSingleValueEvent(
-                    new ValueEventListener() {
+                // get other user so we can add a new message
+                contractor = dataSnapshot.getValue(Contractor.class);
+                if (contractor != null && dataSnapshot != null) {
+                    // add message to user
+                    Log.e(TAG, "attempting to add: " + thisUser);
+                    if(direction.equals("Right")){
+                        contractor.addRightSwipedOn(thisUser);
+                    } else{
+                        contractor.addLeftSwipedOn(thisUser);
+                    }
+                    currentCardRef.setValue(contractor).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            //Get map of users in datasnapshot
-                            userNames[0] = collectUsers((Map<String,Object>) dataSnapshot.getValue());
+                        public void onSuccess(Void aVoid) {
+                            Log.e(TAG, "updated contractor on swipe list");
                         }
-
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            //handle databaseError
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "FAILED to update contactor on swipe list");
                         }
                     });
-            Log.e(TAG,"start for loop");
-
-            for(int i = 0; i < userNames[0].size();i++){
-                Log.e(TAG,"for loop: " + userNames[0].get(i));
-                adapter.addCardToBack(new SwipeCard("default_profile_pic.PNG", userNames[0].get(i), "24"));
-            }
-            Log.e(TAG,"end for loop");
-        }).start();
-    }*/
-/*
-    private ArrayList<String[]> collectUsers(Map<String,Object> users) {
-        Log.e(TAG,"collectUsers called");
-
-        ArrayList<String[]> userData = new ArrayList<>();
-
-        //iterate through each user, ignoring their UID
-        for (Map.Entry<String, Object> entry : users.entrySet()){
-
-            //Get user map
-            Map singleUser = (Map) entry.getValue();
-            //Get phone field and append to list
-            userData.add((String) singleUser.get("username"));
-        }
-
-        return userData;
-    }*/
-
-    public void readData(DatabaseReference ref, final OnGetDataListener listener) {
-        listener.onStart();
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listener.onSuccess(dataSnapshot);
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+            public void onCancelled
+                    (DatabaseError error) {
+                // Getting Post failed, log a message
+                Log.e(TAG, "update contractor swipedby failed", error.toException());
 
             }
         });
-
     }
 
+    private void swipedOnProjectHandler(String direction, String swipedName) {
+        currentCardRef = activeProjectRef.child(swipedName);
 
+        currentCardRef.get();
+
+        currentCardRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            public Project project;
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // get other user so we can add a new message
+                project = dataSnapshot.getValue(Project.class);
+                if (project != null && dataSnapshot != null) {
+                    // add message to user
+                    Log.e(TAG, "attempting to add: " + thisUser);
+                    if(direction.equals("Right")){
+                        project.addRightSwipedOn(thisUser);
+                    } else{
+                        project.addLeftSwipedOn(thisUser);
+                    }
+                    currentCardRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.e(TAG, "updated project on swipe list");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "FAILED to update contactor on swipe list");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled
+                    (DatabaseError error) {
+                // Getting Post failed, log a message
+                Log.e(TAG, "update contractor swipedby failed", error.toException());
+
+            }
+        });
+    }
 }

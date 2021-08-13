@@ -20,7 +20,8 @@ public class Homeowner implements User {
     private String image;
     private ArrayList<String> activeProjectList;
     private ArrayList<String> completedProjectList;
-    private ArrayList<String> swipedOnList;
+    private ArrayList<String> swipedRightOnList;
+    private ArrayList<String> swipedLeftOnList;
     private ArrayList<String> matchList;
 
     public Homeowner(){
@@ -65,13 +66,15 @@ public class Homeowner implements User {
 
         this.activeProjectList = new ArrayList<>();
         this.completedProjectList = new ArrayList<>();
-        this.swipedOnList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
 
 
         this.activeProjectList.add("EMPTY");
         this.completedProjectList.add("EMPTY");
-        this.swipedOnList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
     }
 
@@ -107,7 +110,8 @@ public class Homeowner implements User {
 
         this.activeProjectList = new ArrayList<>();
         this.completedProjectList = new ArrayList<>();
-        this.swipedOnList = new ArrayList<>();
+        this.swipedRightOnList = new ArrayList<>();
+        this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
     }
 
@@ -150,8 +154,11 @@ public class Homeowner implements User {
         activeProjectList.remove(project_id);
     }
 
-    public void addSwipedOn(String username){
-        swipedOnList.add(username);
+    public void addRightSwipedOn(String username){
+        swipedRightOnList.add(username);
+    }
+    public void addLeftSwipedOn(String username){
+        swipedLeftOnList.add(username);
     }
     public void addMatch(String username){
         matchList.add(username);
@@ -168,7 +175,10 @@ public class Homeowner implements User {
         return this.completedProjectList;
     }
 
-    public ArrayList<String> getSwipedOnList(){
-        return this.swipedOnList;
+    public ArrayList<String> getSwipedRightOnList(){
+        return this.swipedRightOnList;
+    }
+    public ArrayList<String> getSwipedLeftOnList(){
+        return this.swipedLeftOnList;
     }
 }
