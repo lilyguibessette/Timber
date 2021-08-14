@@ -62,10 +62,14 @@ public class HomepageFragment extends Fragment {
     String swipedName;
     String thisUserType;
     String thisUser;
+    String thisProject;
     Location location;
     double thisLatitude;
     double thisLongitude;
     double distanceLimit = 20.0;
+    Homeowner selfHomeowner;
+    Contractor selfContractor;
+    Project selfProject;
 
     public HomepageFragment() {
         // Required empty public constructor
@@ -87,7 +91,17 @@ public class HomepageFragment extends Fragment {
         // get Username
         thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
+        //thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
+        thisProject = "CON_testProj12";
 
+
+        Log.e(TAG,"my project is: " + selfProject);
+
+        if(thisUserType.equals("HOMEOWNERS")) {
+            Toast.makeText(getActivity(), "No more contactors available", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getActivity(), "No more projects available", Toast.LENGTH_LONG).show();
+        }
 
         Location location = Utils.getLocation(this.getActivity(), this.getContext());
         thisLatitude = location.getLatitude();
@@ -107,10 +121,19 @@ public class HomepageFragment extends Fragment {
             @Override
             public void onCardSwiped(Direction direction) {
                 Log.d(TAG, "onCardSwiped: p=" + manager.getTopPosition() + " d=" + direction);
+                Log.e(TAG,"122 my project is: " + selfProject);
                 if (direction == Direction.Right){
                     Log.d(TAG, "Swipe Direction Right");
                     swipedName = adapter.getFirstCard().getUsername();
                     Log.e(TAG,"right swipe username is " + swipedName);
+
+                    new Thread(() -> {
+                        Log.e(TAG,"starting a thread for right swipe");
+
+                        //checkIfMatched(swipedName);
+
+                        Log.e(TAG,"ending a thread for right swipe");
+                    }).start();
 
                     // ASYNC OPERATIONS BABY
                     new Thread(() -> {
@@ -247,7 +270,7 @@ public class HomepageFragment extends Fragment {
                             //Log.e(TAG,entry.toString());
 
                             // skip cards which we already swiped
-                            if(checkIfAlreadySwiped(singleUser,thisUser)){
+                            if(checkIfAlreadySwiped(singleUser,thisProject)){
                                 Log.e(TAG,"continue, swiped");
                                 continue;
                             }
@@ -346,6 +369,43 @@ public class HomepageFragment extends Fragment {
     }
 
     private void swipedOnContractorHandler(String direction, String swipedName) {
+        final boolean[] willMatch = {false};
+        // Check if project/contractor will match first
+        if(direction.equals("Right")) {
+            activeProjectRef.child(thisProject).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // get the project referenced
+                    selfProject = dataSnapshot.getValue(Project.class);
+                    if ((selfProject.getSwipedRightOnList()).contains(swipedName)) ;
+                    {
+                        willMatch[0] = true;
+                        selfProject.getMatchList().add(swipedName);
+                        activeProjectRef.child(thisProject).setValue(selfProject).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.e(TAG, "updated project with match succeeded");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Log.e(TAG, "updated project with match failed");
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled
+                        (DatabaseError error) {
+                    // Getting Post failed, log a message
+                    Log.e(TAG, "update contractor swipedby failed", error.toException());
+
+                }
+            });
+        }
+
         currentCardRef = contractorsRef.child(swipedName);
 
         currentCardRef.get();
@@ -359,12 +419,17 @@ public class HomepageFragment extends Fragment {
                 contractor = dataSnapshot.getValue(Contractor.class);
                 if (contractor != null && dataSnapshot != null) {
                     // add message to user
-                    Log.e(TAG, "attempting to add: " + thisUser);
+                    Log.e(TAG, "attempting to add: " + thisProject);
                     if(direction.equals("Right")){
-                        contractor.addRightSwipedOn(thisUser);
+                        contractor.addRightSwipedOn(thisProject);
                     } else{
-                        contractor.addLeftSwipedOn(thisUser);
+                        contractor.addLeftSwipedOn(thisProject);
                     }
+                    Log.e(TAG, "will match: " + willMatch[0]);
+                    if(willMatch[0]){
+                        contractor.getMatchList().add(thisProject);
+                    }
+
                     currentCardRef.setValue(contractor).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -388,9 +453,49 @@ public class HomepageFragment extends Fragment {
 
             }
         });
+
+
     }
 
     private void swipedOnProjectHandler(String direction, String swipedName) {
+        final boolean[] willMatch = {false};
+        // Check if project/contractor will match first
+        if(direction.equals("Right")) {
+            contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // get the project referenced
+                    selfContractor = dataSnapshot.getValue(Contractor.class);
+                    if ((selfContractor.getSwipedRightOnList()).contains(swipedName)) ;
+                    {
+                        willMatch[0] = true;
+                        selfContractor.getMatchList().add(swipedName);
+                        contractorsRef.child(thisUser).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.e(TAG, "updated project with match succeeded");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Log.e(TAG, "updated project with match failed");
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled
+                        (DatabaseError error) {
+                    // Getting Post failed, log a message
+                    Log.e(TAG, "update contractor swipedby failed", error.toException());
+
+                }
+            });
+        }
+
+
         currentCardRef = activeProjectRef.child(swipedName);
 
         currentCardRef.get();
@@ -410,6 +515,12 @@ public class HomepageFragment extends Fragment {
                     } else{
                         project.addLeftSwipedOn(thisUser);
                     }
+
+                    Log.e(TAG, "will match: " + willMatch[0]);
+                    if(willMatch[0]){
+                        project.getMatchList().add(thisUser);
+                    }
+
                     currentCardRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

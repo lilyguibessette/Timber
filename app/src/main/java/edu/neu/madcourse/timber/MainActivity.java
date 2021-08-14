@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
         // hide the action bar for aesthetics
         getSupportActionBar().hide();
 
-        login_button = findViewById(R.id.login_button);
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
 
             // if there is an error, display some error information to the user
@@ -142,21 +141,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             }
         });
 
-        radioGroupUserType = (RadioGroup) findViewById(R.id.login_usertype);
-        int selectedUserType = radioGroupUserType.getCheckedRadioButtonId();
+        login_button = findViewById(R.id.login_button);
+        radioGroupUserType = findViewById(R.id.login_usertype);
 
-        Log.e(TAG," " + selectedUserType);
-
-        radioButtonUserType = (RadioButton) findViewById(selectedUserType);
-
-
-        // store the preferences in the username
-        my_username = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
-                USERNAME, null);
-        my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
-                USERTYPE, null);
-
-        my_usertype = radioButtonUserType.getText().toString().toUpperCase();
 
         SharedPreferences sharedPreferences = getSharedPreferences("TimberSharedPref",
                 MODE_PRIVATE);
