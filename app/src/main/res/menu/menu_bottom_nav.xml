@@ -14,7 +14,7 @@
     <item
         android:id="@+id/menu_messaging"
         android:icon="@drawable/icon_messages"
-        android:title="Messages" />
+        android:title="Matches" />
 
     <item
         android:id="@+id/menu_profile"
