@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Dialog">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
     <LinearLayout
         android:id="@+id/form"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
         <TextView
             style="@style/Timber.Title"
@@ -44,24 +43,12 @@
                 android:text="Contractor" />
         </RadioGroup>
 
-        <TextView
-            style="@style/Timber.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Username" />
-
         <EditText
             android:id="@+id/create_username"
             style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username" />
-
-        <TextView
-            style="@style/Timber.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="First name / Business name" />
 
         <EditText
             android:id="@+id/create_param1"
@@ -70,24 +57,12 @@
             android:layout_height="wrap_content"
             android:hint="First name / Business name" />
 
-        <TextView
-            style="@style/Timber.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Last name / Tax ID" />
-
         <EditText
             android:id="@+id/create_param2"
             style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last name / Tax ID" />
-
-        <TextView
-            style="@style/Timber.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Zip code" />
 
         <EditText
             android:id="@+id/create_zip"
@@ -96,24 +71,12 @@
             android:layout_height="wrap_content"
             android:hint="Zip code" />
 
-        <TextView
-            style="@style/Timber.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Email" />
-
         <EditText
             android:id="@+id/create_email"
             style="@style/Timber.Hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email" />
-
-        <TextView
-            style="@style/Timber.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Phone number" />
 
         <EditText
             android:id="@+id/create_phone"
@@ -124,4 +87,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
