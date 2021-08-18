@@ -98,39 +98,23 @@ public class HomepageFragment extends Fragment {
         // get Username
         thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
-/*
+
         contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // get the project referenced
                 selfContractor = dataSnapshot.getValue(Contractor.class);
-                if ((selfContractor.getSwipedRightOnList()).contains(swipedName)) ;
-                {
-                    willMatch[0] = true;
-                    selfContractor.getMatchList().add(swipedName);
-                    contractorsRef.child(thisUser).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.e(TAG, "updated project with match succeeded");
-                        }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull @NotNull Exception e) {
-                                    Log.e(TAG, "updated project with match failed");
-                                }
-                            });
-                }
+                thisRadius = selfContractor.getRadius();
             }
 
             @Override
             public void onCancelled
                     (DatabaseError error) {
                 // Getting Post failed, log a message
-                Log.e(TAG, "update contractor swipedby failed", error.toException());
+                Log.e(TAG, "cancelled get radius", error.toException());
 
             }
-        });*/
+        });
 
         thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
         Log.e(TAG,"my project is: " + thisProject);
