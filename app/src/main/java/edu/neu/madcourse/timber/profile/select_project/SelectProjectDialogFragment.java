@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 import edu.neu.madcourse.timber.R;
@@ -93,14 +94,15 @@ public class SelectProjectDialogFragment extends DialogFragment {
 
             @Override
             public void onDataChange(@androidx.annotation.NonNull @NotNull DataSnapshot snapshot) {
-
                 Map<String,Object> projectData = (Map<String,Object>) snapshot.getValue();
-
 
                 for(Map.Entry<String, Object> each : projectData.entrySet()){
                     Map singleProject = (Map) each.getValue();
                     projects.add((String) singleProject.get("project_id"));
                 };
+
+
+
                 createRecyclerView(view);
             }
 

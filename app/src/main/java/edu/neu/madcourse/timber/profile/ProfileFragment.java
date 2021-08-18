@@ -25,7 +25,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.create_project.CreateProjectDialogFragment;
@@ -99,6 +103,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
+                "ACTIVE_PROJECTS");
         // connect to the database and look at the users
         my_username = sharedPreferences.getString(USERNAME, null);
         my_usertype = sharedPreferences.getString(USERTYPE, null);
@@ -191,10 +197,31 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 if (my_usertype.equals(HOMEOWNERS)) {
                     Log.e("ProfileFragment", "ProfileFragment to select active project");
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.container, new SelectProjectDialogFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+
+                    projectsRef.orderByChild("username").equalTo(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@androidx.annotation.NonNull @NotNull DataSnapshot snapshot) {
+                            Map<String,Object> projectData = (Map<String,Object>) snapshot.getValue();
+
+                            if(Objects.isNull(projectData)){
+                                Toast.makeText(getActivity(), "No Projects to select! Please create a project" , Toast.LENGTH_SHORT).show();
+                                return;
+                            } else{
+                                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                                fragmentTransaction.replace(R.id.container, new SelectProjectDialogFragment());
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@androidx.annotation.NonNull @NotNull DatabaseError error) {
+
+                        }
+                    });
+
+
                 } else {
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                     View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
