@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +61,7 @@ public class ProfileFragment extends Fragment {
     private LinearLayoutManager completedProjectLayoutManager;
     private ProjectAdapter completedProjectsAdapter;
     private int completedProjectSize = 0;
+    private Contractor selfContractor;
     public String my_username;
     public String my_usertype;
     public String my_param1;
@@ -75,6 +78,9 @@ public class ProfileFragment extends Fragment {
     private static final String HOMEOWNERS = "HOMEOWNERS";
     private static String CLIENT_REGISTRATION_TOKEN;
     private static final String TAG = "MatchesFragment";
+    private DatabaseReference contractorsRef = FirebaseDatabase.getInstance().getReference(
+            "CONTRACTORS");
+
     String other_username;
     Button action_button;
     Button select_button;
@@ -84,6 +90,7 @@ public class ProfileFragment extends Fragment {
     int start = 0; //you need to give starting value of SeekBar
     int end = 1000; //you need to give end value of SeekBar
     int start_pos = 20; //you need to give starting position value of SeekBar
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -105,6 +112,7 @@ public class ProfileFragment extends Fragment {
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
         DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
                 "ACTIVE_PROJECTS");
+
         // connect to the database and look at the users
         my_username = sharedPreferences.getString(USERNAME, null);
         my_usertype = sharedPreferences.getString(USERTYPE, null);
@@ -139,6 +147,7 @@ public class ProfileFragment extends Fragment {
         } else {
             action_button.setText("RADIUS");
         }
+
         action_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +185,8 @@ public class ProfileFragment extends Fragment {
                         }
                     });
                     Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
+
+
 
                     dialogBuilder.setView(updateRadiusView);
                     AlertDialog dialog = dialogBuilder.create();
@@ -390,6 +401,11 @@ public class ProfileFragment extends Fragment {
                             Toast.makeText(getActivity(), "Discrete is " + discrete
                                     + " so changed radius to " + my_user.getRadius(),
                                     Toast.LENGTH_SHORT).show();
+
+                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                            myEdit.putString("RADIUS",String.valueOf(discrete));
+                            myEdit.putString(USERTYPE, my_usertype);
+                            myEdit.commit();
                             myUserRef.setValue(my_user);
                         }
 

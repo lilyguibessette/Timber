@@ -210,9 +210,6 @@ public class NewsFeedFragment extends Fragment {
                 }
             }
         }
-
-
-
     }
 
     private void createRecyclerView(View view) {
@@ -226,12 +223,6 @@ public class NewsFeedFragment extends Fragment {
         newsFeedRecyclerView.setAdapter(newsFeedAdapter);
         newsFeedRecyclerView.setLayoutManager(newsPostLayoutManager);
     }
-
-
-
-
-
-
 
     /**
      * LISTENERS FOR DATA CHANGES

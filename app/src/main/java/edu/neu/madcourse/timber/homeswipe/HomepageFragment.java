@@ -72,6 +72,7 @@ public class HomepageFragment extends Fragment {
     double thisLatitude;
     double thisLongitude;
     double distanceLimit = 20.0;
+    Integer thisRadius;
     Homeowner selfHomeowner;
     Contractor selfContractor;
     Project selfProject;
@@ -97,6 +98,39 @@ public class HomepageFragment extends Fragment {
         // get Username
         thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
+/*
+        contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // get the project referenced
+                selfContractor = dataSnapshot.getValue(Contractor.class);
+                if ((selfContractor.getSwipedRightOnList()).contains(swipedName)) ;
+                {
+                    willMatch[0] = true;
+                    selfContractor.getMatchList().add(swipedName);
+                    contractorsRef.child(thisUser).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.e(TAG, "updated project with match succeeded");
+                        }
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Log.e(TAG, "updated project with match failed");
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled
+                    (DatabaseError error) {
+                // Getting Post failed, log a message
+                Log.e(TAG, "update contractor swipedby failed", error.toException());
+
+            }
+        });*/
 
         thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
         Log.e(TAG,"my project is: " + thisProject);
@@ -281,7 +315,10 @@ public class HomepageFragment extends Fragment {
                             }
 
                             // skip if too far
-                            if (!checkIfLocal(thisLatitude, thisLongitude, (Double) singleUser.get("latitude"), (Double) singleUser.get("longitude"))) {
+                            if (!checkIfLocal(thisLatitude, thisLongitude,
+                                    (Double) singleUser.get("latitude"),
+                                    (Double) singleUser.get("longitude"),
+                                    (Integer) singleUser.get("radius"))) {
                                 Log.e(TAG, "continue, too far");
                                 continue;
                             }
@@ -341,7 +378,7 @@ public class HomepageFragment extends Fragment {
 
                             // skip if too far
                             if (!checkIfLocal(thisLatitude, thisLongitude, (Double) singleUser.
-                                    get("latitude"), (Double) singleUser.get("longitude"))) {
+                                    get("latitude"), (Double) singleUser.get("longitude"),thisRadius)) {
                                 Log.e(TAG, "continue, too far");
                                 continue;
                             }
@@ -354,13 +391,6 @@ public class HomepageFragment extends Fragment {
                                     (String) singleUser.get("image"),
                                     (String) entry.getKey(),
                                     "Default description text here"));
-                            /*
-                            // add cards as they load (ish, basically the same result as above anyways)
-                            adapter.addCardToBack(new SwipeCard(
-                                    (String) singleUser.get("image"),
-                                    (String) singleUser.get("username"),
-                                    "Default description text here"));
-                            */
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -561,16 +591,17 @@ public class HomepageFragment extends Fragment {
         return false;
     }
 
-    private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude) {
+    private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude, Integer radius) {
         Log.e(TAG, "myLat: " + myLatitude);
         Log.e(TAG, "myLong: " + myLongitude);
         Log.e(TAG, "otherLat: " + otherLatitude);
         Log.e(TAG, "otherLong: " + otherLongitude);
         Log.e(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
+        Log.e(TAG, "radius: " + radius);
 
         try {
             // TODO: should use the getRadius function that contractors have - tried but got a null pointer
-            if (Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude) <= distanceLimit) {
+            if (Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude) <= radius) {
                 Log.e(TAG, "returning true");
                 return true;
             } else {

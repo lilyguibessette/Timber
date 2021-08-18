@@ -14,6 +14,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,10 +69,13 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
         void setData(SwipeCard data) {
             Log.e(TAG,"setting data");
-            StorageReference imageRef = storageReference.child(data.getImage());
-            Glide.with(view)
-                    .load(imageRef)
-                    .into(image);
+            if(!Objects.isNull(data.getImage())){
+                StorageReference imageRef = storageReference.child(data.getImage());
+                Glide.with(view)
+                        .load(imageRef)
+                        .into(image);
+            }
+
             username.setText(data.getUsername());
             details.setText(data.getDetails());
         }

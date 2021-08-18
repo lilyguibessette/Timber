@@ -101,8 +101,6 @@ public class SelectProjectDialogFragment extends DialogFragment {
                     projects.add((String) singleProject.get("project_id"));
                 };
 
-
-
                 createRecyclerView(view);
             }
 
