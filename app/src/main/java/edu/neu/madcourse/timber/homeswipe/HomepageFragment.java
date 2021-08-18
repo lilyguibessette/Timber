@@ -233,12 +233,12 @@ public class HomepageFragment extends Fragment {
         if (thisUserType.equals("HOMEOWNERS")) {
             adapter.setCardStack(populateContractorsList());
             if(adapter.getItemCount() == 0){
-                Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
             }
         } else{
             adapter.setCardStack(populateProjectsList());
             if(adapter.getItemCount() == 0){
-                Toast.makeText(getActivity(), "No Projects found, check back later!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "No Projects found, check back later!", Toast.LENGTH_LONG).show();
             }
         }
 
