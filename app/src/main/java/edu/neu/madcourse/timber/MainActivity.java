@@ -61,13 +61,13 @@ import static java.security.AccessController.getContext;
 
 //TODO NOTES
 /*
-- Photo upload
+- Photo upload > put some todos around - got photo selection to work and replace the imageview - need to hook up to database
 - fix login issues?
 - Messaging  notifications and read in recycler views from database
 - Finalize database structures
    - Need to plug everything in
-- GPS and filtering > dvt - updated the radius for the contractor user... need to put GPS into matching criteria
-- Match notifications > dvt -
+- GPS and filtering
+- Match notifications
 - login is still wonky - need to be careful and clean up where shared prefs are used
 
  */

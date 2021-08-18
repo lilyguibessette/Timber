@@ -4,13 +4,18 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
@@ -23,13 +28,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.ProfileFragment;
-import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 
-public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
+public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
     private Button updateButton;
     private Button createButton;
@@ -41,6 +51,17 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
     public String my_email;
     public String my_zip;
     public String my_phone;
+
+    // items related to the update image section
+    ImageView imageView;
+    private Button updateImageButton;
+    private static final int PICK_IMAGE = 100;
+    private final int PICK_IMAGE_GALLERY = 2;
+    private Bitmap bitmap;
+    private InputStream inputStreamImg;
+    private File destination = null;
+    private String imgPath = null;
+    Uri imageUri;
 
     public UpdateHomeownerProfileDialogFragment() {
         // Required empty public constructor
@@ -77,11 +98,20 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "Update complete" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
-
-
             }
+        });
+
+        updateImageButton = view.findViewById(R.id.update_image);
+        imageView = view.findViewById(R.id.image);
+        updateImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(gallery, PICK_IMAGE);
+                }
         });
 
         updateButton = view.findViewById(R.id.cancel_button);
@@ -92,7 +122,7 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to cancel" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "going to cancel", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
@@ -151,11 +181,39 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
         }).start();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
+        super.onActivityResult(requestCode, resultCode, gallery);
+        inputStreamImg = null;
+        Uri selectedImage = gallery.getData();
+
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().
+                    getContentResolver(), selectedImage);
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+            destination = new File(getRealPathFromURI(selectedImage));
+            imageView.setImageBitmap(bitmap);
+            //TODO: upload the image to the database
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), "Photo error",
+                    Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        Toast.makeText(getActivity(), "Picked photo:" +
+                gallery.getData().toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Audio.Media.DATA};
+        Cursor cursor = getContext().getContentResolver().query(contentUri, proj,
+                null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
 
 }
-
-
-
 /*
 
     public void onDialogPositiveClick(DialogFragment viewFragment) {
@@ -210,6 +268,7 @@ public class UpdateHomeownerProfileDialogFragment extends  DialogFragment{
                 Toast.makeText(getActivity(), R.string.update_account_error, Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
  */

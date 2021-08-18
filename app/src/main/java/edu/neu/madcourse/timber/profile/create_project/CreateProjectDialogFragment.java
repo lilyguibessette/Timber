@@ -7,9 +7,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +38,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +64,17 @@ public class CreateProjectDialogFragment extends DialogFragment {
     private String my_username;
     private Location location;
 
+    // items related to the update image section
+    ImageView imageView;
+    private Button updateImageButton;
+    private static final int PICK_IMAGE = 100;
+    private final int PICK_IMAGE_GALLERY = 2;
+    private Bitmap bitmap;
+    private InputStream inputStreamImg;
+    private File destination = null;
+    private String imgPath = null;
+    Uri imageUri;
+
     public CreateProjectDialogFragment() {
         // Required empty public constructor
     }
@@ -75,6 +95,17 @@ public class CreateProjectDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.create_project, container, false);
         my_username = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 "USERNAME", null);
+
+        imageView = view.findViewById(R.id.add_image);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(gallery, PICK_IMAGE);
+            }
+        });
+
         createButton = view.findViewById(R.id.create_button);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,6 +250,37 @@ public class CreateProjectDialogFragment extends DialogFragment {
 
             }
         }).start();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
+        super.onActivityResult(requestCode, resultCode, gallery);
+        inputStreamImg = null;
+        Uri selectedImage = gallery.getData();
+
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().
+                    getContentResolver(), selectedImage);
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+            destination = new File(getRealPathFromURI(selectedImage));
+            imageView.setImageBitmap(bitmap);
+            //TODO: upload the image to the database
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), "Error uploading photo", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        Toast.makeText(getActivity(), "Picked photo:" +
+                gallery.getData().toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Audio.Media.DATA};
+        Cursor cursor = getContext().getContentResolver().query(contentUri, proj,
+                null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
 

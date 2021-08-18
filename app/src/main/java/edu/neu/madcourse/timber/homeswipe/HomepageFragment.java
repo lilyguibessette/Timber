@@ -568,7 +568,8 @@ public class HomepageFragment extends Fragment {
         Log.e(TAG,"distance in miles: " + Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude));
 
         try{
-            if(Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude) <= distanceLimit){
+            // TODO: DT called the getRadius function - hopefully that doesn't break anything
+            if(Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude) <= selfContractor.getRadius()){
 
                 Log.e(TAG,"returning true");
                 return true;
