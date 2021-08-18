@@ -84,14 +84,15 @@ public class NewsFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Initialize our received history size to 0
         newsFeedSize = 0;
+        createDatabaseResources();
 
         // get saved state and initialize the recyclerview
         initialNewsFeedData(savedInstanceState);
 
-        newsFeedHistory.add(new Project("apples", "image placeholder.PNG", "this is a test post 1", "TYPE PLUMBING"));
-        newsFeedHistory.add(new Project("peaches", "image placeholder.PNG", "this is a test post 2", "TYPE PLUMBING"));
-        newsFeedHistory.add(new Project("mangoes", "image placeholder.PNG", "this is a test post 3", "TYPE PLUMBING"));
-        newsFeedHistory.add(new Project("watermelons", "image placeholder.PNG", "this is a test post 4", "TYPE PLUMBING"));
+        //newsFeedHistory.add(new Project("apples", "image placeholder.PNG", "this is a test post 1", "TYPE PLUMBING"));
+        //newsFeedHistory.add(new Project("peaches", "image placeholder.PNG", "this is a test post 2", "TYPE PLUMBING"));
+        //newsFeedHistory.add(new Project("mangoes", "image placeholder.PNG", "this is a test post 3", "TYPE PLUMBING"));
+        //newsFeedHistory.add(new Project("watermelons", "image placeholder.PNG", "this is a test post 4", "TYPE PLUMBING"));
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
@@ -210,11 +211,13 @@ public class NewsFeedFragment extends Fragment {
                 }
             }
         }
+
+
+
     }
 
     private void createRecyclerView(View view) {
         // Create the recyclerview and populate it with the history
-
         newsFeedRecyclerView = view.findViewById(R.id.news_feed_recycler);
         Log.e(TAG,"newsFeed: " + newsFeedRecyclerView.toString());
         newsPostLayoutManager = new LinearLayoutManager(view.getContext());
@@ -223,6 +226,10 @@ public class NewsFeedFragment extends Fragment {
         newsFeedRecyclerView.setAdapter(newsFeedAdapter);
         newsFeedRecyclerView.setLayoutManager(newsPostLayoutManager);
     }
+
+
+
+
 
     /**
      * LISTENERS FOR DATA CHANGES
