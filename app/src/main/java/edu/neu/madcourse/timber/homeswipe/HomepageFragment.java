@@ -409,12 +409,12 @@ public class HomepageFragment extends Fragment {
                                 Log.e(TAG, "updated project with match succeeded");
                             }
                         })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull @NotNull Exception e) {
-                                        Log.e(TAG, "updated project with match failed");
-                                    }
-                                });
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Log.e(TAG, "updated project with match failed");
+                            }
+                        });
                     }
                 }
 
