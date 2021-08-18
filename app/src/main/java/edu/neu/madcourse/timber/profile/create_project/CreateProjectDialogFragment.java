@@ -6,6 +6,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -107,6 +108,11 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 fragmentTransaction.replace(R.id.container, new HomepageFragment());
                 // Should this go to Swiping or Profile?
                 fragmentTransaction.addToBackStack(null);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref",
+                        MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("ACTIVE_PROJECT", project_name);
+
                 Toast.makeText(getActivity(), "Project Created! Swipe to find a Contractor!" , Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }

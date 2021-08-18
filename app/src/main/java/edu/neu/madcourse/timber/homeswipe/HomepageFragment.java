@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -91,16 +92,13 @@ public class HomepageFragment extends Fragment {
         // get Username
         thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
-        //thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
-        thisProject = "CON_testProj12";
 
+        thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
+        Log.e(TAG,"my project is: " + thisProject);
 
-        Log.e(TAG,"my project is: " + selfProject);
-
-        if(thisUserType.equals("HOMEOWNERS")) {
-            Toast.makeText(getActivity(), "No more contactors available", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getActivity(), "No more projects available", Toast.LENGTH_LONG).show();
+        if(Objects.isNull(thisProject)){
+            Toast.makeText(getActivity(), "No Project to swipe for! Please create a project to begin swiping", Toast.LENGTH_LONG).show();
+            return getView();
         }
 
         Location location = Utils.getLocation(this.getActivity(), this.getContext());
@@ -121,7 +119,6 @@ public class HomepageFragment extends Fragment {
             @Override
             public void onCardSwiped(Direction direction) {
                 Log.d(TAG, "onCardSwiped: p=" + manager.getTopPosition() + " d=" + direction);
-                Log.e(TAG,"122 my project is: " + selfProject);
                 if (direction == Direction.Right){
                     Log.d(TAG, "Swipe Direction Right");
                     swipedName = adapter.getFirstCard().getUsername();
@@ -232,8 +229,14 @@ public class HomepageFragment extends Fragment {
         Log.e(TAG,"I am: " + thisUserType + " " + thisUser);
         if(thisUserType.equals("HOMEOWNERS")) {
             adapter.setCardStack(populateContractorsList());
+            if(adapter.getItemCount() == 0){
+                Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
+            }
         } else{
             adapter.setCardStack(populateProjectsList());
+            if(adapter.getItemCount() == 0){
+                Toast.makeText(getActivity(), "No Projects found, check back later!", Toast.LENGTH_LONG).show();
+            }
         }
 
 

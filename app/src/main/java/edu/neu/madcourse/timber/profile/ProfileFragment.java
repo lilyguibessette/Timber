@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.create_project.CreateProjectDialogFragment;
+import edu.neu.madcourse.timber.profile.select_project.SelectProjectDialogFragment;
 import edu.neu.madcourse.timber.profile.update.UpdateContractorProfileDialogFragment;
 import edu.neu.madcourse.timber.profile.update.UpdateHomeownerProfileDialogFragment;
 import edu.neu.madcourse.timber.users.Contractor;
@@ -72,6 +73,7 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "MatchesFragment";
     String other_username;
     Button action_button;
+    Button select_button;
     Button profile_settings;
 
     int discrete;
@@ -123,6 +125,7 @@ public class ProfileFragment extends Fragment {
         //TextView profile_username = view.findViewById(R.id.profile_username);
         //profile_username.setText(my_username);
         action_button = view.findViewById(R.id.profile_action_button);
+        select_button = view.findViewById(R.id.profile_action_button_select);
         if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
             //set text
             action_button.setText("+");
@@ -182,6 +185,60 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+
+        select_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (my_usertype.equals(HOMEOWNERS)) {
+                    Log.e("ProfileFragment", "ProfileFragment to select active project");
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, new SelectProjectDialogFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                    View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
+                    SeekBar seek = (SeekBar) updateRadiusView.findViewById(R.id.seekBar);
+                    int start_position = (int) (((start_pos - start) / (end - start)) * 100);
+                    discrete = start_pos;
+                    seek.setProgress(start_position);
+                    seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            // TODO Auto-generated method stub
+                            Log.e(TAG, "discrete = " + String.valueOf(discrete));
+                            Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
+                        }
+
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                        }
+
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            float temp = progress;
+                            float dis = end - start;
+                            discrete = (int) (start + ((temp / 100) * dis));
+                        }
+                    });
+                    Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
+
+                    dialogBuilder.setView(updateRadiusView);
+                    AlertDialog dialog = dialogBuilder.create();
+                    dialog.show();
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            update_profile();
+                            dialog.dismiss();
+                        }
+                    });
+                }
+
+            }
+        });
+
         profile_settings = view.findViewById(R.id.profile_settings);
         profile_settings.setOnClickListener(new View.OnClickListener() {
             @Override

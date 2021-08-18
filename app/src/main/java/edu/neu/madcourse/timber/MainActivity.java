@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
             int radioUserType = radioGroupUserType.getCheckedRadioButtonId();
             radioButtonUserType = (RadioButton) findViewById(radioUserType);
 
+
             my_usertype = radioButtonUserType.getText().toString().toUpperCase();
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
             Log.e(TAG,"181, my_usertype is "+ my_usertype);
