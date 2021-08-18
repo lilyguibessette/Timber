@@ -325,7 +325,7 @@ public class MessagesFragment extends Fragment {
 
 
 
-    // send a sticker to another user's entry in the realtime db
+    // send a msg to another user's entry in the realtime db
     private void sendMessageToDB(Message message, String proj_id) {
         new Thread(new Runnable() {
             @Override

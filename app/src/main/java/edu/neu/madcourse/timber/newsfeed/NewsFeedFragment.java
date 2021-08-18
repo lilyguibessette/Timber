@@ -21,6 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,9 +52,15 @@ public class NewsFeedFragment extends Fragment {
     // Recycler view related variables
     private final ArrayList<Project> newsFeedHistory = new ArrayList<>();
     private RecyclerView newsFeedRecyclerView;
+    private NewsFeedAdapter newsFeedAdapter;
     private RecyclerView.LayoutManager newsPostLayoutManager;
     private int newsFeedSize = 0;
     public Uri photoURI;
+
+    // Database Resources
+    private FirebaseDatabase database;
+    private DatabaseReference completedProjectsRef;
+    private ChildEventListener completedProjectsListener;
 
     private static final String KEY_OF_POST = "KEY_OF_POST";
     private static final String NUMBER_OF_POSTS = "NUMBER_OF_POSTS";
@@ -199,6 +210,9 @@ public class NewsFeedFragment extends Fragment {
                 }
             }
         }
+
+
+
     }
 
     private void createRecyclerView(View view) {
@@ -208,10 +222,69 @@ public class NewsFeedFragment extends Fragment {
         Log.e(TAG,"newsFeed: " + newsFeedRecyclerView.toString());
         newsPostLayoutManager = new LinearLayoutManager(view.getContext());
         newsFeedRecyclerView.setHasFixedSize(true);
-        newsFeedRecyclerView.setAdapter(new NewsFeedAdapter(newsFeedHistory,photoURI));
+        newsFeedAdapter = new NewsFeedAdapter(newsFeedHistory,photoURI);
+        newsFeedRecyclerView.setAdapter(newsFeedAdapter);
         newsFeedRecyclerView.setLayoutManager(newsPostLayoutManager);
     }
 
+
+
+
+
+
+
+    /**
+     * LISTENERS FOR DATA CHANGES
+     * - Listen for change for number of stickers sent
+     * - Listen for change in all users to validate
+     * - Listen for change in received history
+     */
+    private void createDatabaseResources() {
+        database = FirebaseDatabase.getInstance();
+        completedProjectsRef = database.getReference("COMPLETED_PROJECTS");
+        setCompletedProjectsListener();
+    }
+
+
+    // sets listener for changes to received history; updates the messages received on device
+    public void setCompletedProjectsListener(){
+        completedProjectsListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                // A new data item has been added, add it to the list
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
+                Project project = dataSnapshot.getValue(Project.class);
+                Log.d(TAG, "onChildAdded:" + project.project_id);
+
+                // Add new project from the db to this device's stickerhistory
+                newsFeedHistory.add(0, project);
+
+                // update recyclerView adapter to add the new project
+                newsFeedAdapter.notifyItemInserted(0);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "onCancelled", databaseError.toException());
+            }
+        };
+        completedProjectsRef.addChildEventListener(completedProjectsListener);
+    }
 }
 
 //TODO - getting ERROR on this page for images
