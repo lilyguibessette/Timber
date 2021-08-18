@@ -1,9 +1,12 @@
 package edu.neu.madcourse.timber.homeswipe;
 
-import android.content.SharedPreferences;
+import static android.content.Context.MODE_PRIVATE;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +17,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DiffUtil;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
@@ -31,22 +36,18 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
-import edu.neu.madcourse.timber.MainActivity;
-import edu.neu.madcourse.timber.OnGetDataListener;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class HomepageFragment extends Fragment {
 
@@ -59,6 +60,7 @@ public class HomepageFragment extends Fragment {
     DatabaseReference homeownersRef = database.getReference("HOMEOWNERS/");
     DatabaseReference currentCardRef;
     DataSnapshot contractorData;
+    private static String SERVER_KEY = ""; // TODO: set up connection to database
     String swipedName;
     String thisUserType;
     String thisUser;
@@ -88,16 +90,24 @@ public class HomepageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // get Username
-        thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
-        thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
-        //thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
+        thisUser = this.getActivity().getSharedPreferences("TimberSharedPref",
+                MODE_PRIVATE).getString("USERNAME", null);
+        thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref",
+                MODE_PRIVATE).getString("USERTYPE", null);
+        //thisProject = this.getActivity().getSharedPreferences("TimberSharedPref",
+        // MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
         thisProject = "CON_testProj12";
 
+        createNotificationChannel();
+        // TODO: TEST to use FireBaseMessaging to push a notification
+        // TODO: need to add in the server key
+        sendNotificationToUserTopic(thisUser);
 
-        Log.e(TAG,"my project is: " + selfProject);
+        Log.e(TAG, "my project is: " + selfProject);
 
-        if(thisUserType.equals("HOMEOWNERS")) {
+        if (thisUserType.equals("HOMEOWNERS")) {
             Toast.makeText(getActivity(), "No more contactors available", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getActivity(), "No more projects available", Toast.LENGTH_LONG).show();
@@ -121,72 +131,67 @@ public class HomepageFragment extends Fragment {
             @Override
             public void onCardSwiped(Direction direction) {
                 Log.d(TAG, "onCardSwiped: p=" + manager.getTopPosition() + " d=" + direction);
-                Log.e(TAG,"122 my project is: " + selfProject);
-                if (direction == Direction.Right){
+                Log.e(TAG, "122 my project is: " + selfProject);
+                if (direction == Direction.Right) {
                     Log.d(TAG, "Swipe Direction Right");
                     swipedName = adapter.getFirstCard().getUsername();
-                    Log.e(TAG,"right swipe username is " + swipedName);
+                    Log.e(TAG, "right swipe username is " + swipedName);
 
                     new Thread(() -> {
-                        Log.e(TAG,"starting a thread for right swipe");
+                        Log.e(TAG, "starting a thread for right swipe");
 
                         //checkIfMatched(swipedName);
 
-                        Log.e(TAG,"ending a thread for right swipe");
+                        Log.e(TAG, "ending a thread for right swipe");
                     }).start();
 
                     // ASYNC OPERATIONS BABY
                     new Thread(() -> {
-                        Log.e(TAG,"starting a thread for right swipe");
+                        Log.e(TAG, "starting a thread for right swipe");
 
-                        if(thisUserType.equals("HOMEOWNERS")) {
+                        if (thisUserType.equals("HOMEOWNERS")) {
                             swipedOnContractorHandler("Right", swipedName);
                         } else {
                             swipedOnProjectHandler("Right", swipedName);
                         }
 
-                        Log.e(TAG,"ending a thread for right swipe");
+                        Log.e(TAG, "ending a thread for right swipe");
                     }).start();
-
-
                     //Toast.makeText(HomepageFragment.this, "Direction Right", Toast.LENGTH_SHORT).show();
                 }
-                if (direction == Direction.Top){
+                if (direction == Direction.Top) {
                     Log.d(TAG, "Swipe Direction Top");
                     //Toast.makeText(HomepageFragment.this, "Direction Top", Toast.LENGTH_SHORT).show();
                 }
-                if (direction == Direction.Left){
+                if (direction == Direction.Left) {
                     Log.d(TAG, "Swipe Direction Left");
                     swipedName = adapter.getFirstCard().getUsername();
-                    Log.e(TAG,"left swipe username is " + swipedName);
+                    Log.e(TAG, "left swipe username is " + swipedName);
 
                     // ASYNC OPERATIONS BABY
                     new Thread(() -> {
-                        Log.e(TAG,"starting a thread for left swipe");
+                        Log.e(TAG, "starting a thread for left swipe");
 
-                        if(thisUserType.equals("HOMEOWNERS")) {
+                        if (thisUserType.equals("HOMEOWNERS")) {
                             swipedOnContractorHandler("Left", swipedName);
                         } else {
                             swipedOnProjectHandler("Left", swipedName);
                         }
 
-                        Log.e(TAG,"ending a thread for left swipe");
+                        Log.e(TAG, "ending a thread for left swipe");
                     }).start();
                 }
-                if (direction == Direction.Bottom){
+                if (direction == Direction.Bottom) {
                     Log.d(TAG, "Swipe Direction Bottom");
                     // Toast.makeText(HomepageFragment.this, "Direction Bottom", Toast.LENGTH_SHORT).show();
                 }
-
-                if (manager.getTopPosition() == adapter.getItemCount()){
-                    if(thisUserType.equals("HOMEOWNERS")) {
+                if (manager.getTopPosition() == adapter.getItemCount()) {
+                    if (thisUserType.equals("HOMEOWNERS")) {
                         Toast.makeText(getActivity(), "No more contactors available", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getActivity(), "No more projects available", Toast.LENGTH_LONG).show();
                     }
-
                 }
-
             }
 
             @Override
@@ -224,45 +229,42 @@ public class HomepageFragment extends Fragment {
         manager.setSwipeableMethod(SwipeableMethod.Manual);
         manager.setOverlayInterpolator(new LinearInterpolator());
         manager.setAutoMeasureEnabled(false);
-
         adapter = new CardStackAdapter();
 
-        Log.e(TAG,"adding initial cardstack with userType: " + thisUserType);
-
-        Log.e(TAG,"I am: " + thisUserType + " " + thisUser);
-        if(thisUserType.equals("HOMEOWNERS")) {
+        Log.e(TAG, "adding initial cardstack with userType: " + thisUserType);
+        Log.e(TAG, "I am: " + thisUserType + " " + thisUser);
+        if (thisUserType.equals("HOMEOWNERS")) {
             adapter.setCardStack(populateContractorsList());
-        } else{
+        } else {
             adapter.setCardStack(populateProjectsList());
         }
 
-
-        Log.e(TAG,"create adapter");
+        Log.e(TAG, "create adapter");
         cardStackView.setLayoutManager(manager);
 
-        Log.e(TAG,"set manager");
+        Log.e(TAG, "set manager");
         cardStackView.setAdapter(adapter);
 
-        Log.e(TAG,"set adapter");
+        Log.e(TAG, "set adapter");
 
         cardStackView.setItemAnimator(new DefaultItemAnimator());
 
-        Log.e(TAG,"set item animator");
+        Log.e(TAG, "set item animator");
         return view;
     }
 
     private List<SwipeCard> populateContractorsList() {
         // This might work? https://stackoverflow.com/questions/64655837/cards-stack-swipe-add-card-in-the-back-after-swiping-removing-top-card
-        Log.e(TAG,"populateList called");
-        List<SwipeCard> cardStack= new ArrayList<>();
+        Log.e(TAG, "populateList called");
+        List<SwipeCard> cardStack = new ArrayList<>();
 
         contractorsRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String,Object> userData = (Map<String,Object>) dataSnapshot.getValue();
+                        Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
                         //Get map of users in datasnapshot
-                        for (Map.Entry<String, Object> entry : userData.entrySet()){
+                        for (Map.Entry<String, Object> entry : userData.entrySet()) {
 
                             //Get user map
                             Map singleUser = (Map) entry.getValue();
@@ -270,20 +272,19 @@ public class HomepageFragment extends Fragment {
                             //Log.e(TAG,entry.toString());
 
                             // skip cards which we already swiped
-                            if(checkIfAlreadySwiped(singleUser,thisProject)){
-                                Log.e(TAG,"continue, swiped");
+                            if (checkIfAlreadySwiped(singleUser, thisProject)) {
+                                Log.e(TAG, "continue, swiped");
                                 continue;
                             }
 
                             // skip if too far
-                            if(!checkIfLocal(thisLatitude,thisLongitude,(Double) singleUser.get("latitude"),(Double) singleUser.get("longitude"))){
-                                Log.e(TAG,"continue, too far");
+                            if (!checkIfLocal(thisLatitude, thisLongitude, (Double) singleUser.get("latitude"), (Double) singleUser.get("longitude"))) {
+                                Log.e(TAG, "continue, too far");
                                 continue;
                             }
 
-
                             // Add them all at once?
-                            Log.e(TAG,"adding new card?");
+                            Log.e(TAG, "adding new card?");
                             // Add them all at once?
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -305,22 +306,23 @@ public class HomepageFragment extends Fragment {
                         //handle databaseError
                     }
                 });
-        Log.e(TAG,"returning cardstack");
+        Log.e(TAG, "returning cardstack");
         return cardStack;
     }
 
     private List<SwipeCard> populateProjectsList() {
         // This might work? https://stackoverflow.com/questions/64655837/cards-stack-swipe-add-card-in-the-back-after-swiping-removing-top-card
-        Log.e(TAG,"populateProjectsList called");
-        List<SwipeCard> cardStack= new ArrayList<>();
+        Log.e(TAG, "populateProjectsList called");
+        List<SwipeCard> cardStack = new ArrayList<>();
 
         activeProjectRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String,Object> userData = (Map<String,Object>) dataSnapshot.getValue();
+                        Map<String, Object> userData = (Map<String, Object>) dataSnapshot.
+                                getValue();
                         //Get map of users in datasnapshot
-                        for (Map.Entry<String, Object> entry : userData.entrySet()){
+                        for (Map.Entry<String, Object> entry : userData.entrySet()) {
 
                             //Get user map
                             Map singleUser = (Map) entry.getValue();
@@ -329,20 +331,21 @@ public class HomepageFragment extends Fragment {
                             //Log.e(TAG,entry.getKey());
 
                             // skip cards which we already swiped
-                            if(checkIfAlreadySwiped(singleUser,thisUser)){
-                                Log.e(TAG,"continue, swiped");
+                            if (checkIfAlreadySwiped(singleUser, thisUser)) {
+                                Log.e(TAG, "continue, swiped");
                                 continue;
                             }
 
                             // skip if too far
-                            if(!checkIfLocal(thisLatitude,thisLongitude,(Double) singleUser.get("latitude"),(Double) singleUser.get("longitude"))){
-                                Log.e(TAG,"continue, too far");
+                            if (!checkIfLocal(thisLatitude, thisLongitude, (Double) singleUser.
+                                    get("latitude"), (Double) singleUser.get("longitude"))) {
+                                Log.e(TAG, "continue, too far");
                                 continue;
                             }
 
 
                             // Add them all at once?
-                            Log.e(TAG,"adding new card?");
+                            Log.e(TAG, "adding new card?");
 
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -364,15 +367,16 @@ public class HomepageFragment extends Fragment {
                         //handle databaseError
                     }
                 });
-        Log.e(TAG,"returning cardstack");
+        Log.e(TAG, "returning cardstack");
         return cardStack;
     }
 
     private void swipedOnContractorHandler(String direction, String swipedName) {
         final boolean[] willMatch = {false};
         // Check if project/contractor will match first
-        if(direction.equals("Right")) {
-            activeProjectRef.child(thisProject).addListenerForSingleValueEvent(new ValueEventListener() {
+        if (direction.equals("Right")) {
+            activeProjectRef.child(thisProject).addListenerForSingleValueEvent(
+                    new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // get the project referenced
@@ -381,18 +385,19 @@ public class HomepageFragment extends Fragment {
                     {
                         willMatch[0] = true;
                         selfProject.getMatchList().add(swipedName);
-                        activeProjectRef.child(thisProject).setValue(selfProject).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        activeProjectRef.child(thisProject).setValue(selfProject).
+                                addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
                                 Log.e(TAG, "updated project with match succeeded");
                             }
                         })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull @NotNull Exception e) {
-                                Log.e(TAG, "updated project with match failed");
-                            }
-                        });
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull @NotNull Exception e) {
+                                        Log.e(TAG, "updated project with match failed");
+                                    }
+                                });
                     }
                 }
 
@@ -420,13 +425,13 @@ public class HomepageFragment extends Fragment {
                 if (contractor != null && dataSnapshot != null) {
                     // add message to user
                     Log.e(TAG, "attempting to add: " + thisProject);
-                    if(direction.equals("Right")){
+                    if (direction.equals("Right")) {
                         contractor.addRightSwipedOn(thisProject);
-                    } else{
+                    } else {
                         contractor.addLeftSwipedOn(thisProject);
                     }
                     Log.e(TAG, "will match: " + willMatch[0]);
-                    if(willMatch[0]){
+                    if (willMatch[0]) {
                         contractor.getMatchList().add(thisProject);
                     }
 
@@ -436,12 +441,12 @@ public class HomepageFragment extends Fragment {
                             Log.e(TAG, "updated contractor on swipe list");
                         }
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "FAILED to update contactor on swipe list");
-                        }
-                    });
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e(TAG, "FAILED to update contactor on swipe list");
+                                }
+                            });
                 }
             }
 
@@ -450,17 +455,14 @@ public class HomepageFragment extends Fragment {
                     (DatabaseError error) {
                 // Getting Post failed, log a message
                 Log.e(TAG, "update contractor swipedby failed", error.toException());
-
             }
         });
-
-
     }
 
     private void swipedOnProjectHandler(String direction, String swipedName) {
         final boolean[] willMatch = {false};
         // Check if project/contractor will match first
-        if(direction.equals("Right")) {
+        if (direction.equals("Right")) {
             contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -476,12 +478,12 @@ public class HomepageFragment extends Fragment {
                                 Log.e(TAG, "updated project with match succeeded");
                             }
                         })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull @NotNull Exception e) {
-                                Log.e(TAG, "updated project with match failed");
-                            }
-                        });
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull @NotNull Exception e) {
+                                        Log.e(TAG, "updated project with match failed");
+                                    }
+                                });
                     }
                 }
 
@@ -495,11 +497,8 @@ public class HomepageFragment extends Fragment {
             });
         }
 
-
         currentCardRef = activeProjectRef.child(swipedName);
-
         currentCardRef.get();
-
         currentCardRef.addListenerForSingleValueEvent(new ValueEventListener() {
             public Project project;
 
@@ -510,14 +509,14 @@ public class HomepageFragment extends Fragment {
                 if (project != null && dataSnapshot != null) {
                     // add message to user
                     Log.e(TAG, "attempting to add: " + thisUser);
-                    if(direction.equals("Right")){
+                    if (direction.equals("Right")) {
                         project.addRightSwipedOn(thisUser);
-                    } else{
+                    } else {
                         project.addLeftSwipedOn(thisUser);
                     }
 
                     Log.e(TAG, "will match: " + willMatch[0]);
-                    if(willMatch[0]){
+                    if (willMatch[0]) {
                         project.getMatchList().add(thisUser);
                     }
 
@@ -527,12 +526,12 @@ public class HomepageFragment extends Fragment {
                             Log.e(TAG, "updated project on swipe list");
                         }
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "FAILED to update contactor on swipe list");
-                        }
-                    });
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e(TAG, "FAILED to update contactor on swipe list");
+                                }
+                            });
                 }
             }
 
@@ -541,45 +540,106 @@ public class HomepageFragment extends Fragment {
                     (DatabaseError error) {
                 // Getting Post failed, log a message
                 Log.e(TAG, "update contractor swipedby failed", error.toException());
-
             }
         });
     }
 
     private boolean checkIfAlreadySwiped(Map currentUser, String userName) throws NullPointerException {
-        try{
-            if(((ArrayList<String>) currentUser.get("swipedRightOnList")).contains(userName) ||
-                    ((ArrayList<String>) currentUser.get("swipedLeftOnList")).contains(userName)){
+        try {
+            if (((ArrayList<String>) currentUser.get("swipedRightOnList")).contains(userName) ||
+                    ((ArrayList<String>) currentUser.get("swipedLeftOnList")).contains(userName)) {
                 return true;
-            } else{
+            } else {
                 return false;
             }
-        } catch(NullPointerException exc){
-            Log.e(TAG,exc.getMessage());
+        } catch (NullPointerException exc) {
+            Log.e(TAG, exc.getMessage());
         }
         return false;
     }
 
-    private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude){
-        Log.e(TAG,"myLat: " + myLatitude);
-        Log.e(TAG,"myLong: " + myLongitude);
-        Log.e(TAG,"otherLat: " + otherLatitude);
-        Log.e(TAG,"otherLong: " + otherLongitude);
-        Log.e(TAG,"distance in miles: " + Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude));
+    private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude) {
+        Log.e(TAG, "myLat: " + myLatitude);
+        Log.e(TAG, "myLong: " + myLongitude);
+        Log.e(TAG, "otherLat: " + otherLatitude);
+        Log.e(TAG, "otherLong: " + otherLongitude);
+        Log.e(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
 
-        try{
-            // TODO: DT called the getRadius function - hopefully that doesn't break anything
-            if(Utils.findDistance(myLatitude,myLongitude,otherLatitude,otherLongitude) <= selfContractor.getRadius()){
-
-                Log.e(TAG,"returning true");
+        try {
+            // TODO: should use the getRadius function that contractors have - tried but got a null pointer
+            if (Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude) <= distanceLimit) {
+                Log.e(TAG, "returning true");
                 return true;
-            } else{
-                Log.e(TAG,"returning false");
+            } else {
+                Log.e(TAG, "returning false");
                 return false;
             }
-        } catch(NullPointerException exc){
-            Log.e(TAG,exc.getMessage());
+        } catch (NullPointerException exc) {
+            Log.e(TAG, exc.getMessage());
         }
         return false;
     }
+
+    // TODO: took this from the other project and modified to our variable names
+    // Create notification channel and subscribe user to their channel
+    public void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel
+                    ("Timber", thisUser, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Notifications for " + thisUser);
+            NotificationManager notificationManager = getActivity().
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            subscribeToMyMessages();
+        }
+    }
+
+    // TODO: need to plug in to the positive match so users are notified
+    // FireBase Message to user topic when sending sticker
+    public void sendNotificationToUserTopic(String other_user) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject jPayload = new JSONObject();
+                JSONObject jNotification = new JSONObject();
+                try {
+                    jNotification.put("title", "New message from " + other_user);
+                    jNotification.put("body", "You matched with :" + other_user);
+                    jNotification.put("sound", "default");
+                    jNotification.put("badge", "1");
+
+                    // Populate the Payload object with our notification information
+                    // sent to topic of the user we're sending to
+                    jPayload.put("to", "/topics/" + other_user);
+                    jPayload.put("priority", "high");
+                    jPayload.put("notification", jNotification);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
+                Log.d(TAG, "Notification sent to " + other_user);
+                //Log.d(TAG, messageResponse);
+            }
+        }).start();
+    }
+
+    // TODO: took this from the other project and modified to our variable names
+    // Subscribe a user to their own topic so they can receive notifications when they get messages
+    public void subscribeToMyMessages() {
+        FirebaseMessaging.getInstance().subscribeToTopic(thisUser)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(getActivity(), "Failed to subscribed to "
+                                    + thisUser, Toast.LENGTH_SHORT).show();
+                        }
+                        Toast.makeText(getActivity(), "Subscribed to "
+                                + thisUser, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
 }
