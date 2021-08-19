@@ -1,6 +1,5 @@
 package edu.neu.madcourse.timber.profile;
 
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -24,21 +22,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
 
 import edu.neu.madcourse.timber.R;
-import edu.neu.madcourse.timber.profile.create_project.CreateProjectDialogFragment;
-import edu.neu.madcourse.timber.homeswipe.SelectProjectDialogFragment;
 import edu.neu.madcourse.timber.profile.update.UpdateContractorProfileDialogFragment;
 import edu.neu.madcourse.timber.profile.update.UpdateHomeownerProfileDialogFragment;
 import edu.neu.madcourse.timber.users.Contractor;
-import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -81,7 +73,6 @@ public class ProfileFragment extends Fragment {
             "CONTRACTORS");
 
     String other_username;
-    Button action_button;
     Button profile_settings;
 
     int discrete;
@@ -140,67 +131,6 @@ public class ProfileFragment extends Fragment {
 
         //TextView profile_username = view.findViewById(R.id.profile_username);
         //profile_username.setText(my_username);
-        action_button = view.findViewById(R.id.profile_action_button);
-        if (my_usertype != null && my_usertype.equals(HOMEOWNERS)) {
-            //set text
-            action_button.setText("+");
-
-        } else {
-            action_button.setText("RADIUS");
-        }
-        action_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (my_usertype.equals(HOMEOWNERS)) {
-                    Log.e("ProfileFragment", "ProfileFragment to update homeowner");
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.container, new CreateProjectDialogFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                } else {
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                    View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
-                    SeekBar seek = (SeekBar) updateRadiusView.findViewById(R.id.seekBar);
-                    int start_position = (int) (((start_pos - start) / (end - start)) * 100);
-                    discrete = start_pos;
-                    seek.setProgress(start_position);
-                    seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            // TODO Auto-generated method stub
-                            Log.e(TAG, "discrete = " + String.valueOf(discrete));
-                            Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
-                        }
-
-
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
-                        }
-
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            float temp = progress;
-                            float dis = end - start;
-                            discrete = (int) (start + ((temp / 100) * dis));
-                        }
-                    });
-                    Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
-
-                    dialogBuilder.setView(updateRadiusView);
-                    AlertDialog dialog = dialogBuilder.create();
-                    dialog.show();
-                    confirm.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            update_profile();
-                            dialog.dismiss();
-                        }
-                    });
-                }
-
-            }
-        });
-
 
 
         profile_settings = view.findViewById(R.id.profile_settings);
@@ -298,76 +228,6 @@ public class ProfileFragment extends Fragment {
             }
         });
         itemTouchHelper.attachToRecyclerView(activeProjectsRecyclerView);
-    }
-
-    private void update_profile() {
-        new Thread(() -> {
-            SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
-            // connect to the database and look at the users
-            my_username = sharedPreferences.getString(USERNAME, null);
-            my_usertype = sharedPreferences.getString(USERTYPE, null);
-            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
-                    my_usertype + "/" + my_username);
-
-            myUserRef.addValueEventListener(new ValueEventListener() {
-                public User my_user;
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // if the user exists, get their data
-                    if (dataSnapshot.exists()) {
-                        if (my_usertype.equals(HOMEOWNERS)) {
-                            Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
-                            //my_user.setImage();
-                            // add setters to my_user
-                            myUserRef.setValue(my_user);
-                        } else {
-                            Contractor my_user = dataSnapshot.getValue(Contractor.class);
-                            my_user.setRadius(discrete);
-                            Toast.makeText(getActivity(), "Discrete is " + discrete
-                                    + " so changed radius to " + my_user.getRadius(),
-                                    Toast.LENGTH_SHORT).show();
-
-                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                            myEdit.putString("RADIUS",String.valueOf(discrete));
-                            myEdit.putString(USERTYPE, my_usertype);
-                            myEdit.commit();
-                            myUserRef.setValue(my_user);
-                        }
-
-                    } else {
-                        if (my_usertype.equals(HOMEOWNERS)) {
-                            myUserRef.setValue(new Homeowner(my_username,
-                                    CLIENT_REGISTRATION_TOKEN,
-                                    //  location,
-                                    my_param1,
-                                    my_param2,
-                                    my_email,
-                                    my_zip,
-                                    my_phone));
-
-                        } else {
-                            myUserRef.setValue(new Contractor(my_username,
-                                    CLIENT_REGISTRATION_TOKEN,
-                                    //       location,
-                                    my_param1,
-                                    my_param2,
-                                    my_email,
-                                    my_zip,
-                                    my_phone));
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // if getting post failed, log a message
-                    Log.w(TAG, "update profile onCancelled",
-                            databaseError.toException());
-                }
-            });
-
-        }).start();
     }
 
 

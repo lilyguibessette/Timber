@@ -98,7 +98,7 @@ public class SelectProjectDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 Log.e("SelectProjectDialogFragment", "SelectProjectDialogFragment cancel click");
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, new ProfileFragment());
+                fragmentTransaction.replace(R.id.container, new HomepageFragment());
                 fragmentTransaction.addToBackStack(null);
                 Toast.makeText(getActivity(), "going to cancel" , Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();

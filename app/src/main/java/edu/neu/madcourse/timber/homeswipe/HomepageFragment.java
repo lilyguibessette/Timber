@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -49,11 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.fcm_server.Utils;
+import edu.neu.madcourse.timber.homeswipe.create_project.CreateProjectDialogFragment;
 import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
@@ -84,6 +84,8 @@ public class HomepageFragment extends Fragment {
     Project selfProject;
 
     Button select_button;
+    Button action_button;
+    String newSpecialty;
     int discrete;
     int start = 0; //you need to give starting value of SeekBar
     int end = 1000; //you need to give end value of SeekBar
@@ -296,40 +298,23 @@ public class HomepageFragment extends Fragment {
 
         Log.e(TAG, "set item animator");
 
+        action_button = view.findViewById(R.id.profile_action_button);
+        if (my_usertype != null && my_usertype.equals("HOMEOWNERS")) {
+            //set text
+            action_button.setText("+");
 
-        // Adding new select button
-        DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
-                "ACTIVE_PROJECTS");
-        select_button.setOnClickListener(new View.OnClickListener() {
+        } else {
+            action_button.setText("RADIUS");
+        }
+        action_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (my_usertype.equals("HOMEOWNERS")) {
-                    Log.e("ProfileFragment", "ProfileFragment to select active project");
-
-                    projectsRef.orderByChild("username").equalTo(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                        @Override
-                        public void onDataChange(@androidx.annotation.NonNull @NotNull DataSnapshot snapshot) {
-                            Map<String,Object> projectData = (Map<String,Object>) snapshot.getValue();
-
-                            if(Objects.isNull(projectData)){
-                                Toast.makeText(getActivity(), "No Projects to select! Please create a project" , Toast.LENGTH_SHORT).show();
-                                return;
-                            } else{
-                                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                                fragmentTransaction.replace(R.id.container, new SelectProjectDialogFragment());
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@androidx.annotation.NonNull @NotNull DatabaseError error) {
-
-                        }
-                    });
-
-
+                    Log.e("ProfileFragment", "ProfileFragment to update homeowner");
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, new CreateProjectDialogFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 } else {
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                     View updateRadiusView = getLayoutInflater().inflate(R.layout.update_radius, null);
@@ -365,7 +350,61 @@ public class HomepageFragment extends Fragment {
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            update_radius_swipe();
+                            update_profile();
+                            dialog.dismiss();
+                        }
+                    });
+                }
+
+            }
+        });
+
+
+        // Adding new select button
+        DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
+                "ACTIVE_PROJECTS");
+        select_button = view.findViewById(R.id.select_project_button);
+        select_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (my_usertype.equals("HOMEOWNERS")) {
+                    Log.e("ProfileFragment", "ProfileFragment to select active project");
+
+                    projectsRef.orderByChild("username").equalTo(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@androidx.annotation.NonNull @NotNull DataSnapshot snapshot) {
+                            Map<String,Object> projectData = (Map<String,Object>) snapshot.getValue();
+
+                            if(Objects.isNull(projectData)){
+                                Toast.makeText(getActivity(), "No Projects to select! Please create a project" , Toast.LENGTH_SHORT).show();
+                                return;
+                            } else{
+                                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                                fragmentTransaction.replace(R.id.container, new SelectProjectDialogFragment());
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@androidx.annotation.NonNull @NotNull DatabaseError error) {
+
+                        }
+                    });
+                } else {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                    View updateSpecialtyView = getLayoutInflater().inflate(R.layout.update_specialty, null);
+                    EditText specialtyEdit = (EditText) updateSpecialtyView.findViewById(R.id.specialtyUpdater);
+                    newSpecialty = specialtyEdit.getText().toString();
+                    Button confirm = (Button) updateSpecialtyView.findViewById(R.id.confirm);
+                    dialogBuilder.setView(updateSpecialtyView);
+                    AlertDialog dialog = dialogBuilder.create();
+                    dialog.show();
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            update_profile();
                             dialog.dismiss();
                         }
                     });
@@ -816,10 +855,7 @@ public class HomepageFragment extends Fragment {
         });
     }
 
-
-
-
-    private void update_radius_swipe() {
+    private void update_profile() {
         new Thread(() -> {
             SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
             // connect to the database and look at the users
@@ -842,6 +878,10 @@ public class HomepageFragment extends Fragment {
                             myUserRef.setValue(my_user);
                         } else {
                             Contractor my_user = dataSnapshot.getValue(Contractor.class);
+                            //String currentSpecialty = my_user.getSpecialty();
+                            if(newSpecialty != null){
+                                my_user.setSpecialty(newSpecialty);
+                            }
                             my_user.setRadius(discrete);
                             Toast.makeText(getActivity(), "Discrete is " + discrete
                                             + " so changed radius to " + my_user.getRadius(),
@@ -853,6 +893,7 @@ public class HomepageFragment extends Fragment {
                             myEdit.commit();
                             myUserRef.setValue(my_user);
                         }
+
                     }
                 }
 
@@ -866,6 +907,7 @@ public class HomepageFragment extends Fragment {
 
         }).start();
     }
+
 
 
 }

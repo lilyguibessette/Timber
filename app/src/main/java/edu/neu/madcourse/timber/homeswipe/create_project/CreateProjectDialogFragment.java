@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber.profile.create_project;
+package edu.neu.madcourse.timber.homeswipe.create_project;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.homeswipe.HomepageFragment;
-import edu.neu.madcourse.timber.profile.ProfileFragment;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
 
@@ -178,7 +177,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 Log.e(TAG, "CreateProjectDialogFragment cancel click");
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, new ProfileFragment());
+                fragmentTransaction.replace(R.id.container, new HomepageFragment());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
