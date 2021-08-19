@@ -54,34 +54,25 @@ public class HomepageFragment extends Fragment {
     private static final String TAG = "HomepageFragment";
     private CardStackLayoutManager manager;
     private CardStackAdapter adapter;
+
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference contractorsRef = database.getReference("CONTRACTORS/");
-    DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/");
     DatabaseReference homeownersRef = database.getReference("HOMEOWNERS/");
-    DatabaseReference currentCardRef;
-    DataSnapshot contractorData;
+    DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/");
+    DatabaseReference currentCardRef, projectsRef;
 
-    private static String SERVER_KEY = ""; // TODO: set up connection to database
-    String swipedName;
-    String my_usertype;
-    String my_username;
-    String thisProject;
-    Location location;
-    double thisLatitude;
-    double thisLongitude;
-    double distanceLimit = 20.0;
-    Integer thisRadius;
     Homeowner selfHomeowner;
     Contractor selfContractor;
     Project selfProject;
+    Location location;
 
-    Button select_button;
-    Button action_button;
-    String newSpecialty;
-    int discrete;
-    int start = 0; //you need to give starting value of SeekBar
-    int end = 1000; //you need to give end value of SeekBar
-    int start_pos = 20; //you need to give starting position value of SeekBar
+    String swipedName, my_usertype, my_username, thisProject, newSpecialty;
+    Button select_button, action_button;
+    double thisLatitude, thisLongitude;
+    Integer thisRadius;
+
+    // you need to set values for SeekBar
+    int discrete, start = 0, end = 1000, start_pos = 20;
 
     public HomepageFragment() {
         // Required empty public constructor
@@ -105,8 +96,7 @@ public class HomepageFragment extends Fragment {
         my_username = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         my_usertype = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
         thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
-        DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
-                "ACTIVE_PROJECTS");
+        projectsRef = FirebaseDatabase.getInstance().getReference("ACTIVE_PROJECTS");
 
         // location information
         location = Utils.getLocation(this.getActivity(), this.getContext());
@@ -116,6 +106,8 @@ public class HomepageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         CardStackView cardStackView = view.findViewById(R.id.homepage);
+
+        // set the buttons
         action_button = view.findViewById(R.id.profile_action_button);
         select_button = view.findViewById(R.id.select_project_button);
 
@@ -291,50 +283,9 @@ public class HomepageFragment extends Fragment {
         if (my_usertype.equals("HOMEOWNERS")) {
             adapter.setCardStack(populateContractorsList());
 
-            // TODO: can remove this now - put text behind cards instead
-            /*if (adapter.getItemCount() == 0) {
-                // need to wait for database to return in other thread
-
-                //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                View noMoreContractors = getLayoutInflater().inflate(R.layout.empty_swipe_dialog, null);
-                Button confirm = (Button) noMoreContractors.findViewById(R.id.confirm);
-                dialogBuilder.setView(noMoreContractors);
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.show();
-
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-            }*/
-
             // otherwise populate the card stack with projects
         } else {
             adapter.setCardStack(populateProjectsList());
-
-            // TODO: can remove this now - put text behind cards instead
-            /*if (adapter.getItemCount() == 0) {
-                //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                View noMoreSwipes = getLayoutInflater().inflate(R.layout.empty_swipe_dialog, null);
-                TextView tvNoSwipe = noMoreSwipes.findViewById(R.id.textView);
-                tvNoSwipe.setText("No more Projects! Check back later!");
-                Button confirm = (Button) noMoreSwipes.findViewById(R.id.confirm);
-                dialogBuilder.setView(noMoreSwipes);
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.show();
-
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }*/
         }
 
         Log.e(TAG, "create adapter");
