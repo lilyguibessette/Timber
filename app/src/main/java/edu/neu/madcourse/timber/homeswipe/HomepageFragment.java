@@ -577,7 +577,7 @@ public class HomepageFragment extends Fragment {
                                 Log.d(TAG, "adding new card?");
                                 cardStack.add(new SwipeCard(
                                         (String) singleUser.get("image"),
-                                        (String) entry.getKey(),
+                                        (String) singleUser.get("username"),
                                         (String) singleUser.get("description"),
                                         (String) singleUser.get("zipcode")));
 
