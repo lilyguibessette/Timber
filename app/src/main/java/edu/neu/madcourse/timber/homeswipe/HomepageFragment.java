@@ -451,41 +451,42 @@ public class HomepageFragment extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
-                        //Get map of users in datasnapshot
-                        for (Map.Entry<String, Object> entry : userData.entrySet()) {
+                        if (dataSnapshot.exists()) {
+                            Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
+                            //Get map of users in datasnapshot
+                            for (Map.Entry<String, Object> entry : userData.entrySet()) {
 
-                            //Get user map
-                            Map singleUser = (Map) entry.getValue();
-                            //Get phone field and append to list
-                            //Log.e(TAG,entry.toString());
+                                //Get user map
+                                Map singleUser = (Map) entry.getValue();
+                                //Get phone field and append to list
+                                //Log.e(TAG,entry.toString());
 
-                            // skip cards which we already swiped
-                            if (checkIfAlreadySwiped(singleUser, thisProject)) {
-                                Log.d(TAG, "continue, swiped");
-                                continue;
-                            }
+                                // skip cards which we already swiped
+                                if (checkIfAlreadySwiped(singleUser, thisProject)) {
+                                    Log.d(TAG, "continue, swiped");
+                                    continue;
+                                }
 
-                            Long radius = (Long) singleUser.get("radius");
-                            Integer intRadius = radius.intValue();
+                                Long radius = (Long) singleUser.get("radius");
+                                Integer intRadius = radius.intValue();
 
-                            // skip if too far
-                            if (!checkIfLocal(thisLatitude, thisLongitude,
-                                    (Double) singleUser.get("latitude"),
-                                    (Double) singleUser.get("longitude"),
-                                    intRadius)) {
-                                Log.d(TAG, "continue, too far");
-                                continue;
-                            }
+                                // skip if too far
+                                if (!checkIfLocal(thisLatitude, thisLongitude,
+                                        (Double) singleUser.get("latitude"),
+                                        (Double) singleUser.get("longitude"),
+                                        intRadius)) {
+                                    Log.d(TAG, "continue, too far");
+                                    continue;
+                                }
 
-                            // Add them all at once?
-                            Log.d(TAG, "adding new card");
-                            // Add them all at once?
-                            cardStack.add(new SwipeCard(
-                                    (String) singleUser.get("image"),
-                                    (String) singleUser.get("username"),
-                                    (String) singleUser.get("email"),
-                                    (String) singleUser.get("zipcode")));
+                                // Add them all at once?
+                                Log.d(TAG, "adding new card");
+                                // Add them all at once?
+                                cardStack.add(new SwipeCard(
+                                        (String) singleUser.get("image"),
+                                        (String) singleUser.get("username"),
+                                        (String) singleUser.get("email"),
+                                        (String) singleUser.get("zipcode")));
                             /*
                             // add cards as they load (ish, basically the same result as above anyways)
                             adapter.addCardToBack(new SwipeCard(
@@ -493,10 +494,10 @@ public class HomepageFragment extends Fragment {
                                     (String) singleUser.get("username"),
                                     "Default description text here"));
                             */
-                            adapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         //handle databaseError
@@ -515,41 +516,43 @@ public class HomepageFragment extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
-                        //Get map of users in datasnapshot
-                        for (Map.Entry<String, Object> entry : userData.entrySet()) {
+                        if (dataSnapshot.exists()) {
+                            Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
+                            //Get map of users in datasnapshot
 
-                            //Get user map
-                            Map singleUser = (Map) entry.getValue();
-                            //Get phone field and append to list
+                            for (Map.Entry<String, Object> entry : userData.entrySet()) {
 
-                            //Log.e(TAG,entry.getKey());
+                                //Get user map
+                                Map singleUser = (Map) entry.getValue();
+                                //Get phone field and append to list
 
-                            // skip cards which we already swiped
-                            if (checkIfAlreadySwiped(singleUser, my_username)) {
-                                Log.e(TAG, "continue, swiped");
-                                continue;
+                                //Log.e(TAG,entry.getKey());
+
+                                // skip cards which we already swiped
+                                if (checkIfAlreadySwiped(singleUser, my_username)) {
+                                    Log.e(TAG, "continue, swiped");
+                                    continue;
+                                }
+
+                                // skip if too far
+                                if (!checkIfLocal(thisLatitude, thisLongitude, (Double) singleUser.
+                                        get("latitude"), (Double) singleUser.get("longitude"), thisRadius)) {
+                                    Log.e(TAG, "continue, too far");
+                                    continue;
+                                }
+
+                                // Add them all at once?
+                                Log.d(TAG, "adding new card?");
+
+                                cardStack.add(new SwipeCard(
+                                        (String) singleUser.get("image"),
+                                        (String) entry.getKey(),
+                                        (String) singleUser.get("description"),
+                                        (String) singleUser.get("zipcode")));
+                                adapter.notifyDataSetChanged();
                             }
-
-                            // skip if too far
-                            if (!checkIfLocal(thisLatitude, thisLongitude, (Double) singleUser.
-                                    get("latitude"), (Double) singleUser.get("longitude"),thisRadius)) {
-                                Log.e(TAG, "continue, too far");
-                                continue;
-                            }
-
-                            // Add them all at once?
-                            Log.d(TAG, "adding new card?");
-
-                            cardStack.add(new SwipeCard(
-                                    (String) singleUser.get("image"),
-                                    (String) entry.getKey(),
-                                    (String) singleUser.get("description"),
-                                    (String) singleUser.get("zipcode")));
-                            adapter.notifyDataSetChanged();
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         //handle databaseError

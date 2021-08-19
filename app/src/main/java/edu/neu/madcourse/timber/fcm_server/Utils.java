@@ -191,6 +191,33 @@ public class Utils {
             }).start();
         }
 
+    public static void sendMessageNotification(String my_username, String other_user, String project , String message) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject jPayload = new JSONObject();
+                JSONObject jNotification = new JSONObject();
+                try {
+                    jNotification.put("title", "New message from "+ my_username);
+                    jNotification.put("body", "Project: " + project +" " + message);
+                    jNotification.put("sound", "default");
+                    jNotification.put("badge", "1");
+                    // Populate the Payload object with our notification information
+                    // sent to topic of the user we're sending to
+                    jPayload.put("to", "/topics/" + other_user);
+                    jPayload.put("priority", "high");
+                    jPayload.put("notification", jNotification);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
+                Log.d("MESSAGE NOTIFICATION", "NOTIFICATION SENT TO " + other_user + " FROM "+ my_username + " ABOUT " + project);
+                Log.d("MESSAGE NOTIFICATION", messageResponse);
+            }
+        }).start();
+    }
+
         public static void subscribeToMyMessages(String topic, Activity activity) {
         FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

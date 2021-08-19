@@ -1,6 +1,7 @@
 package edu.neu.madcourse.timber.messages;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,11 @@ import edu.neu.madcourse.timber.R;
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesHolder>{
     private static final String TAG = "MessagesAdapter";
     private final ArrayList<Message> messagesHistory;
+    private final String my_username;
 
-    public MessagesAdapter(ArrayList<Message> messagesHistory) {
+    public MessagesAdapter(ArrayList<Message> messagesHistory, String my_username) {
         this.messagesHistory = messagesHistory;
+        this.my_username = my_username;
     }
 
     @Override
@@ -30,6 +33,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesHolder>{
         Message currentItem = messagesHistory.get(position);
         Log.e(TAG, currentItem.toString());
         if (currentItem != null) {
+            if(currentItem.getUsername().equals(my_username))  {
+                holder.linearLayout.setGravity(Gravity.START);
+            }
+            else {
+                holder.linearLayout.setGravity(Gravity.END);
+            }
+
             Log.e("onBindViewHolder", currentItem.toString());
             holder.username.setText(currentItem.getUsername());
             holder.message.setText(currentItem.getMessage());

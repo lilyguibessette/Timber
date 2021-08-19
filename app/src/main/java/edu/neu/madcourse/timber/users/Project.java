@@ -40,7 +40,7 @@ public class Project {
         this.matchList.add("EMPTY");
 
         ArrayList<Message> welcome = new ArrayList<>();
-        welcome.add(new Message("WELCOME", "Welcome to Timber!"));
+        welcome.add(new Message("WELCOME", username,"Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
 
@@ -63,7 +63,7 @@ public class Project {
         this.matchList.add("EMPTY");
 
         ArrayList<Message> welcome = new ArrayList<>();
-        welcome.add(new Message("WELCOME", "Welcome to Timber!"));
+        welcome.add(new Message("WELCOME",username, "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
     public Project(String username, String project_name, String project_type, int budget,
@@ -88,7 +88,7 @@ public class Project {
         this.matchList.add("EMPTY");
 
         ArrayList<Message> welcome = new ArrayList<>();
-        welcome.add(new Message("WELCOME", "Welcome to Timber!"));
+        welcome.add(new Message("WELCOME", username, "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
 
     }
@@ -114,7 +114,7 @@ public class Project {
         this.matchList.add("EMPTY");
 
         ArrayList<Message> welcome = new ArrayList<>();
-        welcome.add(new Message("WELCOME", "Welcome to Timber!"));
+        welcome.add(new Message("WELCOME", username,"Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
 
@@ -140,7 +140,7 @@ public class Project {
         this.matchList.add("EMPTY");
 
         ArrayList<Message> welcome = new ArrayList<>();
-        welcome.add(new Message("WELCOME", "Welcome to Timber!"));
+        welcome.add(new Message("WELCOME", username, "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
 
