@@ -24,22 +24,26 @@ public class Project {
     public Project(String username, String project_type, String image, String description) {
         this.username = username;
         this.image = image;
+        this.project_id = username + "_" + project_name;
         this.description = description;
         this.project_type = project_type;
         this.completed = true;
-        this.project_id = username + "_" + project_name;
+
         this.swipedRightOnList = new ArrayList<>();
         this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+
         this.swipedRightOnList.add("EMPTY");
         this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
+
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME", "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
 
-    public Project(String username, String project_name, String project_type, int budget, String image, String description) {
+    public Project(String username, String project_name, String project_type, int budget,
+                   String image, String description) {
         this.username = username;
         this.image = image;
         this.description = description;
@@ -47,18 +51,21 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.completed = false;
+
         this.swipedRightOnList = new ArrayList<>();
         this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+
         this.swipedRightOnList.add("EMPTY");
         this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
+
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME", "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
-
-    public Project(String username, String project_name, String project_type, int budget, String description) {
+    public Project(String username, String project_name, String project_type, int budget,
+                   String description) {
         this.username = username;
         this.image = "image placeholder.PNG";
         this.description = description;
@@ -66,20 +73,23 @@ public class Project {
         this.budget = budget;
         this.project_type = project_type;
         this.completed = false;
+
         this.swipedRightOnList = new ArrayList<>();
         this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+
         this.swipedRightOnList.add("EMPTY");
         this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
+
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME", "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
 
     }
 
-    public Project(String username, String project_name, String project_type, int budget, String image, String description, double latitude,
-                   double longitude) {
+    public Project(String username, String project_name, String project_type, int budget,
+                   String image, String description, double latitude, double longitude) {
         this.username = username;
         this.image = image;
         this.description = description;
@@ -89,19 +99,23 @@ public class Project {
         this.latitude = latitude;
         this.longitude = longitude;
         this.completed = false;
+
         this.swipedRightOnList = new ArrayList<>();
         this.swipedLeftOnList = new ArrayList<>();
         this.matchList = new ArrayList<>();
+
         this.swipedRightOnList.add("EMPTY");
         this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
+
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME", "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);
     }
 
-    public Project(String username, String project_name, String project_type, int budget, String image, String description, double latitude,
-                   double longitude, boolean completed) {
+    public Project(String username, String project_name, String project_type, int budget,
+                   String image, String description, double latitude, double longitude,
+                   boolean completed) {
         this.username = username;
         this.image = image;
         this.description = description;
@@ -119,6 +133,7 @@ public class Project {
         this.swipedRightOnList.add("EMPTY");
         this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
+
         ArrayList<Message> welcome = new ArrayList<>();
         welcome.add(new Message("WELCOME", "Welcome to Timber!"));
         this.messageThreads.put("WELCOME", welcome);

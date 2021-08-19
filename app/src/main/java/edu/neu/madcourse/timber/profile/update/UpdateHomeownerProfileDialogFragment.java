@@ -56,6 +56,9 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     private String imgPath = null;
     private Uri imageUri;
 
+    private SharedPreferences sharedPreferences;
+    private DatabaseReference myUserRef;
+
     // instance for firebase storage and StorageReference
     private FirebaseStorage storage;
     private StorageReference storageReference;
@@ -77,7 +80,18 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // inflate the view
         View view = inflater.inflate(R.layout.update_account_homeowner, container, false);
+
+        // get access the user's data
+        sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        my_username = sharedPreferences.getString("USERNAME", null);
+        my_usertype = sharedPreferences.getString("USERTYPE", null);
+        myUserRef = FirebaseDatabase.getInstance().getReference(my_usertype + "/" + my_username);
+
+        // get image storage data
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
 
         updateImageButton = view.findViewById(R.id.update_image);
         updateButton = view.findViewById(R.id.update_account);
@@ -85,6 +99,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
         logout = view.findViewById(R.id.logout);
         imageView = view.findViewById(R.id.image);
 
+        // when the user clicks to update the image
         updateImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +109,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
             }
         });
 
+        // when the user clicks to update the details
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,59 +163,50 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     }
 
     private void update_profile() {
-        new Thread(() -> {
-            SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
-            // connect to the database and look at the users
-            my_username = sharedPreferences.getString("USERNAME", null);
-            my_usertype = sharedPreferences.getString("USERTYPE", null);
-            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
-                    my_usertype + "/" + my_username);
+        new Thread(() -> myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        public User my_user;
 
-            myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                public User my_user;
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            // if the user exists, get their data
+            if (dataSnapshot.exists()) {
+                Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
 
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // if the user exists, get their data
-                    if (dataSnapshot.exists()) {
-                        Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
-
-                        if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
-                            my_user.setUsername(my_username);
-                        }
-                        if (!my_param1.equals("") & !my_user.getFirstName().equals(my_param1)) {
-                            my_user.setFirstName(my_param1);
-                        }
-                        if (!my_param2.equals("") & !my_user.getLastName().equals(my_param2)) {
-                            my_user.setLastName(my_param2);
-                        }
-                        if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
-                            my_user.setEmail(my_email);
-                        }
-                        if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
-                            my_user.setZipcode(my_zip);
-                        }
-                        if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
-                            my_user.setPhoneNumber(my_phone);
-                        }
-                        if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
-                            my_user.setImage(imgPath);
-                        }
-                        myUserRef.setValue(my_user);
-                    } else {
-                        // log error
-                        Log.e(TAG, "cant update the profile");
-                    }
+                if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
+                    my_user.setUsername(my_username);
                 }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // if getting post failed, log a message
-                    Log.w(TAG, "update profile onCancelled",
-                            databaseError.toException());
+                if (!my_param1.equals("") & !my_user.getFirstName().equals(my_param1)) {
+                    my_user.setFirstName(my_param1);
                 }
-            });
-        }).start();
+                if (!my_param2.equals("") & !my_user.getLastName().equals(my_param2)) {
+                    my_user.setLastName(my_param2);
+                }
+                if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
+                    my_user.setEmail(my_email);
+                }
+                if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
+                    my_user.setZipcode(my_zip);
+                }
+                if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
+                    my_user.setPhoneNumber(my_phone);
+                }
+                if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
+                    my_user.setImage(imgPath);
+                }
+                myUserRef.setValue(my_user);
+            } else {
+                // log error
+                Log.e(TAG, "cant update the profile");
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // if getting post failed, log a message
+            Log.w(TAG, "update profile onCancelled",
+                    databaseError.toException());
+        }
+    })).start();
     }
 
     @Override
@@ -211,28 +218,28 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
         Uri selectedImage = gallery.getData();
 
         try {
+            // try to decipher the image
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().
                     getContentResolver(), selectedImage);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+
+            // save the image details
             destination = new File(getRealPathFromURI(selectedImage));
             imgPath = destination.getName();
+            storageReference.child(imgPath).putFile(selectedImage);
 
-            if (imgPath != null) {
-                storage = FirebaseStorage.getInstance();
-                storageReference = storage.getReference();
-                storageReference.child(imgPath).putFile(selectedImage);
-            }
-
+            // set the imageView to show the new pic
             imageView.setImageBitmap(bitmap);
 
+        // catch the try if any errors
         } catch (IOException e) {
-            Toast.makeText(getActivity(), "Photo error",
-                    Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error uploading photo");
             e.printStackTrace();
         }
-        Toast.makeText(getActivity(), "Picked photo:" +
-                gallery.getData().toString(), Toast.LENGTH_SHORT).show();
+        // otherwise log the photo details
+        Log.e(TAG, "Picked photo: " + imgPath);
+
     }
 
     public String getRealPathFromURI(Uri contentUri) {

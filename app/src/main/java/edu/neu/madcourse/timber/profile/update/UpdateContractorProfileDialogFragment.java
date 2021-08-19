@@ -50,6 +50,7 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private Button cancelButton, updateButton, logout, updateImageButton;
     public String my_username, my_param1, my_specialty, my_param2, my_zip, my_email, my_phone;
 
+    // items related to the update image section
     private ImageView imageView;
     private Bitmap bitmap;
     private InputStream inputStreamImg;
@@ -115,8 +116,9 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment create click");
-                // use dialog for add link
+                Log.e(TAG, "UpdateProfileDialogFragment create click");
+
+                // get the variables to update
                 my_username = ((EditText) view.findViewById(R.id.update_username)).getText().toString();
                 my_param1 = ((EditText) view.findViewById(R.id.update_param1)).getText().toString();
                 my_specialty = ((EditText) view.findViewById(R.id.update_specialty)).getText().toString();
@@ -125,8 +127,10 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
                 my_email = ((EditText) view.findViewById(R.id.update_email)).getText().toString();
                 my_phone = ((EditText) view.findViewById(R.id.update_phone)).getText().toString();
 
+                // send those updates to the user profile
                 update_profile();
 
+                // send the user back to the previous page (profile)
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
@@ -135,15 +139,14 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
             }
         });
 
-        // when the user clicks to cancel
+        // when the user clicks to cancel, send to previous page
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment cancel click");
+                Log.e(TAG, "UpdateProfileDialogFragment cancel click");
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to cancel", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
@@ -152,7 +155,7 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment logout click");
+                Log.e(TAG, "UpdateProfileDialogFragment logout click");
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref",
                         MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
@@ -165,6 +168,7 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
         return view;
     }
 
+    // update the user's profile
     private void update_profile() {
         new Thread(() -> myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             public User my_user;
