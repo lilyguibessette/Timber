@@ -296,7 +296,7 @@ public class HomepageFragment extends Fragment {
             adapter.setCardStack(populateContractorsList());
             if(adapter.getItemCount() == 0){
                 // need a wait for database to return in other thread
-
+    /*
                 //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                 View noMoreContractors = getLayoutInflater().inflate(R.layout.empty_swipe_dialog, null);
@@ -311,11 +311,12 @@ public class HomepageFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
-
+*/
             }
         } else{
             adapter.setCardStack(populateProjectsList());
             if(adapter.getItemCount() == 0){
+                /*
                 //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                 View noMoreSwipes = getLayoutInflater().inflate(R.layout.empty_swipe_dialog, null);
@@ -331,7 +332,7 @@ public class HomepageFragment extends Fragment {
                     public void onClick(View v) {
                         dialog.dismiss();
                     }
-                });
+                });*/
             }
         }
 
