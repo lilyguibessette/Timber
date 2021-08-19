@@ -220,6 +220,58 @@ public class MessagesFragment extends Fragment {
             }
         });
 
+        myMessageThreadsRef = database.getReference("ACTIVE_PROJECTS/" + project_id + "/messageThreads");
+        myMessageThreadsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Log.e(TAG, "myMessageThreadsRef onChildChanged:" + snapshot.getValue());
+                if (snapshot.exists()) {
+                    ArrayList<HashMap<String,String>> msgList = (ArrayList<HashMap<String,String>>) snapshot.getValue();
+                    if (msgList != null) {
+                        // messageHistory = new ArrayList<>();
+
+                        for (HashMap<String,String> msgData : msgList) {
+                            if (msgData != null && !msgData.get("message").equals("EMPTY")) {
+                                // might need to configure this? messageHistory.removeAll();
+                                //  Log.e(TAG, each.toString() + " from " +each.get("username") + " said " +each.get("message"));
+                                Log.e(TAG, "msgData for "+ msgData.toString());
+                                Log.e(TAG, msgData.get("username"));
+                                Log.e(TAG, msgData.get("to_username"));
+                                Log.e(TAG, msgData.get("message"));
+                                Message msg = new Message(msgData.get("username"),msgData.get("to_username") , msgData.get("message"));
+                                if((msg.getTo_username().equals(other_user_id) && msg.getUsername().equals(my_username))
+                                        ||( msg.getTo_username().equals(my_username) && msg.getUsername().equals(other_user_id))){
+                                    messageHistory.add(msg);
+                                    //TODO the adapter might end up backwards
+                                    messagesAdapter.notifyItemInserted(0);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
 
@@ -420,59 +472,6 @@ public class MessagesFragment extends Fragment {
         //setMyMessagesListener();
 
 
-        myMessageThreadsRef = database.getReference("ACTIVE_PROJECTS/" + project_id + "/messageThreads");
-        myMessageThreadsRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.e(TAG, "myMessageThreadsRef onChildAdded:" + snapshot.getValue());
-                if (snapshot.exists()) {
-                    ArrayList<HashMap<String,String>> msgList = (ArrayList<HashMap<String,String>>) snapshot.getValue();
-                    if (msgList != null) {
-                        // messageHistory = new ArrayList<>();
-
-                        for (HashMap<String,String> msgData : msgList) {
-                            if (msgData != null && !msgData.get("message").equals("EMPTY")) {
-
-                                //  Log.e(TAG, each.toString() + " from " +each.get("username") + " said " +each.get("message"));
-                                Log.e(TAG, "msgData for "+ msgData.toString());
-                                Log.e(TAG, msgData.get("username"));
-                                Log.e(TAG, msgData.get("to_username"));
-                                Log.e(TAG, msgData.get("message"));
-                                Message msg = new Message(msgData.get("username"),msgData.get("to_username") , msgData.get("message"));
-                                if((msg.getTo_username().equals(other_user_id) && msg.getUsername().equals(my_username))
-                                        ||( msg.getTo_username().equals(my_username) && msg.getUsername().equals(other_user_id))){
-                                    messageHistory.add(msg);
-                                    //TODO the adapter might end up backwards
-                                    messagesAdapter.notifyItemInserted(0);
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
 
