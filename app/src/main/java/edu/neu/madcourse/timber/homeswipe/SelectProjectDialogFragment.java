@@ -1,36 +1,22 @@
-package edu.neu.madcourse.timber.profile.select_project;
+package edu.neu.madcourse.timber.homeswipe;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,18 +26,10 @@ import com.google.firebase.database.ValueEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 import edu.neu.madcourse.timber.R;
-import edu.neu.madcourse.timber.fcm_server.Utils;
-import edu.neu.madcourse.timber.homeswipe.HomepageFragment;
 import edu.neu.madcourse.timber.profile.ProfileFragment;
-import edu.neu.madcourse.timber.profile.ProjectAdapter;
-import edu.neu.madcourse.timber.users.Homeowner;
-import edu.neu.madcourse.timber.users.Project;
 
 public class SelectProjectDialogFragment extends DialogFragment {
     private static final String TAG = "SelectProjectDialogFragment";

@@ -1,4 +1,4 @@
-package edu.neu.madcourse.timber.profile.select_project;
+package edu.neu.madcourse.timber.homeswipe;
 
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -10,15 +10,9 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
-import edu.neu.madcourse.timber.profile.ProjectHolder;
-import edu.neu.madcourse.timber.users.Project;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
