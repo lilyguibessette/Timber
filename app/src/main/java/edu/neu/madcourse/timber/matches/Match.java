@@ -2,27 +2,26 @@ package edu.neu.madcourse.timber.matches;
 
 public class Match {
     public String projectName;
-    public int image;
-    public String last_message;
+    public String image;
+    public String contractor_id;
 
     public Match() {
     }
 
-    public Match(String projectName, int image, String last_message) {
+    public Match(String projectName, String image, String contractor_id) {
         this.projectName = projectName;
         this.image = image;
-        this.last_message = last_message;
+        this.contractor_id = contractor_id;
     }
 
     public String getProjectName() {
         return this.projectName;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public String getLast_message() {
-        return this.last_message;
-    }
+
+    public String getContractor_id() {return this.contractor_id;}
 }

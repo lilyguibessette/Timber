@@ -233,7 +233,7 @@ public class HomepageFragment extends Fragment {
 
             @Override
             public void onCardAppeared(View view, int position) {
-                Log.e(TAG, "onCardAppeared: " + position);
+                Log.d(TAG, "onCardAppeared: " + position);
             }
 
             @Override
@@ -306,7 +306,7 @@ public class HomepageFragment extends Fragment {
 
                             // skip cards which we already swiped
                             if (checkIfAlreadySwiped(singleUser, thisProject)) {
-                                Log.e(TAG, "continue, swiped");
+                                Log.d(TAG, "continue, swiped");
                                 continue;
                             }
 
@@ -318,12 +318,12 @@ public class HomepageFragment extends Fragment {
                                     (Double) singleUser.get("latitude"),
                                     (Double) singleUser.get("longitude"),
                                     intRadius)) {
-                                Log.e(TAG, "continue, too far");
+                                Log.d(TAG, "continue, too far");
                                 continue;
                             }
 
                             // Add them all at once?
-                            Log.e(TAG, "adding new card?");
+                            Log.d(TAG, "adding new card");
                             // Add them all at once?
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -383,7 +383,7 @@ public class HomepageFragment extends Fragment {
                             }
 
                             // Add them all at once?
-                            Log.e(TAG, "adding new card?");
+                            Log.d(TAG, "adding new card?");
 
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -413,12 +413,7 @@ public class HomepageFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // get the project referenced
                             selfProject = dataSnapshot.getValue(Project.class);
-                            Log.e(TAG,"416" + selfProject.getSwipedRightOnList().toString());
-                            Log.e(TAG,"417" + swipedName);
-                            Log.e(TAG,"418 is true?" + (selfProject.getSwipedRightOnList()).contains(swipedName));
                             if ((selfProject.getSwipedRightOnList()).contains(swipedName)) {
-
-                                Log.e(TAG,"422");
                                 willMatch[0] = true;
                                 selfProject.getMatchList().add(swipedName);
                                 activeProjectRef.child(thisProject).setValue(selfProject).
@@ -434,38 +429,38 @@ public class HomepageFragment extends Fragment {
                                                 Log.e(TAG, "updated project with match failed");
                                             }
                                         });
+
+
+                                String homeowner = selfProject.getUsername();
+                                DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
+                                homeownerRef.addListenerForSingleValueEvent(
+                                        new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                                homeownerUser.addMatch(thisProject + "_" + swipedName);
+                                                homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        Log.e(TAG, "updated homeowner user with match succeeded");
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull @NotNull Exception e) {
+                                                        Log.e(TAG, "updated homeowner user with match failed");
+                                                    }
+                                                });
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        }
+                                );
                             }
 
-
-
-                            String homeowner = selfProject.getUsername();
-                            DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
-                            homeownerRef.addListenerForSingleValueEvent(
-                                    new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
-                                            homeownerUser.addMatch(thisProject + "_" + swipedName);
-                                            homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Log.e(TAG, "updated homeowner user with match succeeded");
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull @NotNull Exception e) {
-                                                    Log.e(TAG, "updated homeowner user with match failed");
-                                                }
-                                            });
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    }
-                            );
                         }
 
                         @Override
@@ -473,7 +468,6 @@ public class HomepageFragment extends Fragment {
                                 (DatabaseError error) {
                             // Getting Post failed, log a message
                             Log.e(TAG, "update contractor swipedby failed", error.toException());
-
                 }
             });
         }
@@ -627,20 +621,20 @@ public class HomepageFragment extends Fragment {
     }
 
     private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude, Integer radius) {
-        /*Log.e(TAG, "myLat: " + myLatitude);
-        Log.e(TAG, "myLong: " + myLongitude);
-        Log.e(TAG, "otherLat: " + otherLatitude);
-        Log.e(TAG, "otherLong: " + otherLongitude);
-        Log.e(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
-        Log.e(TAG, "radius: " + radius);*/
+        Log.d(TAG, "myLat: " + myLatitude);
+        Log.d(TAG, "myLong: " + myLongitude);
+        Log.d(TAG, "otherLat: " + otherLatitude);
+        Log.d(TAG, "otherLong: " + otherLongitude);
+        Log.d(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
+        Log.d(TAG, "radius: " + radius);
 
         try {
             // TODO: should use the getRadius function that contractors have - tried but got a null pointer
             if (Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude) <= radius) {
-                Log.e(TAG, "returning true");
+                Log.d(TAG, "returning true");
                 return true;
             } else {
-                Log.e(TAG, "returning false");
+                Log.d(TAG, "returning false");
                 return false;
             }
         } catch (NullPointerException exc) {

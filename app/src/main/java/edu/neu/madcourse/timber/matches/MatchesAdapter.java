@@ -7,6 +7,10 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 import edu.neu.madcourse.timber.R;
@@ -14,6 +18,9 @@ import edu.neu.madcourse.timber.R;
 public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
     private final ArrayList<Match> matchesHistory;
     private MatchClickListener matchClickListener;
+    private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    View view;
+    StorageReference imageRef;
 
     public MatchesAdapter(ArrayList<Match> matchesHistory) {
         this.matchesHistory = matchesHistory;
@@ -21,7 +28,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
 
     @Override
     public MatchesHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_match, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_match, parent, false);
         return new MatchesHolder(view, matchClickListener);
     }
 
@@ -31,10 +38,18 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesHolder>{
         if (currentItem != null) {
             Log.e("onBindViewHolder", currentItem.toString());
             Log.e("onBindViewHolder", currentItem.getProjectName());
-            Log.e("onBindViewHolder", currentItem.getLast_message());
+            holder.contractor_id.setText(currentItem.getContractor_id());
             holder.projectName.setText(currentItem.getProjectName());
-            holder.image.setImageResource(currentItem.getImage());
-            holder.last_message.setText(currentItem.getLast_message());
+            if( currentItem.getImage() != null) {
+
+                 imageRef = storageReference.child(currentItem.getImage());
+
+            } else {
+                 imageRef = storageReference.child("default_profile_pic.PNG");
+            }
+            Glide.with(view)
+                    .load(imageRef)
+                    .into(holder.image);
         }
     }
 

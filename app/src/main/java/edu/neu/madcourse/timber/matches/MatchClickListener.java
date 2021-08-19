@@ -1,5 +1,5 @@
 package edu.neu.madcourse.timber.matches;
 
 public interface MatchClickListener {
-    void onMatchClick(String other_username);
+    void onMatchClick(String project_id, String contractor_id);
 }

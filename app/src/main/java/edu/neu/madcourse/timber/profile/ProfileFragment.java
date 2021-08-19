@@ -20,6 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.matches.Match;
 import edu.neu.madcourse.timber.profile.create_project.CreateProjectDialogFragment;
 import edu.neu.madcourse.timber.profile.select_project.SelectProjectDialogFragment;
 import edu.neu.madcourse.timber.profile.update.UpdateContractorProfileDialogFragment;
@@ -42,6 +46,7 @@ import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
 
+import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -91,6 +96,10 @@ public class ProfileFragment extends Fragment {
     int end = 1000; //you need to give end value of SeekBar
     int start_pos = 20; //you need to give starting position value of SeekBar
 
+    private FirebaseDatabase database;
+    private DatabaseReference myUserProjListRef;
+    private ArrayList<ChildEventListener> completedProjectsListenerList;
+    private ArrayList<DatabaseReference> completedProjectsRefList;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -112,7 +121,6 @@ public class ProfileFragment extends Fragment {
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
         DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
                 "ACTIVE_PROJECTS");
-
         // connect to the database and look at the users
         my_username = sharedPreferences.getString(USERNAME, null);
         my_usertype = sharedPreferences.getString(USERTYPE, null);
@@ -122,11 +130,12 @@ public class ProfileFragment extends Fragment {
 
         // get saved state and initialize the recyclerview
         initialProjectsData(savedInstanceState);
-        Project test_project = new Project("mangoes", "TEST", "PLUMBING", 7000, "image placeholder.PNG", "completedProjectsthis is a test post 3");
-        projects.add(test_project);
-        projects.add(test_project);
-        projects.add(test_project);
-        projects.add(test_project);
+        createDatabaseResources();
+        //Project test_project = new Project("mangoes", "TEST", "PLUMBING", 7000, "image placeholder.PNG", "completedProjectsthis is a test post 3");
+        //projects.add(test_project);
+        //projects.add(test_project);
+        //projects.add(test_project);
+        //projects.add(test_project);
 
 
         // Inflate the layout for this fragment
@@ -147,7 +156,6 @@ public class ProfileFragment extends Fragment {
         } else {
             action_button.setText("RADIUS");
         }
-
         action_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,8 +193,6 @@ public class ProfileFragment extends Fragment {
                         }
                     });
                     Button confirm = (Button) updateRadiusView.findViewById(R.id.confirm);
-
-
 
                     dialogBuilder.setView(updateRadiusView);
                     AlertDialog dialog = dialogBuilder.create();
@@ -445,6 +451,68 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    // add child event listeners for database for new cards for projects
+    private void createDatabaseResources() {
+        database = FirebaseDatabase.getInstance();
+        if (my_usertype != null && my_usertype.equals("HOMEOWNERS")) {
+            myUserProjListRef = database.getReference("HOMEOWNERS/"+my_username+"/completedProjectList");
+        } else{
+            myUserProjListRef = database.getReference("CONTRACTORS/"+my_username+"/completedProjectList");
+        }
+        myUserProjListRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NotNull DataSnapshot snapshot) {
+                ArrayList<String> projectData = (ArrayList<String>) snapshot.getValue();
+                if( projectData != null){
+                for(String each : projectData){
+                    if (!each.equals("EMPTY")) {
+                        Log.e(TAG, each);
+                        DatabaseReference completedProjectsRef = database.getReference("COMPLETED_PROJECTS/" + each);
+                        Log.e(TAG, completedProjectsRef.toString());
+                        setCompletedProjectsListener(completedProjectsRef);
+                    }
+                };}
+
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+    // sets listener for changes to received history; updates the messages received on device
+    public void setCompletedProjectsListener(DatabaseReference completedProjectsRef){
+        ValueEventListener completedProjectsListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NotNull DataSnapshot snapshot) {
+                Log.e(TAG, "onChildAdded:" + snapshot.getKey());
+                Project project = snapshot.getValue(Project.class);
+                Log.e(TAG, "onChildAdded:" + project.project_id );
+
+                // Add new project from the db to this device's stickerhistory
+                projects.add(0, project);
+
+                // update recyclerView adapter to add the new project
+                activeProjectsAdapter.notifyItemInserted(0);
+
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+        completedProjectsRef.addListenerForSingleValueEvent(completedProjectsListener);
+    }
+}
+
+/*
+
     private void create_project() {
         new Thread(() -> {
             SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
@@ -493,7 +561,4 @@ public class ProfileFragment extends Fragment {
 
         }).start();
     }
-
-    // add child event listeners for database for new cards for projects
-
-}
+ */

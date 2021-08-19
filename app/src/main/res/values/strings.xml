@@ -22,4 +22,5 @@
     <string name="create_project">Create Project</string>
     <string name="create_project_error">Error! Unable to create project.</string>
     <string name="projectname">projectName</string>
+    <string name="contractor_id">Contractor Username</string>
 </resources>
