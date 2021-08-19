@@ -34,10 +34,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesHolder>{
         Log.e(TAG, currentItem.toString());
         if (currentItem != null) {
             if(currentItem.getUsername().equals(my_username))  {
-                holder.linearLayout.setGravity(Gravity.START);
+                holder.linearLayout.setGravity(Gravity.LEFT);
             }
             else {
-                holder.linearLayout.setGravity(Gravity.END);
+                holder.linearLayout.setGravity(Gravity.RIGHT);
             }
 
             Log.e("onBindViewHolder", currentItem.toString());

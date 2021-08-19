@@ -154,7 +154,7 @@ public class Project {
 
     public void setImage(String image) {
         this.image = image;
-        Log.e("PROJECT", "set image called in " + this.project_id + "new image =" + this.image + " from " + image);
+        Log.e("PROJECT", "set image called in " + this.project_id + "new image = " + this.image + " from " + image);
     }
 
     public String getDescription() {
