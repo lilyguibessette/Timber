@@ -630,7 +630,6 @@ public class HomepageFragment extends Fragment {
                                                 }
                                             });
 
-
                                     String homeowner = selfProject.getUsername();
                                     DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/" + homeowner);
                                     homeownerRef.addListenerForSingleValueEvent(
@@ -638,7 +637,14 @@ public class HomepageFragment extends Fragment {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     if (snapshot.exists()) {
-                                                        Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                                        Homeowner homeownerUser = snapshot.getValue(Homeowner.class);
+                                                        Log.e(TAG,"641" + snapshot.toString());
+                                                        Log.e(TAG,"642" + homeownerUser.getEmail()+ " \n" +
+                                                                homeownerUser.getEmail()+ " \n" +
+                                                                homeownerUser.getPhoneNumber()+ " \n" +
+                                                                homeownerUser.getZipcode()+ " \n" +
+                                                                homeownerUser.getFirstName()+ " \n"
+                                                        );
                                                         homeownerUser.addMatch(thisProject + "_" + swipedName);
                                                         homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
@@ -687,12 +693,14 @@ public class HomepageFragment extends Fragment {
                                                     Utils.sendNotification(my_username, swipedName, selfProject);
 
                                                     // then add the match to the homeowner's matched project list
+
                                                     DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/" + homeowner);
                                                     homeownerRef.addListenerForSingleValueEvent(
                                                             new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                    Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                                                    Homeowner homeownerUser = snapshot.getValue(Homeowner.class);
+                                                                    Log.e(TAG,"697" + homeownerUser.toString());
                                                                     homeownerUser.addMatch(thisProject + "_" + swipedName);
                                                                     homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                         @Override
@@ -1006,6 +1014,7 @@ public class HomepageFragment extends Fragment {
                             myEdit.putString("RADIUS", String.valueOf(discrete));
                             myEdit.putString("USERTYPE", my_usertype);
                             myEdit.commit();
+                            Log.e(TAG,"1011" + my_user.toString());
                             myUserRef.setValue(my_user);
                         }
                     }
