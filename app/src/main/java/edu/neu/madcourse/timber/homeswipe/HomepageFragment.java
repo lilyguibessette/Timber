@@ -142,10 +142,12 @@ public class HomepageFragment extends Fragment {
         } else{
             try{
                 thisRadius = 20;
-                updateContractorRadius();
+                discrete = 20;
+                update_profile();
             } catch(Exception exc){
                 Log.e(TAG,exc.getMessage());
                 thisRadius = 20;
+                discrete = 20;
             }
         }
 
@@ -862,7 +864,7 @@ public class HomepageFragment extends Fragment {
 
     // TODO: took this from the other project and modified to our variable names
     // Subscribe a user to their own topic so they can receive notifications when they get messages
-
+/*
     public void updateContractorRadius() throws NullPointerException {
         contractorsRef.child(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -886,7 +888,7 @@ public class HomepageFragment extends Fragment {
             }
         });
     }
-
+*/
     private void update_profile() {
         new Thread(() -> {
             SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
@@ -896,7 +898,7 @@ public class HomepageFragment extends Fragment {
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
 
-            myUserRef.addValueEventListener(new ValueEventListener() {
+            myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
