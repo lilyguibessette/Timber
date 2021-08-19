@@ -76,6 +76,7 @@ public class MessagesFragment extends Fragment {
     private DatabaseReference myMessageThreadsRef;
     private Project currentProject;
     private TextView projNametv;
+    SharedPreferences sharedPreferences;
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -113,7 +114,7 @@ public class MessagesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Initialize our received history size to 0
         messagesSize = 0;
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
         my_username = sharedPreferences.getString("USERNAME", "Not found");
         my_usertype = sharedPreferences.getString("USERTYPE", "Not found");
         String project_id2 = sharedPreferences.getString("MSGPROJID", "Not found");
@@ -155,7 +156,7 @@ public class MessagesFragment extends Fragment {
 
     private void createRecyclerView(View view) {
         // Create the recyclerview and populate it with the history
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
         my_username = sharedPreferences.getString("USERNAME", "Not found");
         my_usertype = sharedPreferences.getString("USERTYPE", "Not found");
         String project_id2 = sharedPreferences.getString("MSGPROJID", "Not found");
@@ -201,6 +202,9 @@ public class MessagesFragment extends Fragment {
             public void onClick(View v) {
                 //TODO figure out all the movems for the marking of complete and what info we need here
                 markProjectCompleteToDB(project_id, my_username);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("ACTIVE_PROJECT", null);
+                myEdit.commit();
 
             }
         });
@@ -470,8 +474,6 @@ public class MessagesFragment extends Fragment {
             Log.e(TAG, "FROM CONTRACTOR proj " + project_id + " myuser " + my_username);
         }
         //setMyMessagesListener();
-
-
     }
 
 
