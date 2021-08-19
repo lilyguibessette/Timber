@@ -382,7 +382,6 @@ public class HomepageFragment extends Fragment {
                                 continue;
                             }
 
-
                             // Add them all at once?
                             Log.e(TAG, "adding new card?");
 
@@ -410,39 +409,76 @@ public class HomepageFragment extends Fragment {
         if (direction.equals("Right")) {
             activeProjectRef.child(thisProject).addListenerForSingleValueEvent(
                     new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // get the project referenced
-                    selfProject = dataSnapshot.getValue(Project.class);
-                    if ((selfProject.getSwipedRightOnList()).contains(swipedName)) ;
-                    {
-                        willMatch[0] = true;
-                        selfProject.getMatchList().add(swipedName);
-                        activeProjectRef.child(thisProject).setValue(selfProject).
-                                addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Log.e(TAG, "updated project with match succeeded");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull @NotNull Exception e) {
-                                Log.e(TAG, "updated project with match failed");
-                            }
-                        });
-                    }
-                }
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // get the project referenced
+                            selfProject = dataSnapshot.getValue(Project.class);
+                            Log.e(TAG,"416" + selfProject.getSwipedRightOnList().toString());
+                            Log.e(TAG,"417" + swipedName);
+                            Log.e(TAG,"418 is true?" + (selfProject.getSwipedRightOnList()).contains(swipedName));
+                            if ((selfProject.getSwipedRightOnList()).contains(swipedName)) {
 
-                @Override
-                public void onCancelled
-                        (DatabaseError error) {
-                    // Getting Post failed, log a message
-                    Log.e(TAG, "update contractor swipedby failed", error.toException());
+                                Log.e(TAG,"422");
+                                willMatch[0] = true;
+                                selfProject.getMatchList().add(swipedName);
+                                activeProjectRef.child(thisProject).setValue(selfProject).
+                                        addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Log.e(TAG, "updated project with match succeeded");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull @NotNull Exception e) {
+                                                Log.e(TAG, "updated project with match failed");
+                                            }
+                                        });
+                            }
+
+
+
+                            String homeowner = selfProject.getUsername();
+                            DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
+                            homeownerRef.addListenerForSingleValueEvent(
+                                    new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                            homeownerUser.addMatch(thisProject + "_" + swipedName);
+                                            homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Log.e(TAG, "updated homeowner user with match succeeded");
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull @NotNull Exception e) {
+                                                    Log.e(TAG, "updated homeowner user with match failed");
+                                                }
+                                            });
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void onCancelled
+                                (DatabaseError error) {
+                            // Getting Post failed, log a message
+                            Log.e(TAG, "update contractor swipedby failed", error.toException());
 
                 }
             });
         }
+
+
 
         currentCardRef = contractorsRef.child(swipedName);
 
@@ -501,8 +537,7 @@ public class HomepageFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // get the project referenced
                     selfContractor = dataSnapshot.getValue(Contractor.class);
-                    if ((selfContractor.getSwipedRightOnList()).contains(swipedName)) ;
-                    {
+                    if ((selfContractor.getSwipedRightOnList()).contains(swipedName)) {
                         willMatch[0] = true;
                         selfContractor.getMatchList().add(swipedName);
                         contractorsRef.child(thisUser).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -592,12 +627,12 @@ public class HomepageFragment extends Fragment {
     }
 
     private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude, Integer radius) {
-        Log.e(TAG, "myLat: " + myLatitude);
+        /*Log.e(TAG, "myLat: " + myLatitude);
         Log.e(TAG, "myLong: " + myLongitude);
         Log.e(TAG, "otherLat: " + otherLatitude);
         Log.e(TAG, "otherLong: " + otherLongitude);
         Log.e(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
-        Log.e(TAG, "radius: " + radius);
+        Log.e(TAG, "radius: " + radius);*/
 
         try {
             // TODO: should use the getRadius function that contractors have - tried but got a null pointer
