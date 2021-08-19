@@ -4,10 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../layout/custom_preview.xml" value="0.1828125" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/card_message.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/card_swipe.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/create_account.xml" value="0.264" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/create_project.xml" value="0.264" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/empty_swipe_dialog.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/fragment_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/fragment_matches.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/fragment_profile.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/main_screen.xml" value="0.6" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/recycler_message.xml" value="0.4" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/update_account_contractor.xml" value="0.264" />
@@ -17,7 +21,6 @@
         <entry key="app/src/main/res/layout/card_contacts.xml" value="0.2910569105691057" />
         <entry key="app/src/main/res/layout/card_match.xml" value="0.33" />
         <entry key="app/src/main/res/layout/card_message.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/card_message_me.xml" value="0.3026041666666667" />
         <entry key="app/src/main/res/layout/card_post.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/card_select_project.xml" value="0.20572916666666666" />
         <entry key="app/src/main/res/layout/card_swipe.xml" value="0.1578125" />
