@@ -23,7 +23,7 @@
     <string name="create_project_error">Error! Unable to create project.</string>
     <string name="projectname">projectName</string>
     <string name="contractor_id">Contractor Username</string>
-    <string name="empty_stack">No more cards to swipe!</string>
-    <string name="check_back">Check back later today.</string>
+    <string name="empty_stack">No more cards to swipe.</string>
+    <string name="check_back">Check back later today!</string>
 
 </resources>

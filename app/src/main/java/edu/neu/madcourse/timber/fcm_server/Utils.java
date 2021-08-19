@@ -30,14 +30,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import edu.neu.madcourse.timber.HomepageActivity;
 import edu.neu.madcourse.timber.users.Project;
 
 // Reference: Firebase Demo 3 from classwork
 
 public class Utils {
-    private static final String SERVER_KEY ="key=AAAA7aKez00:APA91bEkDUkYiAq8qyquB8bS_F5DkDfNDuUgbpnF8yMf0kTsQy3RszivsRmJXZ1sJdN1kjaHDptTXRR6eM6Y7VqxfNE5Z1-52ZkDsaxpPzH26WjzhWuaeUPpB5eAcOPE758dv8ic_akm" ;
+    private static final String SERVER_KEY = "key=AAAA7aKez00:APA91bEkDUkYiAq8qyquB8bS_F5DkDfNDuUgbpnF8yMf0kTsQy3RszivsRmJXZ1sJdN1kjaHDptTXRR6eM6Y7VqxfNE5Z1-52ZkDsaxpPzH26WjzhWuaeUPpB5eAcOPE758dv8ic_akm";
 
+    // function to convert a stream to a string
     public static String convertStreamToString(InputStream inputStream) {
         // creating a new string builder
         StringBuilder stringBuilder = new StringBuilder();
@@ -56,7 +56,7 @@ public class Utils {
             bufferedReader.close();
             return stringBuilder.toString().replace(",", ",\n");
 
-        // look for any exceptions and print them out
+            // look for any exceptions and print them out
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,66 +65,55 @@ public class Utils {
         return "";
     }
 
+    // function to get the fcm HTTP connection
     public static String fcmHttpConnection(String serverToken, JSONObject jsonObject) {
 
         // try to open the HTTP connection
         try {
-            // Open the HTTP connection and send the payload
+            // open the HTTP connection and send the payload
             HttpURLConnection conn = (HttpURLConnection) new URL("https://fcm.googleapis.com/fcm/send").openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Authorization", serverToken);
             conn.setDoOutput(true);
 
-            // Send FCM message content.
+            // send FCM message content
             OutputStream outputStream = conn.getOutputStream();
             outputStream.write(jsonObject.toString().getBytes());
             outputStream.close();
 
-            // Read FCM response.
+            // read FCM response
             InputStream inputStream = conn.getInputStream();
             return convertStreamToString(inputStream);
 
-        // look for IOExceptions - if they happen, return NULL
+            // look for IOExceptions - if they happen, return NULL
         } catch (IOException e) {
             return "NULL";
         }
-
     }
 
-
-
-    /**
-    Checking Distance between two points
-     */
+    // function to check the distance between two locations
     // if we want an adjustable radius -> public boolean findDistance(double otherLatitude, double otherLongitude, int searchRadius) {
     // math supplemented by these posts:
     // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
     // https://gis.stackexchange.com/questions/5821/calculating-latitude-longitude-x-miles-from-point
     public static double findDistance(double latitude, double longitude, double otherLatitude, double otherLongitude) {
         int R = 6371; // radius of the earth
-        //double M = 3958.761; // convert Radians to miles
         double latDistance = Math.toRadians(otherLatitude - latitude);
         double lonDistance = Math.toRadians(otherLongitude - longitude);
+
+        // doing math to find the distance
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(latitude)) * Math.cos(Math.toRadians(otherLatitude))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = Math.round(Math.sqrt(Math.pow(R * c, 2)) * 0.6213712); // to approx. convert to miles
 
-        // to approx. convert to miles
-        double distance = Math.round(Math.sqrt(Math.pow(R * c, 2)) * 0.6213712);
-
-        // return (distance <= searchRadius);
-        return (distance); // to approx. convert to miles
+        return (distance);
     }
 
-
-
-    public static Location getLocation(Activity activity, Context context){
-
-        // TODO: can we stick this in the user class and initialize in the onCreate
-        //  then save to database?
-
+    // function to get the location
+    public static Location getLocation(Activity activity, Context context) {
         // define the location manager
         LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
@@ -138,6 +127,7 @@ public class Utils {
                     setNegativeButton("No", (dialog, which) -> dialog.cancel());
             alert.create().show();
         } else {
+
             // otherwise move forward by checking permissions again
             if (ActivityCompat.checkSelfPermission(
                     activity,
@@ -147,12 +137,14 @@ public class Utils {
                     activity,
                     Manifest.permission.ACCESS_COARSE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED) {
+
                 // if permissions aren't enabled, request from user
                 ActivityCompat.requestPermissions(
                         activity,
                         new String[]{Manifest.permission.
                                 ACCESS_FINE_LOCATION}, 1);
             } else {
+
                 // if permissions are granted, find the last location
                 Location location = locationManager.getLastKnownLocation
                         (LocationManager.GPS_PROVIDER);
@@ -162,36 +154,42 @@ public class Utils {
         return null;
     }
 
-
-    // FireBase Message to user topic when sending sticker
+    // function to send a firebase message
     public static void sendNotification(String my_username, String other_user, Project project) {
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jPayload = new JSONObject();
-                    JSONObject jNotification = new JSONObject();
-                    try {
-                        jNotification.put("title", "New match with "+ my_username);
-                        jNotification.put("body", "New match for project: " + project.project_id +"!");
-                        jNotification.put("sound", "default");
-                        jNotification.put("badge", "1");
-                        // Populate the Payload object with our notification information
-                        // sent to topic of the user we're sending to
-                        jPayload.put("to", "/topics/" + other_user);
-                        jPayload.put("priority", "high");
-                        jPayload.put("notification", jNotification);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
-                    Log.d("NOTIFICATION", "NOTIFICATION SENT TO " + other_user + " FROM "+ my_username + " ABOUT " + project.getProject_id());
-                    Log.d("NOTIFICATION", messageResponse);
-                }
-            }).start();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // create the JSON objects
+                JSONObject jPayload = new JSONObject();
+                JSONObject jNotification = new JSONObject();
 
-    public static void sendMessageNotification(String my_username, String other_user, String project , String message) {
+                // then try to put the information in the JSON
+                try {
+                    jNotification.put("title", "New match with " + my_username);
+                    jNotification.put("body", "Project: " + project.project_id + "!");
+                    jNotification.put("sound", "default");
+                    jNotification.put("badge", "1");
+
+                    // Populate the Payload object with our notification information
+                    jPayload.put("to", "/topics/" + other_user);
+                    jPayload.put("priority", "high");
+                    jPayload.put("notification", jNotification);
+
+                    // catch exceptions
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // send to topic of the user we're sending to
+                final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
+                Log.d("NOTIFICATION", "NOTIFICATION SENT TO " + other_user + " FROM " + my_username + " ABOUT " + project.getProject_id());
+                Log.d("NOTIFICATION", messageResponse);
+            }
+        }).start();
+    }
+
+    public static void sendMessageNotification(String my_username, String other_user, String project, String message) {
 
         new Thread(new Runnable() {
             @Override
@@ -199,8 +197,8 @@ public class Utils {
                 JSONObject jPayload = new JSONObject();
                 JSONObject jNotification = new JSONObject();
                 try {
-                    jNotification.put("title", "New message from "+ my_username);
-                    jNotification.put("body", "Project: " + project +" " + message);
+                    jNotification.put("title", "New message from " + my_username);
+                    jNotification.put("body", "Project: " + project + " " + message);
                     jNotification.put("sound", "default");
                     jNotification.put("badge", "1");
                     // Populate the Payload object with our notification information
@@ -212,20 +210,20 @@ public class Utils {
                     e.printStackTrace();
                 }
                 final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
-                Log.d("MESSAGE NOTIFICATION", "NOTIFICATION SENT TO " + other_user + " FROM "+ my_username + " ABOUT " + project);
+                Log.d("MESSAGE NOTIFICATION", "NOTIFICATION SENT TO " + other_user + " FROM " + my_username + " ABOUT " + project);
                 Log.d("MESSAGE NOTIFICATION", messageResponse);
             }
         }).start();
     }
 
-        public static void subscribeToMyMessages(String topic, Activity activity) {
+    public static void subscribeToMyMessages(String topic, Activity activity) {
         FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         String msg = "Subscribed to " + topic;
                         if (!task.isSuccessful()) {
-                            msg = "Failed to subscribe to "+topic;
+                            msg = "Failed to subscribe to " + topic;
                         }
                         Toast.makeText(activity.getBaseContext(), msg, Toast.LENGTH_SHORT).show();
                     }

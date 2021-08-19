@@ -50,8 +50,9 @@
             style="@style/Timber.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="100dp"
             android:gravity="center"
-            android:text="OOPH"
+            android:text="OOPS!"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,8 +85,8 @@
 
         <com.yuyakaido.android.cardstackview.CardStackView
             android:id="@+id/homepage"
-            android:layout_width="393dp"
-            android:layout_height="611dp"
+            android:layout_width="match_parent"
+            android:layout_height="610dp"
             android:clipToPadding="false"
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"

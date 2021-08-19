@@ -304,7 +304,7 @@ public class HomepageFragment extends Fragment {
             action_button.setText("+");
             // otherwise set the action button to 'RADIUS'
         } else {
-            action_button.setText("RADIUS");
+            action_button.setText("R");
         }
 
         // if a user clicks on the action button
@@ -334,7 +334,7 @@ public class HomepageFragment extends Fragment {
                     seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onStopTrackingTouch(SeekBar seekBar) {
-                            // TODO Auto-generated method stub
+
                             Log.e(TAG, "discrete = " + String.valueOf(discrete));
                             Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
                         }
@@ -634,8 +634,15 @@ public class HomepageFragment extends Fragment {
                                                     Log.e("PROJECT:", projectClass.getProject_id()
                                                             + " and this proj" + thisProject
                                                             + "and swipename" + swipedName);
+
                                                     String homeowner = projectClass.getUsername();
                                                     Log.e("HOMEOWNER:", homeowner);
+
+                                                    // debugging the sendNotificatoin
+                                                    Log.e("my_username: ", my_username
+                                                            + "\nhomeowner: " + homeowner
+                                                            + "\nswipedName: " + swipedName
+                                                            + "\nselfProject: " + selfProject);
 
                                                     // send notifications to the homeowner and the contractor
                                                     Utils.sendNotification(my_username, homeowner, selfProject);
