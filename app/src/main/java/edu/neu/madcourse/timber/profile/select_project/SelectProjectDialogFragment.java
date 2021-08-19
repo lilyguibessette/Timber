@@ -83,7 +83,6 @@ public class SelectProjectDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.select_project, container, false);
         my_username = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 "USERNAME", null);
-        selectButton = view.findViewById(R.id.select_button);
 
         Log.e(TAG,my_username);
 
@@ -114,22 +113,6 @@ public class SelectProjectDialogFragment extends DialogFragment {
 
         //Create a recycler view...ugh
 
-
-        selectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("SelectProjectDialogFragment", "SelectProjectDialogFragment create click");
-
-                Log.e("SelectProjectDialogFragment", "SelectProjectDialogFragment got to homepage on click");
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, new ProfileFragment());
-                // Should this go to Swiping or Profile?
-                fragmentTransaction.addToBackStack(null);
-
-                Toast.makeText(getActivity(), "To swipe from select project" , Toast.LENGTH_SHORT).show();
-                fragmentTransaction.commit();
-            }
-        });
 
         cancelButton = view.findViewById(R.id.cancel_select_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {

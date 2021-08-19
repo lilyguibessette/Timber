@@ -430,37 +430,6 @@ public class HomepageFragment extends Fragment {
                                             }
                                         });
                             }
-
-
-
-                            String homeowner = selfProject.getUsername();
-                            DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
-                            homeownerRef.addListenerForSingleValueEvent(
-                                    new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
-                                            homeownerUser.addMatch(thisProject + "_" + swipedName);
-                                            homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Log.e(TAG, "updated homeowner user with match succeeded");
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull @NotNull Exception e) {
-                                                    Log.e(TAG, "updated homeowner user with match failed");
-                                                }
-                                            });
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    }
-                            );
                         }
 
                         @Override
@@ -468,7 +437,6 @@ public class HomepageFragment extends Fragment {
                                 (DatabaseError error) {
                             // Getting Post failed, log a message
                             Log.e(TAG, "update contractor swipedby failed", error.toException());
-
                 }
             });
         }
@@ -622,12 +590,12 @@ public class HomepageFragment extends Fragment {
     }
 
     private boolean checkIfLocal(Double myLatitude, Double myLongitude, Double otherLatitude, Double otherLongitude, Integer radius) {
-        /*Log.e(TAG, "myLat: " + myLatitude);
-        Log.e(TAG, "myLong: " + myLongitude);
-        Log.e(TAG, "otherLat: " + otherLatitude);
-        Log.e(TAG, "otherLong: " + otherLongitude);
-        Log.e(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
-        Log.e(TAG, "radius: " + radius);*/
+        Log.d(TAG, "myLat: " + myLatitude);
+        Log.d(TAG, "myLong: " + myLongitude);
+        Log.d(TAG, "otherLat: " + otherLatitude);
+        Log.d(TAG, "otherLong: " + otherLongitude);
+        Log.d(TAG, "distance in miles: " + Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude));
+        Log.d(TAG, "radius: " + radius);
 
         try {
             // TODO: should use the getRadius function that contractors have - tried but got a null pointer
