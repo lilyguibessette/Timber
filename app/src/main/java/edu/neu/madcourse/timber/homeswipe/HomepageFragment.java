@@ -343,8 +343,7 @@ public class HomepageFragment extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, Object> userData = (Map<String, Object>) dataSnapshot.
-                                getValue();
+                        Map<String, Object> userData = (Map<String, Object>) dataSnapshot.getValue();
                         //Get map of users in datasnapshot
                         for (Map.Entry<String, Object> entry : userData.entrySet()) {
 
