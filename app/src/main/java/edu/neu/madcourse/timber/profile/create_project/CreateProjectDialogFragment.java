@@ -51,8 +51,9 @@ public class CreateProjectDialogFragment extends DialogFragment {
     private static final int PICK_IMAGE = 100;
 
     private Button cancelButton, createButton;
-    private String my_username, project_name, project_type, project_description, project_image;
+    private String my_username, project_name, project_type, project_description, imgPath;
     private Location location;
+    private Project project;
     private int budget;
 
     // items related to the update image section
@@ -60,12 +61,17 @@ public class CreateProjectDialogFragment extends DialogFragment {
     private Bitmap bitmap;
     private InputStream inputStreamImg;
     private File destination = null;
-    private String imgPath = null;
-    private Uri imageUri;
+
+    private SharedPreferences sharedPreferences;
+    private DatabaseReference userRef;
 
     // instance for firebase storage and StorageReference
     private FirebaseStorage storage;
     private StorageReference storageReference;
+
+    // get references to database
+    private FirebaseDatabase database;
+    private DatabaseReference projectRef;
 
     public CreateProjectDialogFragment() {
         // Required empty public constructor
@@ -85,10 +91,25 @@ public class CreateProjectDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_project, container, false);
-        my_username = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).
-                getString("USERNAME", null);
 
+        // get access the user's data
+        sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        my_username = sharedPreferences.getString("USERNAME", null);
+
+        // get image storage data
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        database = FirebaseDatabase.getInstance();
+
+        // define the interactive objects on the screen
         imageView = view.findViewById(R.id.add_image);
+        createButton = view.findViewById(R.id.create_button);
+        cancelButton = view.findViewById(R.id.cancel_button);
+
+        // default image path
+        imgPath = "default_profile_pic.PNG";
+
+        // when the user clicks ot add in an image
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,11 +119,12 @@ public class CreateProjectDialogFragment extends DialogFragment {
             }
         });
 
-        createButton = view.findViewById(R.id.create_button);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("CreateProjectDialogFragment", "CreateProjectDialogFragment create click");
+                Log.e(TAG, "CreateProjectDialogFragment create click");
+
+                // get the variables to update
                 project_name = ((EditText) view.findViewById(R.id.create_project_name)).getText().toString();
                 project_type = ((EditText) view.findViewById(R.id.create_project_type)).getText().toString();
                 try {
@@ -110,168 +132,174 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 } catch (Exception e) {
                     budget = 0;
                 }
-                //project_image = ((EditText) view.findViewById(R.id.update_image)).getText().toString();
                 project_description = ((EditText) view.findViewById(R.id.create_project_description)).getText().toString();
-                //new Project(my_username, project_name, project_type, budget, project_image, project_description);
+
+                // finding the location of the user and assigning it to the project
                 Log.e(TAG, "attempting location");
                 location = Utils.getLocation(getActivity(), getContext());
                 Log.e(TAG, location.getLatitude() + " " + location.getLongitude());
 
                 // send to database
-                Log.e(TAG, my_username + " " + project_name + " " + project_type + " " + budget + " " + project_image + " " + project_description + " " + location);
-                Project project = new Project(my_username, project_name, project_type, budget, project_image, project_description, location.getLatitude(), location.getLongitude());
-                Log.e("CreateProjectDialogFragment", project.getProject_id());
+                Log.e(TAG, my_username + " "
+                        + project_name + " "
+                        + project_type + " "
+                        + budget + " "
+                        + imgPath + " "
+                        + project_description + " "
+                        + location);
+                project = new Project(my_username,
+                        project_name,
+                        project_type,
+                        budget,
+                        imgPath,
+                        project_description,
+                        location.getLatitude(),
+                        location.getLongitude());
+                Log.e(TAG, project.getProject_id());
 
+                // add to the database
                 addProjectToDB(project, my_username);
 
-                Log.e("CreateProjectDialogFragment", "CreateProjectDialogFragment got to homepage on click");
+                // send the user back to the previous page (swiping)
+                Log.e(TAG, "CreateProjectDialogFragment got to homepage on click");
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new HomepageFragment());
-                // Should this go to Swiping or Profile?
                 fragmentTransaction.addToBackStack(null);
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref",
-                        MODE_PRIVATE);
-                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString("ACTIVE_PROJECT", project_name);
-
-                Toast.makeText(getActivity(), "Project Created! Swipe to find a Contractor!", Toast.LENGTH_SHORT).show();
+                sharedPreferences.edit().putString("ACTIVE_PROJECT", project_name);
+                Toast.makeText(getActivity(), "Project Created! Swipe to find a Contractor!",
+                        Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
 
-        cancelButton = view.findViewById(R.id.cancel_button);
+        // when the user clicks to cancel, send to previous page
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("CreateProjectDialogFragment", "CreateProjectDialogFragment cancel click");
+                Log.e(TAG, "CreateProjectDialogFragment cancel click");
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to cancel", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
         return view;
     }
 
-    // send a sticker to another user's entry in the realtime db
+    // add the project to the database
     private void addProjectToDB(Project project, String my_username) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // get references to database
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                // Update user stats for sending message
-                DatabaseReference projectRef = database.getReference("ACTIVE_PROJECTS/" + project.getProject_id());
-                projectRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    public Project proj;
+        new Thread(() -> {
+            // get the project reference from the database
+            projectRef = database.getReference("ACTIVE_PROJECTS/" + project.getProject_id());
+            projectRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // get other project so we can add a new message
-                        proj = dataSnapshot.getValue(Project.class);
-                        if (projectRef != null) {
-                            // add message to project
-                            // set other project to the newly updates other project
-                            proj.setImage(imgPath);
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (projectRef != null) {
+                        // set the image of the project
+                        dataSnapshot.getValue(Project.class).setImage(project.getImage());
 
-                            projectRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received new project: " + project.toString());
-                                }
-                            })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + project.toString());
-                                        }
-                                    });
-                        }
+                        projectRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.w(TAG, "SUCCESS - received new project: "
+                                        + project.toString());
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "FAILED - did not update project list: "
+                                                + project.toString());
+                                    }
+                                });
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w(TAG, "proj ref add proj onCancelled", databaseError.toException());
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "proj ref add proj onCancelled", databaseError.toException());
+                }
+            });
+
+            // get the user reference from the database
+            userRef = database.getReference("HOMEOWNERS/" + my_username);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                public Homeowner user;
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // get other user so we can add a new message
+                    user = dataSnapshot.getValue(Homeowner.class);
+                    if (userRef != null && dataSnapshot != null && user != null) {
+
+                        // add message to user
+                        ArrayList<String> test = user.getActiveProjectList();
+                        Log.w(TAG, "test proj to user list: " + user.toString());
+                        Log.w(TAG, "test proj to user list: " + user.getUsername());
+                        Log.w(TAG, "test proj to user list: " + test.toString());
+                        Log.w(TAG, "test proj to user list: " + project.getProject_id());
+
+                        user.addActiveProject(project.getProject_id());
+                        Log.w(TAG, "added proj to user list: " + user.toString());
+
+                        //TODO fix -  not adding to db yet...
+                        userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.w(TAG, "SUCCESS received new project: " + user.toString());
+
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "FAILED did not update project list: " + user.toString());
+                                    }
+                                });
                     }
-                });
+                }
 
-                DatabaseReference userRef = database.getReference("HOMEOWNERS/" + my_username);
-
-                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    public Homeowner user;
-
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // get other user so we can add a new message
-                        user = dataSnapshot.getValue(Homeowner.class);
-                        if (userRef != null && dataSnapshot != null && user != null) {
-                            // add message to user
-                            ArrayList<String> test = user.getActiveProjectList();
-                            Log.w(TAG, "test proj to user list: " + user.toString());
-                            Log.w(TAG, "test proj to user list: " + user.getUsername());
-                            Log.w(TAG, "test proj to user list: " + test.toString());
-                            Log.w(TAG, "test proj to user list: " + project.getProject_id());
-                            user.addActiveProject(project.getProject_id());
-                            Log.w(TAG, "added proj to user list: " + user.toString());
-                            //TODO fix -  not adding to db yet...
-                            userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received new project: " + user.toString());
-
-                                }
-                            })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + user.toString());
-                                        }
-                                    });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w(TAG, "user ref add proj onCancelled", databaseError.toException());
-                    }
-                });
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "user ref add proj onCancelled", databaseError.toException());
+                }
+            });
         }).start();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
         super.onActivityResult(requestCode, resultCode, gallery);
+        if(resultCode == 0) { return; }
+
         inputStreamImg = null;
         Uri selectedImage = gallery.getData();
 
         try {
+            // try to decipher the image
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().
                     getContentResolver(), selectedImage);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+
+            // save the image details
             destination = new File(getRealPathFromURI(selectedImage));
             imgPath = destination.getName();
+            storageReference.child(imgPath).putFile(selectedImage);
 
-            if (imgPath != null) {
-                storage = FirebaseStorage.getInstance();
-                storageReference = storage.getReference();
-                // Defining the child of storageReference
-                StorageReference ref = storageReference.child(imgPath);
-                ref.putFile(selectedImage);
-            }
+            // set the imageView to show the new pic
             imageView.setImageBitmap(bitmap);
 
+            // catch the try if any errors
         } catch (IOException e) {
-            Toast.makeText(getActivity(), "Photo error",
-                    Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error uploading photo");
             e.printStackTrace();
         }
-        Toast.makeText(getActivity(), "Picked photo:" +
-                gallery.getData().toString(), Toast.LENGTH_SHORT).show();
+        // otherwise log the photo details
+        Log.e(TAG, "Picked photo: " + imgPath);
     }
 
     public String getRealPathFromURI(Uri contentUri) {
