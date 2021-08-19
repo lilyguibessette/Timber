@@ -34,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
@@ -46,7 +45,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     public String my_usertype = "HOMEOWNERS";
     private static final int PICK_IMAGE = 100;
 
-    private Button updateButton, createButton, logout, updateImageButton;
+    private Button cancelButton, updateButton, logout, updateImageButton;
     public String my_username, my_param1, my_param2, my_email, my_zip, my_phone;
 
     // items related to the update image section
@@ -81,7 +80,11 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.update_account_homeowner, container, false);
 
         updateImageButton = view.findViewById(R.id.update_image);
+        updateButton = view.findViewById(R.id.update_account);
+        cancelButton = view.findViewById(R.id.cancel_button);
+        logout = view.findViewById(R.id.logout);
         imageView = view.findViewById(R.id.image);
+
         updateImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,8 +94,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
             }
         });
 
-        createButton = view.findViewById(R.id.update_account);
-        createButton.setOnClickListener(new View.OnClickListener() {
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment create click");
@@ -103,7 +105,9 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                 my_email = ((EditText) view.findViewById(R.id.update_email)).getText().toString();
                 my_zip = ((EditText) view.findViewById(R.id.update_zip)).getText().toString();
                 my_phone = ((EditText) view.findViewById(R.id.update_phone)).getText().toString();
+
                 update_profile();
+
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
@@ -112,8 +116,8 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
             }
         });
 
-        updateButton = view.findViewById(R.id.cancel_button);
-        updateButton.setOnClickListener(new View.OnClickListener() {
+        // when the user clicks to cancel
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment cancel click");
@@ -124,7 +128,8 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                 fragmentTransaction.commit();
             }
         });
-        logout = view.findViewById(R.id.logout);
+
+        // when the user clicks to log out
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,12 +185,10 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                         if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
                             my_user.setImage(imgPath);
                         }
-
                         myUserRef.setValue(my_user);
-
                     } else {
                         // log error
-                        Log.e(TAG, "cant update");
+                        Log.e(TAG, "cant update the profile");
                     }
                 }
 
@@ -196,16 +199,14 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                             databaseError.toException());
                 }
             });
-
         }).start();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
         super.onActivityResult(requestCode, resultCode, gallery);
-        if(resultCode == 0){
-            return;
-        }
+        if(resultCode == 0) { return; }
+
         inputStreamImg = null;
         Uri selectedImage = gallery.getData();
 
@@ -218,12 +219,9 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
             imgPath = destination.getName();
 
             if (imgPath != null) {
-
                 storage = FirebaseStorage.getInstance();
                 storageReference = storage.getReference();
-                // Defining the child of storageReference
-                StorageReference ref = storageReference.child(imgPath);
-                ref.putFile(selectedImage);
+                storageReference.child(imgPath).putFile(selectedImage);
             }
 
             imageView.setImageBitmap(bitmap);

@@ -44,7 +44,7 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/create_username"
+            android:id="@+id/update_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
@@ -52,7 +52,7 @@
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/update_specialty"
+            android:id="@+id/update_param1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Business name"
@@ -60,10 +60,10 @@
             android:textSize="12sp" />
 
         <EditText
-            android:id="@+id/update_param1"
+            android:id="@+id/update_specialty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Specialty"
+            android:hint="Speciality"
             android:textColor="@color/light_grey"
             android:textSize="12sp" />
 

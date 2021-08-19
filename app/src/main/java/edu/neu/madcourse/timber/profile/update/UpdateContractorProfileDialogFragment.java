@@ -48,7 +48,7 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private static final int PICK_IMAGE = 100;
 
     private Button cancelButton, updateButton, logout, updateImageButton;
-    public String my_username, my_param1, my_param2, my_email, my_zip, my_phone;
+    public String my_username, my_param1, my_specialty, my_param2, my_zip, my_email, my_phone;
 
     private ImageView imageView;
     private Bitmap bitmap;
@@ -56,6 +56,9 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private File destination = null;
     private String imgPath = null;
     private Uri imageUri;
+
+    private SharedPreferences sharedPreferences;
+    private DatabaseReference myUserRef;
 
     // instance for firebase storage and StorageReference
     private FirebaseStorage storage;
@@ -78,20 +81,37 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // inflate the view
         View view = inflater.inflate(R.layout.update_account_contractor, container, false);
 
+        // get access the user's data
+        sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
+        my_username = sharedPreferences.getString("USERNAME", null);
+        my_usertype = sharedPreferences.getString("USERTYPE", null);
+        myUserRef = FirebaseDatabase.getInstance().getReference(my_usertype + "/" + my_username);
+
+        // get image storage data
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
+        // define the interactive objects on the screen
         updateImageButton = view.findViewById(R.id.update_image);
+        updateButton = view.findViewById(R.id.update_account);
+        cancelButton = view.findViewById(R.id.cancel_button);
+        logout = view.findViewById(R.id.logout);
         imageView = view.findViewById(R.id.image);
+
+        // when the user clicks to update the image
         updateImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent gallery = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(gallery, PICK_IMAGE);
             }
         });
 
-        updateButton = view.findViewById(R.id.update_account);
+        // when the user clicks to update the details
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,21 +119,23 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
                 // use dialog for add link
                 my_username = ((EditText) view.findViewById(R.id.update_username)).getText().toString();
                 my_param1 = ((EditText) view.findViewById(R.id.update_param1)).getText().toString();
+                my_specialty = ((EditText) view.findViewById(R.id.update_specialty)).getText().toString();
                 my_param2 = ((EditText) view.findViewById(R.id.update_param2)).getText().toString();
-                my_email = ((EditText) view.findViewById(R.id.update_email)).getText().toString();
                 my_zip = ((EditText) view.findViewById(R.id.update_zip)).getText().toString();
+                my_email = ((EditText) view.findViewById(R.id.update_email)).getText().toString();
                 my_phone = ((EditText) view.findViewById(R.id.update_phone)).getText().toString();
+
                 update_profile();
+
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
                 Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
-
             }
         });
 
-        cancelButton = view.findViewById(R.id.cancel_button);
+        // when the user clicks to cancel
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,12 +148,11 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
             }
         });
 
-
-        logout = view.findViewById(R.id.logout);
+        // when the user clicks to log out
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment cancel click");
+                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment logout click");
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("TimberSharedPref",
                         MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
@@ -145,101 +166,98 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     }
 
     private void update_profile() {
-        new Thread(() -> {
-            SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE);
-            // connect to the database and look at the users
-            my_username = sharedPreferences.getString("USERNAME", null);
-            my_usertype = sharedPreferences.getString("USERTYPE", null);
-            DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
-                    my_usertype + "/" + my_username);
+        new Thread(() -> myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            public User my_user;
 
-            myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                public User my_user;
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // if the user exists, get their data
-                    if (dataSnapshot.exists()) {
-                        Contractor my_user = dataSnapshot.getValue(Contractor.class);
-
-                        if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
-                            my_user.setUsername(my_username);
-                        }
-                        if (!my_param1.equals("") & !my_user.getBusinessName().equals(my_param1)) {
-                            my_user.setBusinessName(my_param1);
-                        }
-                        if (!my_param2.equals("") & !my_user.getTaxID().equals(my_param2)) {
-                            my_user.setTaxID(my_param2);
-                        }
-                        if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
-                            my_user.setEmail(my_email);
-                        }
-                        if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
-                            my_user.setZipcode(my_zip);
-                        }
-                        if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
-                            my_user.setPhoneNumber(my_phone);
-                        }
-                        if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
-                            my_user.setImage(imgPath);
-                        }
-
-                        myUserRef.setValue(my_user);
-
-                    } else {
-                        // log error
-                        Log.e(TAG, "cant update");
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // if the user exists, get their data
+                if (dataSnapshot.exists()) {
+                    Contractor my_user = dataSnapshot.getValue(Contractor.class);
+                    Log.e(TAG,"Made it to the my_user section");
+                    // checking for valid input / no blanks
+                    if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
+                        my_user.setUsername(my_username);
                     }
+                    Log.e(TAG,"Made it to the my_username field");
+                    if (!my_param1.equals("") & !my_user.getBusinessName().equals(my_param1)) {
+                        my_user.setBusinessName(my_param1);
+                    }
+                    Log.e(TAG,"Made it to the my_param1 field");
+                    if (!my_specialty.equals("") & !my_user.getSpecialty().equals(my_specialty)) {
+                        my_user.setSpecialty(my_specialty);
+                    }
+                    Log.e(TAG,"Made it to the my_speciality field");
+                    if (!my_param2.equals("") & !my_user.getTaxID().equals(my_param2)) {
+                        my_user.setTaxID(my_param2);
+                    }
+                    Log.e(TAG,"Made it to the my_param2 field");
+                    if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
+                        my_user.setEmail(my_email);
+                    }
+                    Log.e(TAG,"Made it to the my_email field");
+                    if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
+                        my_user.setZipcode(my_zip);
+                    }
+                    Log.e(TAG,"Made it to the my_zip field");
+                    if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
+                        my_user.setPhoneNumber(my_phone);
+                    }
+                    Log.e(TAG,"Made it to the my_phone field");
+                    if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
+                        my_user.setImage(imgPath);
+                    }
+                    Log.e(TAG,"Made it to the my_image field");
+                    myUserRef.setValue(my_user);
+                    Log.e(TAG,"After setting it for the user");
+                } else {
+                    // if there's an issue log this error
+                    Log.e(TAG, "cant update the profile");
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // if getting post failed, log a message
-                    Log.w(TAG, "update profile onCancelled",
-                            databaseError.toException());
-                }
-            });
-
-        }).start();
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // if getting post failed, log a message
+                Log.w(TAG, "update profile onCancelled",
+                        databaseError.toException());
+            }
+        })).start();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
         super.onActivityResult(requestCode, resultCode, gallery);
-        if(resultCode == 0){
-            return;
-        }
+        if(resultCode == 0) { return; }
+
         inputStreamImg = null;
         Uri selectedImage = gallery.getData();
 
         try {
+            // try to decipher the image
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().
                     getContentResolver(), selectedImage);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+
+            // save the image details
             destination = new File(getRealPathFromURI(selectedImage));
             imgPath = destination.getName();
+            storageReference.child(imgPath).putFile(selectedImage);
 
-            if (imgPath != null) {
-
-                storage = FirebaseStorage.getInstance();
-                storageReference = storage.getReference();
-                // Defining the child of storageReference
-                StorageReference ref = storageReference.child(imgPath);
-                ref.putFile(selectedImage);
-            }
-
+            // set the imageView to show the new pic
             imageView.setImageBitmap(bitmap);
 
+        // catch the try if any errors
         } catch (IOException e) {
-            Toast.makeText(getActivity(), "Photo error",
-                    Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error uploading photo");
             e.printStackTrace();
         }
-        Toast.makeText(getActivity(), "Picked photo:" +
-                gallery.getData().toString(), Toast.LENGTH_SHORT).show();
+        // otherwise log the photo details
+        Log.e(TAG, "Picked photo: " + imgPath);
     }
 
+    // getting the path from the URI
     public String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Audio.Media.DATA};
         Cursor cursor = getContext().getContentResolver().query(contentUri, proj,

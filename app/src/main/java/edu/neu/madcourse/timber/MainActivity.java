@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                         Log.e(TAG,"login_user: User does not exist in DB");
                         Log.e(TAG,"login_user: " + my_usertype);
                         Log.e(TAG,location.toString());
-                       // Log.e(TAG,location.getLatitude());
+                        // Log.e(TAG,location.getLatitude());
                         Log.e(TAG,String.valueOf(location.getLongitude()));
                         if (my_usertype.equals(HOMEOWNERS)) {
                             try {

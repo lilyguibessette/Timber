@@ -93,7 +93,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Intent gallery = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(gallery, PICK_IMAGE);
             }
         });
