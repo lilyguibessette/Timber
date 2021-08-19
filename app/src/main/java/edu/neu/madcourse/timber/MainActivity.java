@@ -170,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
             my_usertype = radioButtonUserType.getText().toString().toUpperCase();
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
+            if(my_username.length() == 0){
+                return;
+            }
             Log.e(TAG,"181, my_usertype is "+ my_usertype);
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
