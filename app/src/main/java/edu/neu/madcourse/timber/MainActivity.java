@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 USERNAME, null);
         my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERTYPE, null);
+        location = Utils.getLocation(this,this);
         if (my_username != null && my_usertype != null && my_username != "LOGOUT") {
             Log.e(TAG,"start activity 114");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));
@@ -169,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
 
             my_usertype = radioButtonUserType.getText().toString().toUpperCase();
             my_username = ((EditText) findViewById(R.id.enter_username)).getText().toString();
+            if(my_username.length() == 0){
+                return;
+            }
             Log.e(TAG,"181, my_usertype is "+ my_usertype);
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);

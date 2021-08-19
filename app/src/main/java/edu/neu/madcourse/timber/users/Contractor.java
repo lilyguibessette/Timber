@@ -4,24 +4,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Contractor implements User {
-    private String username;
-    private String token;
-    private double latitude;
-    private double longitude;
-    private String businessName;
-    private String taxID;
-    private String email;
-    private String zipcode;
-    private String phoneNumber;
-    private String image;
-    private ArrayList<String> activeProjectList;
-    private ArrayList<String> completedProjectList;
-    private ArrayList<String> swipedRightOnList;
-    private ArrayList<String> swipedLeftOnList;
-    private ArrayList<String> matchList;
+    private String username, token, businessName, taxID, email, zipcode, phoneNumber, image,
+            specialty;
+    private ArrayList<String> activeProjectList, completedProjectList, swipedRightOnList,
+            swipedLeftOnList, matchList;
+    private double latitude, longitude;
     private int workRadius;
-    private String specialty;
-
 
     public Contractor() {
     }
@@ -39,7 +27,7 @@ public class Contractor implements User {
         this.username = Objects.requireNonNull(username, "username must not be null");
 
         this.token = token;
-        this.token = Objects.requireNonNull(token, "username must not be null");
+        this.token = Objects.requireNonNull(token, "token must not be null");
 
         this.latitude = latitude;
         this.longitude = longitude;
@@ -87,7 +75,7 @@ public class Contractor implements User {
         this.username = Objects.requireNonNull(username, "username must not be null");
 
         this.token = token;
-        this.token = Objects.requireNonNull(token, "username must not be null");
+        this.token = Objects.requireNonNull(token, "token must not be null");
 
         this.businessName = businessName;
         this.businessName = Objects.requireNonNull(businessName, "businessName must not be null");
@@ -121,11 +109,6 @@ public class Contractor implements User {
         this.specialty = "No specialties added.";
     }
 
-
-    public String getUsername() {
-        return this.username;
-    }
-
     public String getToken() {
         return this.token;
     }
@@ -134,55 +117,80 @@ public class Contractor implements User {
         return this.latitude;
     }
 
-    public double getLongitude() {
-        return this.longitude;
-    }
-    //public void setLatitude(Location location){this.latitude = location.getLatitude();}
-    //public void setLongitude(Location location){ this.longitude  = location.getLongitude() ;}
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return this.longitude;
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getBusinessName() {
         return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
     }
 
     public String getTaxID() {
         return taxID;
     }
 
+    public void setTaxID(String taxID) {
+        this.taxID = taxID;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getZipcode() {
         return zipcode;
     }
 
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setRadius(int workRadius) {
-        this.workRadius = workRadius;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public int getRadius() {
         return workRadius;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setRadius(int workRadius) {
+        this.workRadius = workRadius;
     }
 
     public String getImage() {
         return this.image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public ArrayList<String> getMatchList() {
@@ -197,18 +205,16 @@ public class Contractor implements User {
         return this.completedProjectList;
     }
 
-    public void addRightSwipedOn(String username){
-        swipedRightOnList.add(username);
-    }
-    public void addLeftSwipedOn(String username){
-        swipedLeftOnList.add(username);
-    }
+    public void addRightSwipedOn(String username) { swipedRightOnList.add(username); }
 
-    public ArrayList<String> getSwipedRightOnList(){
-        return this.swipedRightOnList;
-    }
-    public ArrayList<String> getSwipedLeftOnList(){
-        return this.swipedLeftOnList;
-    }
+    public void addLeftSwipedOn(String username) { swipedLeftOnList.add(username); }
+
+    public ArrayList<String> getSwipedRightOnList() { return this.swipedRightOnList; }
+
+    public ArrayList<String> getSwipedLeftOnList() { return this.swipedLeftOnList; }
+
+    //public void setLatitude(Location location){this.latitude = location.getLatitude();}
+    //public void setLongitude(Location location){ this.longitude  = location.getLongitude() ;}
+
 
 }

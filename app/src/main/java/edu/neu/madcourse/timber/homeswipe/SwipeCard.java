@@ -4,15 +4,17 @@ public class SwipeCard {
     private String image;
     private String name;
     private String details;
+    private String zipcode;
 
 
     public SwipeCard() {
     }
 
-    public SwipeCard(String image, String name, String details) {
+    public SwipeCard(String image, String name, String details, String zipcode) {
         this.image = image;
         this.name = name;
         this.details = details;
+        this.zipcode = zipcode;
     }
 
     public String getImage() {
@@ -25,5 +27,9 @@ public class SwipeCard {
 
     public String getDetails() {
         return details;
+    }
+
+    public String getZipcode() {
+        return zipcode;
     }
 }

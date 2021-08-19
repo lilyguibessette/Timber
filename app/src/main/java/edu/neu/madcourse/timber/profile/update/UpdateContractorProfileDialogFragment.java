@@ -25,10 +25,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.ProfileFragment;
+import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -37,30 +40,26 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
-    private Button cancelButton;
-    private Button updateButton;
-    private Button logout;
-    public String my_username;
-    public String my_usertype = "CONTRACTORS";
-    public String my_param1;
-    public String my_param2;
-    public String my_email;
-    public String my_zip;
-    public String my_phone;
-
-    // items related to the update image section
-    ImageView imageView;
-    private Button updateImageButton;
+    private String my_usertype = "CONTRACTORS";
     private static final int PICK_IMAGE = 100;
-    private final int PICK_IMAGE_GALLERY = 2;
+
+    private Button cancelButton, updateButton, logout, updateImageButton;
+    public String my_username, my_param1, my_param2, my_email, my_zip, my_phone;
+
+    private ImageView imageView;
     private Bitmap bitmap;
     private InputStream inputStreamImg;
     private File destination = null;
     private String imgPath = null;
-    Uri imageUri;
+    private Uri imageUri;
+
+    // instance for firebase storage and StorageReference
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
 
     public UpdateContractorProfileDialogFragment() {
         // Required empty public constructor
@@ -154,16 +153,37 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
 
-            myUserRef.addValueEventListener(new ValueEventListener() {
+            myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 public User my_user;
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
-                        //my_user.setImage();
-                        // add setters to my_user
+                        Contractor my_user = dataSnapshot.getValue(Contractor.class);
+
+                        if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
+                            my_user.setUsername(my_username);
+                        }
+                        if (!my_param1.equals("") & !my_user.getBusinessName().equals(my_param1)) {
+                            my_user.setBusinessName(my_param1);
+                        }
+                        if (!my_param2.equals("") & !my_user.getTaxID().equals(my_param2)) {
+                            my_user.setTaxID(my_param2);
+                        }
+                        if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
+                            my_user.setEmail(my_email);
+                        }
+                        if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
+                            my_user.setZipcode(my_zip);
+                        }
+                        if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
+                            my_user.setPhoneNumber(my_phone);
+                        }
+                        if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
+                            my_user.setImage(imgPath);
+                        }
+
                         myUserRef.setValue(my_user);
 
                     } else {
@@ -186,6 +206,9 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
         super.onActivityResult(requestCode, resultCode, gallery);
+        if(resultCode == 0){
+            return;
+        }
         inputStreamImg = null;
         Uri selectedImage = gallery.getData();
 
@@ -195,8 +218,19 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
             destination = new File(getRealPathFromURI(selectedImage));
+            imgPath = destination.getName();
+
+            if (imgPath != null) {
+
+                storage = FirebaseStorage.getInstance();
+                storageReference = storage.getReference();
+                // Defining the child of storageReference
+                StorageReference ref = storageReference.child(imgPath);
+                ref.putFile(selectedImage);
+            }
+
             imageView.setImageBitmap(bitmap);
-            //TODO: upload the image to the database
+
         } catch (IOException e) {
             Toast.makeText(getActivity(), "Photo error",
                     Toast.LENGTH_SHORT).show();
@@ -214,7 +248,6 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-
 }
 
 

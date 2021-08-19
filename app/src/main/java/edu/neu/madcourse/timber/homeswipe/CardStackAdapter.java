@@ -14,6 +14,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -56,24 +57,29 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView image;
-        TextView username, details;
+        TextView username, details, zipcode;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            Log.e(TAG,"Called ViewHolder");
+            Log.d(TAG,"Called ViewHolder");
             image = itemView.findViewById(R.id.swipe_image);
             username = itemView.findViewById(R.id.swipe_username);
             details = itemView.findViewById(R.id.swipe_details);
+            zipcode = itemView.findViewById(R.id.swipe_zipcode);
         }
 
         void setData(SwipeCard data) {
-            Log.e(TAG,"setting data");
-            StorageReference imageRef = storageReference.child(data.getImage());
-            Glide.with(view)
-                    .load(imageRef)
-                    .into(image);
+            Log.d(TAG,"setting data");
+            if(!Objects.isNull(data.getImage())){
+                StorageReference imageRef = storageReference.child(data.getImage());
+                Glide.with(view)
+                        .load(imageRef)
+                        .into(image);
+            }
+
             username.setText(data.getUsername());
             details.setText(data.getDetails());
+            zipcode.setText(data.getZipcode());
         }
     }
 

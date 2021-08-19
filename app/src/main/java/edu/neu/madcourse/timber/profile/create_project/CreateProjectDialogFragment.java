@@ -2,20 +2,14 @@ package edu.neu.madcourse.timber.profile.create_project;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +20,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,13 +30,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.fcm_server.Utils;
@@ -55,26 +48,24 @@ import edu.neu.madcourse.timber.users.Project;
 
 public class CreateProjectDialogFragment extends DialogFragment {
     private static final String TAG = "CreateProjectDialogFragment";
-    private Button cancelButton;
-    private Button createButton;
-    private String project_name;
-    private String project_type;
-    private int budget;
-    private String project_image;
-    private String project_description;
-    private String my_username;
+    private static final int PICK_IMAGE = 100;
+
+    private Button cancelButton, createButton;
+    private String my_username, project_name, project_type, project_description, project_image;
     private Location location;
+    private int budget;
 
     // items related to the update image section
-    ImageView imageView;
-    private Button updateImageButton;
-    private static final int PICK_IMAGE = 100;
-    private final int PICK_IMAGE_GALLERY = 2;
+    private ImageView imageView;
     private Bitmap bitmap;
     private InputStream inputStreamImg;
     private File destination = null;
     private String imgPath = null;
-    Uri imageUri;
+    private Uri imageUri;
+
+    // instance for firebase storage and StorageReference
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
 
     public CreateProjectDialogFragment() {
         // Required empty public constructor
@@ -94,8 +85,8 @@ public class CreateProjectDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_project, container, false);
-        my_username = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
-                "USERNAME", null);
+        my_username = getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).
+                getString("USERNAME", null);
 
         imageView = view.findViewById(R.id.add_image);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -116,20 +107,19 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 project_type = ((EditText) view.findViewById(R.id.create_project_type)).getText().toString();
                 try {
                     budget = Integer.parseInt(((EditText) view.findViewById(R.id.create_budget)).getText().toString());
-                } catch(Exception e){
+                } catch (Exception e) {
                     budget = 0;
                 }
-                // TODO: this might need to be a button to launch the photo library or something
                 //project_image = ((EditText) view.findViewById(R.id.update_image)).getText().toString();
                 project_description = ((EditText) view.findViewById(R.id.create_project_description)).getText().toString();
                 //new Project(my_username, project_name, project_type, budget, project_image, project_description);
                 Log.e(TAG, "attempting location");
                 location = Utils.getLocation(getActivity(), getContext());
-                Log.e(TAG, location.getLatitude() + " " +location.getLongitude());
+                Log.e(TAG, location.getLatitude() + " " + location.getLongitude());
 
                 // send to database
-                Log.e(TAG, my_username+ " "+project_name+ " "+ project_type+ " "+ budget+ " "+ project_image+ " "+ project_description+ " "+ location);
-                Project project = new Project(my_username,project_name, project_type, budget, project_image, project_description, location.getLatitude(),location.getLongitude());
+                Log.e(TAG, my_username + " " + project_name + " " + project_type + " " + budget + " " + project_image + " " + project_description + " " + location);
+                Project project = new Project(my_username, project_name, project_type, budget, project_image, project_description, location.getLatitude(), location.getLongitude());
                 Log.e("CreateProjectDialogFragment", project.getProject_id());
 
                 addProjectToDB(project, my_username);
@@ -144,7 +134,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("ACTIVE_PROJECT", project_name);
 
-                Toast.makeText(getActivity(), "Project Created! Swipe to find a Contractor!" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Project Created! Swipe to find a Contractor!", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
@@ -157,7 +147,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new ProfileFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to cancel" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "going to cancel", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
@@ -172,17 +162,19 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 // get references to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 // Update user stats for sending message
-                DatabaseReference projectRef = database.getReference("ACTIVE_PROJECTS/"+project.getProject_id());
-                projectRef.addValueEventListener(new ValueEventListener() {
+                DatabaseReference projectRef = database.getReference("ACTIVE_PROJECTS/" + project.getProject_id());
+                projectRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     public Project proj;
-                    public Boolean first_change = true;
+
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other project so we can add a new message
                         proj = dataSnapshot.getValue(Project.class);
-                        if (projectRef != null && first_change){
+                        if (projectRef != null) {
                             // add message to project
                             // set other project to the newly updates other project
+                            proj.setImage(imgPath);
+
                             projectRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -196,7 +188,6 @@ public class CreateProjectDialogFragment extends DialogFragment {
                                         }
                                     });
                         }
-                        first_change = false;
                     }
 
                     @Override
@@ -204,19 +195,18 @@ public class CreateProjectDialogFragment extends DialogFragment {
                         // Getting Post failed, log a message
                         Log.w(TAG, "proj ref add proj onCancelled", databaseError.toException());
                     }
-
                 });
 
-                DatabaseReference userRef = database.getReference("HOMEOWNERS/"+my_username);
-                // update other user's message history with new message
-                userRef.addValueEventListener(new ValueEventListener() {
+                DatabaseReference userRef = database.getReference("HOMEOWNERS/" + my_username);
+
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     public Homeowner user;
-                    public Boolean first_change = true;
+
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other user so we can add a new message
                         user = dataSnapshot.getValue(Homeowner.class);
-                        if (userRef != null && dataSnapshot != null && first_change && user != null){
+                        if (userRef != null && dataSnapshot != null && user != null) {
                             // add message to user
                             ArrayList<String> test = user.getActiveProjectList();
                             Log.w(TAG, "test proj to user list: " + user.toString());
@@ -239,9 +229,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
                                             Log.w(TAG, "FAILED to update project list: " + user.toString());
                                         }
                                     });
-                            first_change = false;
                         }
-
                     }
 
                     @Override
@@ -249,11 +237,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
                         // Getting Post failed, log a message
                         Log.w(TAG, "user ref add proj onCancelled", databaseError.toException());
                     }
-
                 });
-
-
-
             }
         }).start();
     }
@@ -270,10 +254,20 @@ public class CreateProjectDialogFragment extends DialogFragment {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
             destination = new File(getRealPathFromURI(selectedImage));
+            imgPath = destination.getName();
+
+            if (imgPath != null) {
+                storage = FirebaseStorage.getInstance();
+                storageReference = storage.getReference();
+                // Defining the child of storageReference
+                StorageReference ref = storageReference.child(imgPath);
+                ref.putFile(selectedImage);
+            }
             imageView.setImageBitmap(bitmap);
-            //TODO: upload the image to the database
+
         } catch (IOException e) {
-            Toast.makeText(getActivity(), "Error uploading photo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Photo error",
+                    Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         Toast.makeText(getActivity(), "Picked photo:" +

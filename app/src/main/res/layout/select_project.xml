@@ -30,24 +30,14 @@
             android:weightSum="2">
 
             <Button
-                android:id="@+id/select_button"
-                style="@style/Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:layout_weight="1"
-                android:text="Select" />
-
-            <Button
                 android:id="@+id/cancel_select_button"
                 style="@style/Button"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="Cancel" />
+                android:text="Exit" />
 
         </LinearLayout>
 
