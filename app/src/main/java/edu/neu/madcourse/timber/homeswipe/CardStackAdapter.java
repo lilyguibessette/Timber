@@ -57,7 +57,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView image;
-        TextView username, details;
+        TextView username, details, zipcode;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -65,6 +65,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
             image = itemView.findViewById(R.id.swipe_image);
             username = itemView.findViewById(R.id.swipe_username);
             details = itemView.findViewById(R.id.swipe_details);
+            zipcode = itemView.findViewById(R.id.swipe_zipcode);
         }
 
         void setData(SwipeCard data) {
@@ -78,6 +79,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
             username.setText(data.getUsername());
             details.setText(data.getDetails());
+            zipcode.setText(data.getZipcode());
         }
     }
 

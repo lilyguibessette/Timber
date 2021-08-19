@@ -328,7 +328,8 @@ public class HomepageFragment extends Fragment {
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
                                     (String) singleUser.get("username"),
-                                    (String) singleUser.get("email")));
+                                    (String) singleUser.get("email"),
+                                    (String) singleUser.get("zipcode")));
                             /*
                             // add cards as they load (ish, basically the same result as above anyways)
                             adapter.addCardToBack(new SwipeCard(
@@ -388,7 +389,8 @@ public class HomepageFragment extends Fragment {
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
                                     (String) entry.getKey(),
-                                    (String) singleUser.get("description")));
+                                    (String) singleUser.get("description"),
+                                    (String) singleUser.get("zipcode")));
                             adapter.notifyDataSetChanged();
                         }
                     }
