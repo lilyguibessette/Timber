@@ -599,20 +599,22 @@ public class HomepageFragment extends Fragment {
                                             new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
-                                                    homeownerUser.addMatch(thisProject + "_" + swipedName);
-                                                    homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-                                                            Log.e(TAG, "updated homeowner user with match succeeded");
-                                                        }
-                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull @NotNull Exception e) {
-                                                            Log.e(TAG, "updated homeowner user with match failed");
-                                                        }
-                                                    });
+                                                    if (snapshot.exists()) {
+                                                        Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                                        homeownerUser.addMatch(thisProject + "_" + swipedName);
+                                                        homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+                                                                Log.e(TAG, "updated homeowner user with match succeeded");
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull @NotNull Exception e) {
+                                                                Log.e(TAG, "updated homeowner user with match failed");
+                                                            }
+                                                        });
 
+                                                    }
                                                 }
 
                                                 @Override
