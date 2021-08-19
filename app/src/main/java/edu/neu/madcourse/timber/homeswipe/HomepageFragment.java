@@ -17,6 +17,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
@@ -132,14 +132,9 @@ public class HomepageFragment extends Fragment {
 
         thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
         Log.e(TAG,"my project is: " + thisProject);
-        createNotificationChannel();
-        // TODO: TEST to use FireBaseMessaging to push a notification
-        // TODO: need to add in the server key
-        sendNotificationToUserTopic(my_username);
-
+        Utils.subscribeToMyMessages(thisProject, this.getActivity());
         if(my_usertype == "HOMEOWNERS"){
             thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
-
             if(Objects.isNull(thisProject)){
                 Toast.makeText(getActivity(), "No Project to swipe for! Please create a project to begin swiping", Toast.LENGTH_LONG).show();
                 return getView();
@@ -271,18 +266,50 @@ public class HomepageFragment extends Fragment {
         manager.setOverlayInterpolator(new LinearInterpolator());
         manager.setAutoMeasureEnabled(false);
         adapter = new CardStackAdapter();
-
+        DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
+                "ACTIVE_PROJECTS");
         Log.e(TAG, "adding initial cardstack with userType: " + my_usertype);
         Log.e(TAG, "I am: " + my_usertype + " " + my_username);
         if (my_usertype.equals("HOMEOWNERS")) {
             adapter.setCardStack(populateContractorsList());
             if(adapter.getItemCount() == 0){
+                // need a wait for database to return in other thread
+
                 //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                View noMoreContractors = getLayoutInflater().inflate(R.layout.empty_swipe_dialog, null);
+                Button confirm = (Button) noMoreContractors.findViewById(R.id.confirm);
+                dialogBuilder.setView(noMoreContractors);
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.show();
+
+                confirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
             }
         } else{
             adapter.setCardStack(populateProjectsList());
             if(adapter.getItemCount() == 0){
-                //Toast.makeText(getActivity(), "No Projects found, check back later!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "No Contractors found, check back later!", Toast.LENGTH_LONG).show();
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                View noMoreSwipes = getLayoutInflater().inflate(R.layout.empty_swipe_dialog, null);
+                TextView tvNoSwipe = noMoreSwipes.findViewById(R.id.textView);
+                tvNoSwipe.setText("No more Projects! Check back later!");
+                Button confirm = (Button) noMoreSwipes.findViewById(R.id.confirm);
+                dialogBuilder.setView(noMoreSwipes);
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.show();
+
+                confirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
             }
         }
 
@@ -361,8 +388,7 @@ public class HomepageFragment extends Fragment {
 
 
         // Adding new select button
-        DatabaseReference projectsRef = FirebaseDatabase.getInstance().getReference(
-                "ACTIVE_PROJECTS");
+
         select_button = view.findViewById(R.id.select_project_button);
         select_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -395,15 +421,16 @@ public class HomepageFragment extends Fragment {
                 } else {
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                     View updateSpecialtyView = getLayoutInflater().inflate(R.layout.update_specialty, null);
-                    EditText specialtyEdit = (EditText) updateSpecialtyView.findViewById(R.id.specialtyUpdater);
-                    newSpecialty = specialtyEdit.getText().toString();
                     Button confirm = (Button) updateSpecialtyView.findViewById(R.id.confirm);
+                    EditText specialtyEdit = (EditText) updateSpecialtyView.findViewById(R.id.specialtyUpdater);
                     dialogBuilder.setView(updateSpecialtyView);
                     AlertDialog dialog = dialogBuilder.create();
                     dialog.show();
+
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            newSpecialty = specialtyEdit.getText().toString();
                             update_profile();
                             dialog.dismiss();
                         }
@@ -588,6 +615,56 @@ public class HomepageFragment extends Fragment {
                                             }
                                         }
                                 );
+                                // Lily adding notifs
+                                // Homeowner swiping on Contractor -> need what project this is
+                                DatabaseReference projRef = database.getReference("ACTIVE_PROJECTS/"+thisProject);
+                                projRef.addListenerForSingleValueEvent(
+                                        new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                // get the project referenced
+                                                Project projectClass = dataSnapshot.getValue(Project.class);
+                                                Log.e("PROJECT:", projectClass.getProject_id() + " and this proj" + thisProject + "and swipename" +swipedName);
+                                                String homeowner = projectClass.getUsername();
+                                                Log.e("HOMEOWNER:", homeowner);
+                                                Utils.sendNotification(my_username, homeowner, selfProject);
+                                                Utils.sendNotification(my_username, swipedName, selfProject);
+                                                DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
+                                                homeownerRef.addListenerForSingleValueEvent(
+                                                            new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                                                    homeownerUser.addMatch(thisProject + "_" + swipedName);
+                                                                    homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
+                                                                        @Override
+                                                                        public void onSuccess(Void unused) {
+                                                                            Log.e(TAG, "updated homeowner user with match succeeded");
+                                                                        }
+                                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull @NotNull Exception e) {
+                                                                            Log.e(TAG, "updated homeowner user with match failed");
+                                                                        }
+                                                                    });
+
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                }
+                                                            }
+                                                    );
+                                            }
+
+                                            @Override
+                                            public void onCancelled
+                                                    (DatabaseError error) {
+                                                // Getting Post failed, log a message
+                                                Log.e(TAG, "update contractor swipedby failed", error.toException());
+                                            }
+                                        });
                             }
 
                         }
@@ -660,7 +737,7 @@ public class HomepageFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // get the project referenced
                     selfContractor = dataSnapshot.getValue(Contractor.class);
-                    if ((selfContractor.getSwipedRightOnList()).contains(swipedName)) {
+                    if (selfContractor != null && (selfContractor.getSwipedRightOnList()).contains(swipedName)) {
                         willMatch[0] = true;
                         selfContractor.getMatchList().add(swipedName);
                         contractorsRef.child(my_username).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -675,6 +752,8 @@ public class HomepageFragment extends Fragment {
                                         Log.e(TAG, "updated project with match failed");
                                     }
                                 });
+
+
                     }
                 }
 
@@ -709,6 +788,7 @@ public class HomepageFragment extends Fragment {
                     Log.e(TAG, "will match: " + willMatch[0]);
                     if (willMatch[0]) {
                         project.getMatchList().add(my_username);
+                        Utils.sendNotification(my_username, swipedName, project);
                     }
 
                     currentCardRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -772,66 +852,10 @@ public class HomepageFragment extends Fragment {
         return false;
     }
 
-    // TODO: took this from the other project and modified to our variable names
-    // Create notification channel and subscribe user to their channel
-    public void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel
-                    ("Timber", my_username, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Notifications for " + my_username);
-            NotificationManager notificationManager = getActivity().
-                    getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-            subscribeToMyMessages();
-        }
-    }
-
-    // TODO: need to plug in to the positive match so users are notified
-    // FireBase Message to user topic when sending sticker
-    public void sendNotificationToUserTopic(String other_user) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject jPayload = new JSONObject();
-                JSONObject jNotification = new JSONObject();
-                try {
-                    jNotification.put("title", "New message from " + other_user);
-                    jNotification.put("body", "You matched with :" + other_user);
-                    jNotification.put("sound", "default");
-                    jNotification.put("badge", "1");
-
-                    // Populate the Payload object with our notification information
-                    // sent to topic of the user we're sending to
-                    jPayload.put("to", "/topics/" + other_user);
-                    jPayload.put("priority", "high");
-                    jPayload.put("notification", jNotification);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                //final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
-                Log.d(TAG, "Notification sent to " + other_user);
-                //Log.d(TAG, messageResponse);
-            }
-        }).start();
-    }
 
     // TODO: took this from the other project and modified to our variable names
     // Subscribe a user to their own topic so they can receive notifications when they get messages
-    public void subscribeToMyMessages() {
-        FirebaseMessaging.getInstance().subscribeToTopic(my_username)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(getActivity(), "Failed to subscribed to "
-                                    + my_username, Toast.LENGTH_SHORT).show();
-                        }
-                        Toast.makeText(getActivity(), "Subscribed to "
-                                + my_username, Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+
     public void updateContractorRadius() throws NullPointerException {
         contractorsRef.child(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -865,8 +889,6 @@ public class HomepageFragment extends Fragment {
                     my_usertype + "/" + my_username);
 
             myUserRef.addValueEventListener(new ValueEventListener() {
-                public User my_user;
-
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
@@ -875,7 +897,7 @@ public class HomepageFragment extends Fragment {
                             Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
                             //my_user.setImage();
                             // add setters to my_user
-                            myUserRef.setValue(my_user);
+                            //myUserRef.setValue(my_user);
                         } else {
                             Contractor my_user = dataSnapshot.getValue(Contractor.class);
                             //String currentSpecialty = my_user.getSpecialty();
@@ -883,6 +905,7 @@ public class HomepageFragment extends Fragment {
                                 my_user.setSpecialty(newSpecialty);
                             }
                             my_user.setRadius(discrete);
+
                             Toast.makeText(getActivity(), "Discrete is " + discrete
                                             + " so changed radius to " + my_user.getRadius(),
                                     Toast.LENGTH_SHORT).show();

@@ -1,25 +1,31 @@
 package edu.neu.madcourse.timber;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -29,6 +35,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.neu.madcourse.timber.fcm_server.Utils;
 import edu.neu.madcourse.timber.homeswipe.HomepageFragment;
 import edu.neu.madcourse.timber.matches.MatchesFragment;
 import edu.neu.madcourse.timber.newsfeed.NewsFeedFragment;
@@ -102,6 +109,19 @@ public class HomepageActivity extends AppCompatActivity {
                 return false;
             };
 
+    // TODO: took this from the other project and modified to our variable names
+    // Create notification channel and subscribe user to their channel
+    public void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel
+                    ("Timber", my_username, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Notifications for " + my_username);
+            NotificationManager notificationManager = this.
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            Utils.subscribeToMyMessages(my_username, this);
+        }
+    }
 
 
 

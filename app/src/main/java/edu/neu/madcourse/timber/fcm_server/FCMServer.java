@@ -86,14 +86,12 @@ public class FCMServer extends FirebaseMessagingService {
 
         // designing the notification bar with the icon in it
         notification = builder.setContentTitle(remoteMessageNotification.getTitle())
-                .setContentText("New message!")
                 .setSmallIcon(R.mipmap.timber_launcher_round)
                 .setAutoCancel(true)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        Integer.parseInt(Objects.requireNonNull(
-                                remoteMessageNotification.getBody()))))
+                .setContentText(remoteMessageNotification.getBody())
                 .setContentIntent(pendingIntent)
                 .build();
         notificationManager.notify(0, notification);
+        Log.d("RECEIVE NOTIF" ,"Channel" + CHANNEL_ID + " Title"+remoteMessageNotification.getTitle()+" ");
     }
 }

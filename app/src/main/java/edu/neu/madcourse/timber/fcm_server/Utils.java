@@ -9,9 +9,17 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -22,9 +30,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import edu.neu.madcourse.timber.HomepageActivity;
+import edu.neu.madcourse.timber.users.Project;
+
 // Reference: Firebase Demo 3 from classwork
 
 public class Utils {
+    private static final String SERVER_KEY ="key=AAAA7aKez00:APA91bEkDUkYiAq8qyquB8bS_F5DkDfNDuUgbpnF8yMf0kTsQy3RszivsRmJXZ1sJdN1kjaHDptTXRR6eM6Y7VqxfNE5Z1-52ZkDsaxpPzH26WjzhWuaeUPpB5eAcOPE758dv8ic_akm" ;
 
     public static String convertStreamToString(InputStream inputStream) {
         // creating a new string builder
@@ -148,5 +160,48 @@ public class Utils {
             }
         }
         return null;
+    }
+
+
+    // FireBase Message to user topic when sending sticker
+    public static void sendNotification(String my_username, String other_user, Project project) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject jPayload = new JSONObject();
+                    JSONObject jNotification = new JSONObject();
+                    try {
+                        jNotification.put("title", "New match with "+ my_username);
+                        jNotification.put("body", "New match for project: " + project.project_id +"!");
+                        jNotification.put("sound", "default");
+                        jNotification.put("badge", "1");
+                        // Populate the Payload object with our notification information
+                        // sent to topic of the user we're sending to
+                        jPayload.put("to", "/topics/" + other_user);
+                        jPayload.put("priority", "high");
+                        jPayload.put("notification", jNotification);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    final String messageResponse = Utils.fcmHttpConnection(SERVER_KEY, jPayload);
+                    Log.d("NOTIFICATION", "NOTIFICATION SENT TO " + other_user + " FROM "+ my_username + " ABOUT " + project.getProject_id());
+                    Log.d("NOTIFICATION", messageResponse);
+                }
+            }).start();
+        }
+
+        public static void subscribeToMyMessages(String topic, Activity activity) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed to " + topic;
+                        if (!task.isSuccessful()) {
+                            msg = "Failed to subscribe to "+topic;
+                        }
+                        Toast.makeText(activity.getBaseContext(), msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

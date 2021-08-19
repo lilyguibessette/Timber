@@ -164,9 +164,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
 
     private void update_profile() {
         new Thread(() -> myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-        public User my_user;
-
-        @Override
+         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             // if the user exists, get their data
             if (dataSnapshot.exists()) {

@@ -90,11 +90,14 @@ public class Homeowner implements User {
         this.phoneNumber = phoneNumber;
         this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber must not be null");
 
-        this.activeProjectList = new ArrayList<>();
-        this.completedProjectList = new ArrayList<>();
-        this.swipedRightOnList = new ArrayList<>();
-        this.swipedLeftOnList = new ArrayList<>();
-        this.matchList = new ArrayList<>();
+        this.activeProjectList.add("EMPTY");
+        this.completedProjectList.add("EMPTY");
+        this.swipedRightOnList.add("EMPTY");
+        this.swipedLeftOnList.add("EMPTY");
+        this.matchList.add("EMPTY");
+
+        this.image = "default_profile_pic.PNG";
+
     }
 
     public String getToken() {

@@ -23,4 +23,6 @@
     <string name="create_project_error">Error! Unable to create project.</string>
     <string name="projectname">projectName</string>
     <string name="contractor_id">Contractor Username</string>
+    <string name="empty_radius_tip">No more projects to swipe! Try updating your radius!</string>
+    <string name="empty_contractors_tip">Check back later today or try selecting another project!</string>
 </resources>

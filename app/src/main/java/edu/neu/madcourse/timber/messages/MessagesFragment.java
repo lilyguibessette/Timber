@@ -257,13 +257,11 @@ public class MessagesFragment extends Fragment {
                     }
                 });
                 DatabaseReference completedProjectRef = database.getReference("COMPLETED_PROJECTS/" + proj_id);
-                completedProjectRef.addValueEventListener(new ValueEventListener() {
-                    public Boolean first_change = true;
-
+                completedProjectRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other user so we can add a new message
-                        if (completedProjectRef != null && dataSnapshot != null && first_change) {
+                        if (completedProjectRef != null && dataSnapshot != null ) {
                             Log.w(TAG, "added proj to completed list: " + proj_id);
                             completedProjectRef.setValue(currentProject).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -283,7 +281,6 @@ public class MessagesFragment extends Fragment {
                                             Log.w(TAG, "FAILED to update project list: " + "completed not changed");
                                         }
                                     });
-                            first_change = false;
                         }
 
                     }
@@ -297,15 +294,14 @@ public class MessagesFragment extends Fragment {
                 });
                 if (my_usertype.equals("HOMEOWNERS")) {
                     DatabaseReference userRef = database.getReference("HOMEOWNERS/" + my_username);
-                    userRef.addValueEventListener(new ValueEventListener() {
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         public Homeowner user;
-                        public Boolean first_change = true;
 
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // get other user so we can add a new message
                             user = dataSnapshot.getValue(Homeowner.class);
-                            if (userRef != null && dataSnapshot != null && first_change && user != null) {
+                            if (userRef != null && dataSnapshot != null && user != null) {
                                 // add message to user
                                 Log.w(TAG, "test proj to user list: " + user.toString());
                                 Log.w(TAG, "test proj to user list: " + user.getUsername());
@@ -324,7 +320,6 @@ public class MessagesFragment extends Fragment {
                                                 Log.w(TAG, "FAILED to update project list: " + user.toString());
                                             }
                                         });
-                                first_change = false;
                             }
 
                         }
@@ -422,7 +417,6 @@ public class MessagesFragment extends Fragment {
         myMessagesListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-
                 Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
                 //   private HashMap<String, ArrayList<Message>> messageThreads = new HashMap<>();
                 HashMap<String, Message> msgData = (HashMap<String, Message>) dataSnapshot.getValue();
