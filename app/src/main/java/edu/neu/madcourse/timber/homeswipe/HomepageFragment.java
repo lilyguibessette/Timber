@@ -275,6 +275,7 @@ public class HomepageFragment extends Fragment {
         Log.e(TAG, "populateList called");
         List<SwipeCard> cardStack = new ArrayList<>();
 
+
         contractorsRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -294,11 +295,14 @@ public class HomepageFragment extends Fragment {
                                 continue;
                             }
 
+                            Long radius = (Long) singleUser.get("radius");
+                            Integer intRadius = radius.intValue();
+
                             // skip if too far
                             if (!checkIfLocal(thisLatitude, thisLongitude,
                                     (Double) singleUser.get("latitude"),
                                     (Double) singleUser.get("longitude"),
-                                    (Integer) singleUser.get("radius"))) {
+                                    intRadius)) {
                                 Log.e(TAG, "continue, too far");
                                 continue;
                             }
@@ -662,7 +666,11 @@ public class HomepageFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // get the project referenced
                 selfContractor = dataSnapshot.getValue(Contractor.class);
-                thisRadius = selfContractor.getRadius();
+                try{
+                    thisRadius = selfContractor.getRadius();
+                } catch(NullPointerException exc){
+                    return;
+                }
             }
 
             @Override
