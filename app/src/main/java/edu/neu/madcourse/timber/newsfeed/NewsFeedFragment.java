@@ -50,7 +50,7 @@ public class NewsFeedFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     // Recycler view related variables
-    private final ArrayList<Project> newsFeedHistory = new ArrayList<>();
+    private ArrayList<Project> newsFeedHistory;
     private RecyclerView newsFeedRecyclerView;
     private NewsFeedAdapter newsFeedAdapter;
     private RecyclerView.LayoutManager newsPostLayoutManager;
@@ -84,6 +84,7 @@ public class NewsFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Initialize our received history size to 0
         newsFeedSize = 0;
+        newsFeedHistory = new ArrayList<>();
         createDatabaseResources();
 
         // get saved state and initialize the recyclerview

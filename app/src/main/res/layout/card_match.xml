@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
@@ -27,17 +28,16 @@
             style="@style/Timber.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/username"
-            app:layout_constraintBottom_toTopOf="@+id/match_last_message"
+            android:text="@string/contractor_id"
             app:layout_constraintStart_toEndOf="@id/match_image"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/match_last_message"
+            android:id="@+id/match_project_id"
             style="@style/Timber.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="last message"
+            android:text="@string/projectname"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/match_image"
             app:layout_constraintTop_toBottomOf="@id/match_username" />
