@@ -638,13 +638,6 @@ public class HomepageFragment extends Fragment {
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     if (snapshot.exists()) {
                                                         Homeowner homeownerUser = snapshot.getValue(Homeowner.class);
-                                                        Log.e(TAG,"641" + snapshot.toString());
-                                                        Log.e(TAG,"642" + homeownerUser.getEmail()+ " \n" +
-                                                                homeownerUser.getEmail()+ " \n" +
-                                                                homeownerUser.getPhoneNumber()+ " \n" +
-                                                                homeownerUser.getZipcode()+ " \n" +
-                                                                homeownerUser.getFirstName()+ " \n"
-                                                        );
                                                         homeownerUser.addMatch(thisProject + "_" + swipedName);
                                                         homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
