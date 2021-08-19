@@ -27,32 +27,6 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-       <Button
-            android:id="@+id/profile_action_button"
-            android:layout_width="50dp"
-           android:layout_height="40dp"
-           android:backgroundTint="@color/light_grey"
-           android:textColor="@color/light_green"
-           android:textSize="18sp"
-           android:background="@android:color/transparent"
-           android:text="+"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent"
-             />
-
-        <Button
-            android:id="@+id/profile_action_button_select"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
-            android:background="@android:color/transparent"
-            android:backgroundTint="@color/light_grey"
-            android:text="="
-            android:textColor="@color/light_green"
-            android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@id/profile_action_button"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_constraintStart_toEndOf="@id/profile_action_button" />
-
         <Button
             android:id="@+id/profile_settings"
             android:layout_width="20dp"
@@ -70,8 +44,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
