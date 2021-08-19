@@ -197,8 +197,11 @@ public class CreateProjectDialogFragment extends DialogFragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (projectRef != null) {
                         // set the image of the project
-                        dataSnapshot.getValue(Project.class).setImage(project.getImage());
-
+                       // Project snapshotProj;
+                       // snapshotProj =  dataSnapshot.getValue(Project.class);
+                        //snapshotProj = project;
+                        //snapshotProj.setImage(project.getImage());
+                        Log.e("PROJECT CREATION ATTEMPT", project.toString() + project.getImage());
                         projectRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {

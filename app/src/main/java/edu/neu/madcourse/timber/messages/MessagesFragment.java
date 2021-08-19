@@ -426,6 +426,8 @@ public class MessagesFragment extends Fragment {
                 Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
                 //   private HashMap<String, ArrayList<Message>> messageThreads = new HashMap<>();
                 HashMap<String, Message> msgData = (HashMap<String, Message>) dataSnapshot.getValue();
+                Log.e(TAG, msgData.toString());
+                /*
                 if (msgData != null) {
                     for (int i = 0; i < msgData.size(); i++) {
                         if (!msgData.get(String.valueOf(i)).getMessage().equals("EMPTY") && msgData.get(String.valueOf(i)).getMessage() != null) {
@@ -440,6 +442,7 @@ public class MessagesFragment extends Fragment {
 
                     ;
                 }
+                */
             }
 
             @Override

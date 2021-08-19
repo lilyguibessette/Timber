@@ -1,5 +1,7 @@
 package edu.neu.madcourse.timber.users;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +69,10 @@ public class Project {
     public Project(String username, String project_name, String project_type, int budget,
                    String description) {
         this.username = username;
-        this.image = "image placeholder.PNG";
+        if (this.image == null) {
+            this.image = "image placeholder.PNG";
+            Log.e("PROJECT", "proj made with default image");
+        }
         this.description = description;
         this.project_id = username + "_" + project_name;
         this.budget = budget;
@@ -149,6 +154,7 @@ public class Project {
 
     public void setImage(String image) {
         this.image = image;
+        Log.e("PROJECT", "set image called in " + this.project_id + "new image =" + this.image + " from " + image);
     }
 
     public String getDescription() {
