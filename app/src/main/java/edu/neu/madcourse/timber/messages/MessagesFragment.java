@@ -451,9 +451,11 @@ public class MessagesFragment extends Fragment {
                                 Message msg = new Message(msgData.get("username"),msgData.get("to_username") , msgData.get("message"));
                                 if((msg.getTo_username().equals(other_user_id) && msg.getUsername().equals(my_username))
                                         ||( msg.getTo_username().equals(my_username) && msg.getUsername().equals(other_user_id))){
-                                    messageHistory.add(msg);
-                                    //TODO the adapter might end up backwards
-                                    messagesAdapter.notifyItemInserted(0);
+                                    if(i > msgList.size() -1) {
+                                        messageHistory.add(msg);
+                                        //TODO the adapter might end up backwards
+                                        messagesAdapter.notifyItemInserted(0);
+                                    }
                                     i++;
                                 }
                             }
