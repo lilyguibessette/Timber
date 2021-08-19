@@ -414,7 +414,7 @@ public class MessagesFragment extends Fragment {
     private void createDatabaseResources() {
         database = FirebaseDatabase.getInstance();
         Log.e(TAG, "proj " + project_id + " myuser " + my_username);
-        if (my_usertype.equals("HOMEOWNER")) {
+        if (my_usertype.equals("HOMEOWNERS")) {
             myMessagesRef = database.getReference("ACTIVE_PROJECTS/" + project_id + "/messageThreads/" + other_user_id);
             Log.e(TAG, "FROM HOMEOWNER proj " + project_id + " contractor " + other_user_id);
         } else {
