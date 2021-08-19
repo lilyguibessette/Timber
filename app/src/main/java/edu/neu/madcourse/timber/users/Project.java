@@ -140,14 +140,13 @@ public class Project {
     public String getImage() {
         return this.image;
     }
+    public void setImage(String image) {this.image = image;}
 
     public String getDescription() {
         return this.description;
     }
 
-    public String getProject_id()
-    {return this.project_id;}
-
+    public String getProject_id() { return this.project_id; }
 
     public String getProject_type(){
         return this.project_type;

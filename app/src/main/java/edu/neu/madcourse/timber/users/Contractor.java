@@ -169,20 +169,18 @@ public class Contractor implements User {
         return phoneNumber;
     }
 
+    public int getRadius() {
+        return workRadius;
+    }
     public void setRadius(int workRadius) {
         this.workRadius = workRadius;
     }
 
-    public int getRadius() {
-        return workRadius;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getImage() {
         return this.image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public ArrayList<String> getMatchList() {

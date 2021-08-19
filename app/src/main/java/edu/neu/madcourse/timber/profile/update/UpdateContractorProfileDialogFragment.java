@@ -25,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
@@ -62,6 +64,10 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private File destination = null;
     private String imgPath = null;
     Uri imageUri;
+
+    // instance for firebase storage and StorageReference
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     public UpdateContractorProfileDialogFragment() {
         // Required empty public constructor
@@ -187,13 +193,8 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
         super.onActivityResult(requestCode, resultCode, gallery);
-        if(resultCode == 0){
-            return;
-        }
-
         inputStreamImg = null;
         Uri selectedImage = gallery.getData();
-
 
         try {
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().
@@ -201,8 +202,19 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
             destination = new File(getRealPathFromURI(selectedImage));
+            imgPath = destination.getName();
+
+            if (imgPath != null) {
+
+                storage = FirebaseStorage.getInstance();
+                storageReference = storage.getReference();
+                // Defining the child of storageReference
+                StorageReference ref = storageReference.child(imgPath);
+                ref.putFile(selectedImage);
+            }
+
             imageView.setImageBitmap(bitmap);
-            //TODO: upload the image to the database
+
         } catch (IOException e) {
             Toast.makeText(getActivity(), "Photo error",
                     Toast.LENGTH_SHORT).show();
@@ -220,7 +232,6 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-
 }
 
 

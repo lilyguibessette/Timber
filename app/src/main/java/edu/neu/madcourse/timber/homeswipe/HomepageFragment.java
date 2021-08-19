@@ -104,7 +104,7 @@ public class HomepageFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // get the project referenced
                 selfContractor = dataSnapshot.getValue(Contractor.class);
-                thisRadius = selfContractor.getRadius();
+                //thisRadius = selfContractor.getRadius();
             }
 
             @Override

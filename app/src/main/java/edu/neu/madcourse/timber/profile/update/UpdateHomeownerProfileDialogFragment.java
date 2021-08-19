@@ -27,12 +27,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
+import java.util.UUID;
 
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
@@ -62,6 +64,10 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     private File destination = null;
     private String imgPath = null;
     Uri imageUri;
+
+    // instance for firebase storage and StorageReference
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     public UpdateHomeownerProfileDialogFragment() {
         // Required empty public constructor
@@ -111,7 +117,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                 Intent gallery = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(gallery, PICK_IMAGE);
-                }
+            }
         });
 
         updateButton = view.findViewById(R.id.cancel_button);
@@ -152,7 +158,7 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
 
-            myUserRef.addValueEventListener(new ValueEventListener() {
+            myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 public User my_user;
 
                 @Override
@@ -160,8 +166,29 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
                         Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
-                        //my_user.setImage();
-                        // add setters to my_user
+
+                        if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
+                            my_user.setUsername(my_username);
+                        }
+                        if (!my_param1.equals("") & !my_user.getFirstName().equals(my_param1)) {
+                            my_user.setFirstName(my_param1);
+                        }
+                        if (!my_param2.equals("") & !my_user.getLastName().equals(my_param2)) {
+                            my_user.setLastName(my_param2);
+                        }
+                        if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
+                            my_user.setEmail(my_email);
+                        }
+                        if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
+                            my_user.setZipcode(my_zip);
+                        }
+                        if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
+                            my_user.setPhoneNumber(my_phone);
+                        }
+                        if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
+                            my_user.setImage(imgPath);
+                        }
+
                         myUserRef.setValue(my_user);
 
                     } else {
@@ -193,8 +220,19 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
             destination = new File(getRealPathFromURI(selectedImage));
+            imgPath = destination.getName();
+
+            if (imgPath != null) {
+
+                storage = FirebaseStorage.getInstance();
+                storageReference = storage.getReference();
+                // Defining the child of storageReference
+                StorageReference ref = storageReference.child(imgPath);
+                ref.putFile(selectedImage);
+            }
+
             imageView.setImageBitmap(bitmap);
-            //TODO: upload the image to the database
+
         } catch (IOException e) {
             Toast.makeText(getActivity(), "Photo error",
                     Toast.LENGTH_SHORT).show();

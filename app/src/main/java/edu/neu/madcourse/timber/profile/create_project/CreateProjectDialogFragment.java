@@ -38,6 +38,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -75,6 +77,10 @@ public class CreateProjectDialogFragment extends DialogFragment {
     private File destination = null;
     private String imgPath = null;
     Uri imageUri;
+
+    // instance for firebase storage and StorageReference
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     public CreateProjectDialogFragment() {
         // Required empty public constructor
@@ -183,6 +189,7 @@ public class CreateProjectDialogFragment extends DialogFragment {
                         if (projectRef != null && first_change){
                             // add message to project
                             // set other project to the newly updates other project
+                            proj.setImage(imgPath);
                             projectRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -270,10 +277,22 @@ public class CreateProjectDialogFragment extends DialogFragment {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
             destination = new File(getRealPathFromURI(selectedImage));
+            imgPath = destination.getName();
+
+            if (imgPath != null) {
+
+                storage = FirebaseStorage.getInstance();
+                storageReference = storage.getReference();
+                // Defining the child of storageReference
+                StorageReference ref = storageReference.child(imgPath);
+                ref.putFile(selectedImage);
+            }
+
             imageView.setImageBitmap(bitmap);
-            //TODO: upload the image to the database
+
         } catch (IOException e) {
-            Toast.makeText(getActivity(), "Error uploading photo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Photo error",
+                    Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         Toast.makeText(getActivity(), "Picked photo:" +
