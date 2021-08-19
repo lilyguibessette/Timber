@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements CreateUserDialogF
                 USERNAME, null);
         my_usertype = getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString(
                 USERTYPE, null);
+        location = Utils.getLocation(this,this);
         if (my_username != null && my_usertype != null && my_username != "LOGOUT") {
             Log.e(TAG,"start activity 114");
             startActivity(new Intent(MainActivity.this, HomepageActivity.class));

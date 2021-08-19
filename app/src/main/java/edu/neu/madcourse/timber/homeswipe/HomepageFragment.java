@@ -99,33 +99,29 @@ public class HomepageFragment extends Fragment {
         thisUser = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERNAME", null);
         thisUserType = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("USERTYPE", null);
 
-        contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // get the project referenced
-                selfContractor = dataSnapshot.getValue(Contractor.class);
-                thisRadius = selfContractor.getRadius();
-            }
 
-            @Override
-            public void onCancelled
-                    (DatabaseError error) {
-                // Getting Post failed, log a message
-                Log.e(TAG, "cancelled get radius", error.toException());
 
-            }
-        });
-
-        thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
         Log.e(TAG,"my project is: " + thisProject);
         createNotificationChannel();
         // TODO: TEST to use FireBaseMessaging to push a notification
         // TODO: need to add in the server key
         sendNotificationToUserTopic(thisUser);
 
-        if(Objects.isNull(thisProject)){
-            Toast.makeText(getActivity(), "No Project to swipe for! Please create a project to begin swiping", Toast.LENGTH_LONG).show();
-            return getView();
+        if(thisUserType == "HOMEOWNERS"){
+            thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
+
+            if(Objects.isNull(thisProject)){
+                Toast.makeText(getActivity(), "No Project to swipe for! Please create a project to begin swiping", Toast.LENGTH_LONG).show();
+                return getView();
+            }
+        } else{
+            try{
+                thisRadius = 20;
+                updateContractorRadius();
+            } catch(Exception exc){
+                Log.e(TAG,exc.getMessage());
+                thisRadius = 20;
+            }
         }
 
         Location location = Utils.getLocation(this.getActivity(), this.getContext());
@@ -338,6 +334,7 @@ public class HomepageFragment extends Fragment {
         // This might work? https://stackoverflow.com/questions/64655837/cards-stack-swipe-add-card-in-the-back-after-swiping-removing-top-card
         Log.e(TAG, "populateProjectsList called");
         List<SwipeCard> cardStack = new ArrayList<>();
+
 
         activeProjectRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -658,6 +655,26 @@ public class HomepageFragment extends Fragment {
                     }
                 });
     }
+
+    public void updateContractorRadius() throws NullPointerException {
+        contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // get the project referenced
+                selfContractor = dataSnapshot.getValue(Contractor.class);
+                thisRadius = selfContractor.getRadius();
+            }
+
+            @Override
+            public void onCancelled
+                    (DatabaseError error) {
+                // Getting Post failed, log a message
+                Log.e(TAG, "cancelled get radius", error.toException());
+
+            }
+        });
+    }
+
 
 
 }
