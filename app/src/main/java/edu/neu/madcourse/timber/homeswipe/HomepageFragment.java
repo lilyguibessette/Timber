@@ -570,76 +570,77 @@ public class HomepageFragment extends Fragment {
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            // get the project referenced
-                            selfProject = dataSnapshot.getValue(Project.class);
-                            if ((selfProject.getSwipedRightOnList()).contains(swipedName)) {
-                                willMatch[0] = true;
-                                selfProject.getMatchList().add(swipedName);
-                                activeProjectRef.child(thisProject).setValue(selfProject).
-                                        addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Log.e(TAG, "updated project with match succeeded");
+                            if (dataSnapshot.exists()) {
+                                // get the project referenced
+                                selfProject = dataSnapshot.getValue(Project.class);
+                                if ((selfProject.getSwipedRightOnList()).contains(swipedName)) {
+                                    willMatch[0] = true;
+                                    selfProject.getMatchList().add(swipedName);
+                                    activeProjectRef.child(thisProject).setValue(selfProject).
+                                            addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Log.e(TAG, "updated project with match succeeded");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull @NotNull Exception e) {
+                                                    Log.e(TAG, "updated project with match failed");
+                                                }
+                                            });
+
+
+                                    String homeowner = selfProject.getUsername();
+                                    DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/" + homeowner);
+                                    homeownerRef.addListenerForSingleValueEvent(
+                                            new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
+                                                    homeownerUser.addMatch(thisProject + "_" + swipedName);
+                                                    homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            Log.e(TAG, "updated homeowner user with match succeeded");
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull @NotNull Exception e) {
+                                                            Log.e(TAG, "updated homeowner user with match failed");
+                                                        }
+                                                    });
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
                                             }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull @NotNull Exception e) {
-                                                Log.e(TAG, "updated project with match failed");
-                                            }
-                                        });
-
-
-                                String homeowner = selfProject.getUsername();
-                                DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
-                                homeownerRef.addListenerForSingleValueEvent(
-                                        new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
-                                                homeownerUser.addMatch(thisProject + "_" + swipedName);
-                                                homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        Log.e(TAG, "updated homeowner user with match succeeded");
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull @NotNull Exception e) {
-                                                        Log.e(TAG, "updated homeowner user with match failed");
-                                                    }
-                                                });
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                            }
-                                        }
-                                );
-                                // Lily adding notifs
-                                // Homeowner swiping on Contractor -> need what project this is
-                                DatabaseReference projRef = database.getReference("ACTIVE_PROJECTS/"+thisProject);
-                                projRef.addListenerForSingleValueEvent(
-                                        new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                // get the project referenced
-                                                Project projectClass = dataSnapshot.getValue(Project.class);
-                                                Log.e("PROJECT:", projectClass.getProject_id() + " and this proj" + thisProject + "and swipename" +swipedName);
-                                                String homeowner = projectClass.getUsername();
-                                                Log.e("HOMEOWNER:", homeowner);
-                                                Utils.sendNotification(my_username, homeowner, selfProject);
-                                                Utils.sendNotification(my_username, swipedName, selfProject);
-                                                DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/"+homeowner);
-                                                homeownerRef.addListenerForSingleValueEvent(
+                                    );
+                                    // Lily adding notifs
+                                    // Homeowner swiping on Contractor -> need what project this is
+                                    DatabaseReference projRef = database.getReference("ACTIVE_PROJECTS/" + thisProject);
+                                    projRef.addListenerForSingleValueEvent(
+                                            new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    // get the project referenced
+                                                    Project projectClass = dataSnapshot.getValue(Project.class);
+                                                    Log.e("PROJECT:", projectClass.getProject_id() + " and this proj" + thisProject + "and swipename" + swipedName);
+                                                    String homeowner = projectClass.getUsername();
+                                                    Log.e("HOMEOWNER:", homeowner);
+                                                    Utils.sendNotification(my_username, homeowner, selfProject);
+                                                    Utils.sendNotification(my_username, swipedName, selfProject);
+                                                    DatabaseReference homeownerRef = database.getReference("HOMEOWNERS/" + homeowner);
+                                                    homeownerRef.addListenerForSingleValueEvent(
                                                             new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                     Homeowner homeownerUser = dataSnapshot.getValue(Homeowner.class);
                                                                     homeownerUser.addMatch(thisProject + "_" + swipedName);
-                                                                    homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>(){
+                                                                    homeownerRef.setValue(homeownerUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                         @Override
                                                                         public void onSuccess(Void unused) {
                                                                             Log.e(TAG, "updated homeowner user with match succeeded");
@@ -659,19 +660,19 @@ public class HomepageFragment extends Fragment {
                                                                 }
                                                             }
                                                     );
-                                            }
+                                                }
 
-                                            @Override
-                                            public void onCancelled
-                                                    (DatabaseError error) {
-                                                // Getting Post failed, log a message
-                                                Log.e(TAG, "update contractor swipedby failed", error.toException());
-                                            }
-                                        });
+                                                @Override
+                                                public void onCancelled
+                                                        (DatabaseError error) {
+                                                    // Getting Post failed, log a message
+                                                    Log.e(TAG, "update contractor swipedby failed", error.toException());
+                                                }
+                                            });
+                                }
+
                             }
-
                         }
-
                         @Override
                         public void onCancelled
                                 (DatabaseError error) {
@@ -692,33 +693,34 @@ public class HomepageFragment extends Fragment {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // get other user so we can add a new message
-                contractor = dataSnapshot.getValue(Contractor.class);
-                if (contractor != null && dataSnapshot != null) {
-                    // add message to user
-                    Log.e(TAG, "attempting to add: " + thisProject);
-                    if (direction.equals("Right")) {
-                        contractor.addRightSwipedOn(thisProject);
-                    } else {
-                        contractor.addLeftSwipedOn(thisProject);
-                    }
-                    Log.e(TAG, "will match: " + willMatch[0]);
-                    if (willMatch[0]) {
-                        contractor.getMatchList().add(thisProject);
-                    }
-
-                    currentCardRef.setValue(contractor).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.e(TAG, "updated contractor on swipe list");
+                if (dataSnapshot.exists()) {                // get other user so we can add a new message
+                    contractor = dataSnapshot.getValue(Contractor.class);
+                    if (contractor != null && dataSnapshot != null) {
+                        // add message to user
+                        Log.e(TAG, "attempting to add: " + thisProject);
+                        if (direction.equals("Right")) {
+                            contractor.addRightSwipedOn(thisProject);
+                        } else {
+                            contractor.addLeftSwipedOn(thisProject);
                         }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e(TAG, "FAILED to update contactor on swipe list");
-                                }
-                            });
+                        Log.e(TAG, "will match: " + willMatch[0]);
+                        if (willMatch[0]) {
+                            contractor.getMatchList().add(thisProject);
+                        }
+
+                        currentCardRef.setValue(contractor).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.e(TAG, "updated contractor on swipe list");
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e(TAG, "FAILED to update contactor on swipe list");
+                                    }
+                                });
+                    }
                 }
             }
 
@@ -738,28 +740,29 @@ public class HomepageFragment extends Fragment {
             contractorsRef.child(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    // get the project referenced
-                    selfContractor = dataSnapshot.getValue(Contractor.class);
-                    if (selfContractor != null && (selfContractor.getSwipedRightOnList()).contains(swipedName)) {
-                        willMatch[0] = true;
-                        selfContractor.getMatchList().add(swipedName);
-                        contractorsRef.child(my_username).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Log.e(TAG, "updated project with match succeeded");
-                            }
-                        })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull @NotNull Exception e) {
-                                        Log.e(TAG, "updated project with match failed");
-                                    }
-                                });
+                    if (dataSnapshot.exists()) {
+                        // get the project referenced
+                        selfContractor = dataSnapshot.getValue(Contractor.class);
+                        if (selfContractor != null && (selfContractor.getSwipedRightOnList()).contains(swipedName)) {
+                            willMatch[0] = true;
+                            selfContractor.getMatchList().add(swipedName);
+                            contractorsRef.child(my_username).setValue(selfContractor).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.e(TAG, "updated project with match succeeded");
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull @NotNull Exception e) {
+                                            Log.e(TAG, "updated project with match failed");
+                                        }
+                                    });
 
 
+                        }
                     }
                 }
-
                 @Override
                 public void onCancelled
                         (DatabaseError error) {
@@ -777,38 +780,39 @@ public class HomepageFragment extends Fragment {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // get other user so we can add a new message
-                project = dataSnapshot.getValue(Project.class);
-                if (project != null && dataSnapshot != null) {
-                    // add message to user
-                    Log.e(TAG, "attempting to add: " + my_username);
-                    if (direction.equals("Right")) {
-                        project.addRightSwipedOn(my_username);
-                    } else {
-                        project.addLeftSwipedOn(my_username);
-                    }
-
-                    Log.e(TAG, "will match: " + willMatch[0]);
-                    if (willMatch[0]) {
-                        project.getMatchList().add(my_username);
-                        Utils.sendNotification(my_username, swipedName, project);
-                    }
-
-                    currentCardRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.e(TAG, "updated project on swipe list");
+                if (dataSnapshot.exists()) {
+                    // get other user so we can add a new message
+                    project = dataSnapshot.getValue(Project.class);
+                    if (project != null && dataSnapshot != null) {
+                        // add message to user
+                        Log.e(TAG, "attempting to add: " + my_username);
+                        if (direction.equals("Right")) {
+                            project.addRightSwipedOn(my_username);
+                        } else {
+                            project.addLeftSwipedOn(my_username);
                         }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e(TAG, "FAILED to update contactor on swipe list");
-                                }
-                            });
+
+                        Log.e(TAG, "will match: " + willMatch[0]);
+                        if (willMatch[0]) {
+                            project.getMatchList().add(my_username);
+                            Utils.sendNotification(my_username, swipedName, project);
+                        }
+
+                        currentCardRef.setValue(project).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.e(TAG, "updated project on swipe list");
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e(TAG, "FAILED to update contactor on swipe list");
+                                    }
+                                });
+                    }
                 }
             }
-
             @Override
             public void onCancelled
                     (DatabaseError error) {
@@ -863,15 +867,16 @@ public class HomepageFragment extends Fragment {
         contractorsRef.child(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // get the project referenced
-                selfContractor = dataSnapshot.getValue(Contractor.class);
-                try{
-                    thisRadius = selfContractor.getRadius();
-                } catch(NullPointerException exc){
-                    return;
+                if (dataSnapshot.exists()) {
+                    // get the project referenced
+                    selfContractor = dataSnapshot.getValue(Contractor.class);
+                    try {
+                        thisRadius = selfContractor.getRadius();
+                    } catch (NullPointerException exc) {
+                        return;
+                    }
                 }
             }
-
             @Override
             public void onCancelled
                     (DatabaseError error) {
