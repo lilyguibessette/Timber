@@ -233,7 +233,7 @@ public class HomepageFragment extends Fragment {
 
             @Override
             public void onCardAppeared(View view, int position) {
-                Log.e(TAG, "onCardAppeared: " + position);
+                Log.d(TAG, "onCardAppeared: " + position);
             }
 
             @Override
@@ -306,7 +306,7 @@ public class HomepageFragment extends Fragment {
 
                             // skip cards which we already swiped
                             if (checkIfAlreadySwiped(singleUser, thisProject)) {
-                                Log.e(TAG, "continue, swiped");
+                                Log.d(TAG, "continue, swiped");
                                 continue;
                             }
 
@@ -318,12 +318,12 @@ public class HomepageFragment extends Fragment {
                                     (Double) singleUser.get("latitude"),
                                     (Double) singleUser.get("longitude"),
                                     intRadius)) {
-                                Log.e(TAG, "continue, too far");
+                                Log.d(TAG, "continue, too far");
                                 continue;
                             }
 
                             // Add them all at once?
-                            Log.e(TAG, "adding new card?");
+                            Log.d(TAG, "adding new card");
                             // Add them all at once?
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -383,7 +383,7 @@ public class HomepageFragment extends Fragment {
                             }
 
                             // Add them all at once?
-                            Log.e(TAG, "adding new card?");
+                            Log.d(TAG, "adding new card?");
 
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
@@ -413,12 +413,7 @@ public class HomepageFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // get the project referenced
                             selfProject = dataSnapshot.getValue(Project.class);
-                            Log.e(TAG,"416" + selfProject.getSwipedRightOnList().toString());
-                            Log.e(TAG,"417" + swipedName);
-                            Log.e(TAG,"418 is true?" + (selfProject.getSwipedRightOnList()).contains(swipedName));
                             if ((selfProject.getSwipedRightOnList()).contains(swipedName)) {
-
-                                Log.e(TAG,"422");
                                 willMatch[0] = true;
                                 selfProject.getMatchList().add(swipedName);
                                 activeProjectRef.child(thisProject).setValue(selfProject).
@@ -637,10 +632,10 @@ public class HomepageFragment extends Fragment {
         try {
             // TODO: should use the getRadius function that contractors have - tried but got a null pointer
             if (Utils.findDistance(myLatitude, myLongitude, otherLatitude, otherLongitude) <= radius) {
-                Log.e(TAG, "returning true");
+                Log.d(TAG, "returning true");
                 return true;
             } else {
-                Log.e(TAG, "returning false");
+                Log.d(TAG, "returning false");
                 return false;
             }
         } catch (NullPointerException exc) {

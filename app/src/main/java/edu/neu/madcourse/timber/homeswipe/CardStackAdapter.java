@@ -61,7 +61,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            Log.e(TAG,"Called ViewHolder");
+            Log.d(TAG,"Called ViewHolder");
             image = itemView.findViewById(R.id.swipe_image);
             username = itemView.findViewById(R.id.swipe_username);
             details = itemView.findViewById(R.id.swipe_details);
@@ -69,7 +69,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         }
 
         void setData(SwipeCard data) {
-            Log.e(TAG,"setting data");
+            Log.d(TAG,"setting data");
             if(!Objects.isNull(data.getImage())){
                 StorageReference imageRef = storageReference.child(data.getImage());
                 Glide.with(view)
