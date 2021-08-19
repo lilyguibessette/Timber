@@ -251,7 +251,6 @@ public class MatchesFragment extends Fragment {
     // sets listener for changes to received history; updates the messages received on device
     public void setHomeOwnerActiveProjectsListener(DatabaseReference activeProjectRef) {
         ValueEventListener activeProjectsListener = new ValueEventListener() {
-
             @Override
             public void onDataChange(@NotNull DataSnapshot snapshot) {
                 Log.e(TAG, "onChildAdded:" + snapshot.getKey());
