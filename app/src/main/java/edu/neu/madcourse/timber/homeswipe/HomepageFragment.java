@@ -123,9 +123,21 @@ public class HomepageFragment extends Fragment {
         // TODO: need to add in the server key
         sendNotificationToUserTopic(thisUser);
 
-        if(Objects.isNull(thisProject)){
-            Toast.makeText(getActivity(), "No Project to swipe for! Please create a project to begin swiping", Toast.LENGTH_LONG).show();
-            return getView();
+        if(thisUserType == "HOMEOWNERS"){
+            thisProject = this.getActivity().getSharedPreferences("TimberSharedPref", MODE_PRIVATE).getString("ACTIVE_PROJECT", null);
+
+            if(Objects.isNull(thisProject)){
+                Toast.makeText(getActivity(), "No Project to swipe for! Please create a project to begin swiping", Toast.LENGTH_LONG).show();
+                return getView();
+            }
+        } else{
+            try{
+                thisRadius = 20;
+                updateContractorRadius();
+            } catch(Exception exc){
+                Log.e(TAG,exc.getMessage());
+                thisRadius = 20;
+            }
         }
 
         Location location = Utils.getLocation(this.getActivity(), this.getContext());
@@ -298,11 +310,14 @@ public class HomepageFragment extends Fragment {
                                 continue;
                             }
 
+                            Long radius = (Long) singleUser.get("radius");
+                            Integer intRadius = radius.intValue();
+
                             // skip if too far
                             if (!checkIfLocal(thisLatitude, thisLongitude,
                                     (Double) singleUser.get("latitude"),
                                     (Double) singleUser.get("longitude"),
-                                    (Integer) singleUser.get("radius"))) {
+                                    intRadius)) {
                                 Log.e(TAG, "continue, too far");
                                 continue;
                             }
@@ -313,7 +328,7 @@ public class HomepageFragment extends Fragment {
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
                                     (String) singleUser.get("username"),
-                                    "Default description text here"));
+                                    (String) singleUser.get("email")));
                             /*
                             // add cards as they load (ish, basically the same result as above anyways)
                             adapter.addCardToBack(new SwipeCard(
@@ -373,7 +388,7 @@ public class HomepageFragment extends Fragment {
                             cardStack.add(new SwipeCard(
                                     (String) singleUser.get("image"),
                                     (String) entry.getKey(),
-                                    "Default description text here"));
+                                    (String) singleUser.get("description")));
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -657,6 +672,27 @@ public class HomepageFragment extends Fragment {
                     }
                 });
     }
+    public void updateContractorRadius() throws NullPointerException {
+        contractorsRef.child(thisUser).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // get the project referenced
+                selfContractor = dataSnapshot.getValue(Contractor.class);
+                try{
+                    thisRadius = selfContractor.getRadius();
+                } catch(NullPointerException exc){
+                    return;
+                }
+            }
 
+            @Override
+            public void onCancelled
+                    (DatabaseError error) {
+                // Getting Post failed, log a message
+                Log.e(TAG, "cancelled get radius", error.toException());
+
+            }
+        });
+    }
 
 }

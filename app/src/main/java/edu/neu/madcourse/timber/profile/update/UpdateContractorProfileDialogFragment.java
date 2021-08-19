@@ -193,6 +193,9 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent gallery) {
         super.onActivityResult(requestCode, resultCode, gallery);
+        if(resultCode == 0){
+            return;
+        }
         inputStreamImg = null;
         Uri selectedImage = gallery.getData();
 
