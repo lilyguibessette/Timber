@@ -31,6 +31,7 @@ import com.google.firebase.storage.StorageReference;
 import edu.neu.madcourse.timber.MainActivity;
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.ProfileFragment;
+import edu.neu.madcourse.timber.users.Contractor;
 import edu.neu.madcourse.timber.users.Homeowner;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -43,31 +44,22 @@ import java.util.Objects;
 
 public class UpdateContractorProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
-    private Button cancelButton;
-    private Button updateButton;
-    private Button logout;
-    public String my_username;
-    public String my_usertype = "CONTRACTORS";
-    public String my_param1;
-    public String my_param2;
-    public String my_email;
-    public String my_zip;
-    public String my_phone;
-
-    // items related to the update image section
-    ImageView imageView;
-    private Button updateImageButton;
+    private String my_usertype = "CONTRACTORS";
     private static final int PICK_IMAGE = 100;
-    private final int PICK_IMAGE_GALLERY = 2;
+
+    private Button cancelButton, updateButton, logout, updateImageButton;
+    public String my_username, my_param1, my_param2, my_email, my_zip, my_phone;
+
+    private ImageView imageView;
     private Bitmap bitmap;
     private InputStream inputStreamImg;
     private File destination = null;
     private String imgPath = null;
-    Uri imageUri;
+    private Uri imageUri;
 
     // instance for firebase storage and StorageReference
-    FirebaseStorage storage;
-    StorageReference storageReference;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
 
     public UpdateContractorProfileDialogFragment() {
         // Required empty public constructor
@@ -161,16 +153,37 @@ public class UpdateContractorProfileDialogFragment extends DialogFragment {
             DatabaseReference myUserRef = FirebaseDatabase.getInstance().getReference(
                     my_usertype + "/" + my_username);
 
-            myUserRef.addValueEventListener(new ValueEventListener() {
+            myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 public User my_user;
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // if the user exists, get their data
                     if (dataSnapshot.exists()) {
-                        Homeowner my_user = dataSnapshot.getValue(Homeowner.class);
-                        //my_user.setImage();
-                        // add setters to my_user
+                        Contractor my_user = dataSnapshot.getValue(Contractor.class);
+
+                        if (!my_username.equals("") & !my_user.getUsername().equals(my_username)) {
+                            my_user.setUsername(my_username);
+                        }
+                        if (!my_param1.equals("") & !my_user.getBusinessName().equals(my_param1)) {
+                            my_user.setBusinessName(my_param1);
+                        }
+                        if (!my_param2.equals("") & !my_user.getTaxID().equals(my_param2)) {
+                            my_user.setTaxID(my_param2);
+                        }
+                        if (!my_email.equals("") & !my_user.getEmail().equals(my_email)) {
+                            my_user.setEmail(my_email);
+                        }
+                        if (!my_zip.equals("") & !my_user.getZipcode().equals(my_zip)) {
+                            my_user.setZipcode(my_zip);
+                        }
+                        if (!my_phone.equals("") & !my_user.getPhoneNumber().equals(my_phone)) {
+                            my_user.setPhoneNumber(my_phone);
+                        }
+                        if (!imgPath.equals("") & !my_user.getImage().equals(imgPath)) {
+                            my_user.setImage(imgPath);
+                        }
+
                         myUserRef.setValue(my_user);
 
                     } else {

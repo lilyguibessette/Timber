@@ -4,21 +4,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Homeowner implements User {
-    private String username;
-    private String token;
-    private double latitude;
-    private double longitude;
-    private String firstName;
-    private String lastName;
-    private String zipcode;
-    private String email;
-    private String phoneNumber;
-    private String image;
-    private ArrayList<String> activeProjectList;
-    private ArrayList<String> completedProjectList;
-    private ArrayList<String> swipedRightOnList;
-    private ArrayList<String> swipedLeftOnList;
-    private ArrayList<String> matchList;
+    private String username, token, firstName, lastName, zipcode, email, phoneNumber, image;
+    private ArrayList<String> activeProjectList, completedProjectList, swipedRightOnList,
+            swipedLeftOnList, matchList;
+    private double latitude, longitude;
 
     public Homeowner() {
     }
@@ -56,7 +45,6 @@ public class Homeowner implements User {
 
         this.phoneNumber = phoneNumber;
         this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber must not be null");
-        this.image = "default_profile_pic.PNG";
 
         this.activeProjectList = new ArrayList<>();
         this.completedProjectList = new ArrayList<>();
@@ -69,6 +57,8 @@ public class Homeowner implements User {
         this.swipedRightOnList.add("EMPTY");
         this.swipedLeftOnList.add("EMPTY");
         this.matchList.add("EMPTY");
+
+        this.image = "default_profile_pic.PNG";
     }
 
     public Homeowner(String username,

@@ -43,31 +43,23 @@ import edu.neu.madcourse.timber.users.Homeowner;
 
 public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
     private static final String TAG = "UpdateProfileDialogFragment";
-    private Button updateButton;
-    private Button createButton;
-    private Button logout;
-    public String my_username;
     public String my_usertype = "HOMEOWNERS";
-    public String my_param1;
-    public String my_param2;
-    public String my_email;
-    public String my_zip;
-    public String my_phone;
+    private static final int PICK_IMAGE = 100;
+
+    private Button updateButton, createButton, logout, updateImageButton;
+    public String my_username, my_param1, my_param2, my_email, my_zip, my_phone;
 
     // items related to the update image section
-    ImageView imageView;
-    private Button updateImageButton;
-    private static final int PICK_IMAGE = 100;
-    private final int PICK_IMAGE_GALLERY = 2;
+    private ImageView imageView;
     private Bitmap bitmap;
     private InputStream inputStreamImg;
     private File destination = null;
     private String imgPath = null;
-    Uri imageUri;
+    private Uri imageUri;
 
     // instance for firebase storage and StorageReference
-    FirebaseStorage storage;
-    StorageReference storageReference;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
 
     public UpdateHomeownerProfileDialogFragment() {
         // Required empty public constructor
@@ -88,27 +80,6 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.update_account_homeowner, container, false);
 
-        createButton = view.findViewById(R.id.update_account);
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                my_username = ((EditText) view.findViewById(R.id.update_username)).getText().toString();
-                my_param1 = ((EditText) view.findViewById(R.id.update_param1)).getText().toString();
-                my_param2 = ((EditText) view.findViewById(R.id.update_param2)).getText().toString();
-                my_email = ((EditText) view.findViewById(R.id.update_email)).getText().toString();
-                my_zip = ((EditText) view.findViewById(R.id.update_zip)).getText().toString();
-                my_phone = ((EditText) view.findViewById(R.id.update_phone)).getText().toString();
-                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment create click");
-                // use dialog for add link
-                update_profile();
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.container, new ProfileFragment());
-                fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
-                fragmentTransaction.commit();
-            }
-        });
-
         updateImageButton = view.findViewById(R.id.update_image);
         imageView = view.findViewById(R.id.image);
         updateImageButton.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +88,27 @@ public class UpdateHomeownerProfileDialogFragment extends DialogFragment {
                 Intent gallery = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(gallery, PICK_IMAGE);
+            }
+        });
+
+        createButton = view.findViewById(R.id.update_account);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("UpdateProfileDialogFragment", "UpdateProfileDialogFragment create click");
+                // use dialog for add link
+                my_username = ((EditText) view.findViewById(R.id.update_username)).getText().toString();
+                my_param1 = ((EditText) view.findViewById(R.id.update_param1)).getText().toString();
+                my_param2 = ((EditText) view.findViewById(R.id.update_param2)).getText().toString();
+                my_email = ((EditText) view.findViewById(R.id.update_email)).getText().toString();
+                my_zip = ((EditText) view.findViewById(R.id.update_zip)).getText().toString();
+                my_phone = ((EditText) view.findViewById(R.id.update_phone)).getText().toString();
+                update_profile();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, new ProfileFragment());
+                fragmentTransaction.addToBackStack(null);
+                Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
+                fragmentTransaction.commit();
             }
         });
 
