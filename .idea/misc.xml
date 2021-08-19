@@ -4,10 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../layout/custom_preview.xml" value="0.1828125" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/card_message.xml" value="0.11481481481481481" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/card_swipe.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/create_account.xml" value="0.264" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/create_project.xml" value="0.264" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/fragment_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/fragment_matches.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/fragment_profile.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/main_screen.xml" value="0.6" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/recycler_message.xml" value="0.4" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/update_account_contractor.xml" value="0.264" />
@@ -15,8 +18,8 @@
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/layout/update_radius.xml" value="0.19583333333333333" />
         <entry key="..\:/Users/tolli/Documents/GitHub/Timber/app/src/main/res/menu/menu_bottom_nav.xml" value="0.25416666666666665" />
         <entry key="app/src/main/res/layout/card_contacts.xml" value="0.2910569105691057" />
-        <entry key="app/src/main/res/layout/card_match.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/card_message.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/card_match.xml" value="0.16770833333333332" />
+        <entry key="app/src/main/res/layout/card_message.xml" value="0.1690527296823459" />
         <entry key="app/src/main/res/layout/card_post.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/card_swipe.xml" value="0.1578125" />
         <entry key="app/src/main/res/layout/create_account.xml" value="0.240658760270996" />
