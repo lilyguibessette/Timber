@@ -45,6 +45,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Uri photoURI;
+    private StorageReference imageRef;
 
     View view;
     private final ArrayList<Project> newsFeedHistory;
@@ -72,7 +73,14 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedHolder>{
             holder.post_username.setText(currentItem.getUsername());
             // Reference to an image file in Cloud Storage
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-            StorageReference imageRef = storageReference.child(currentItem.getImage());
+            if( currentItem.getImage() != null) {
+
+                imageRef = storageReference.child(currentItem.getImage());
+
+            } else {
+                imageRef = storageReference.child("default_profile_pic.PNG");
+            }
+
             Glide.with(view)
                     .asBitmap()
                     .load(imageRef)

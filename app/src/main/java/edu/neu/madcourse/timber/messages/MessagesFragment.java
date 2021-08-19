@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,9 +32,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import edu.neu.madcourse.timber.R;
+import edu.neu.madcourse.timber.matches.Match;
 import edu.neu.madcourse.timber.matches.MatchesFragment;
 import edu.neu.madcourse.timber.users.Homeowner;
 import edu.neu.madcourse.timber.users.Project;
@@ -65,8 +70,9 @@ public class MessagesFragment extends Fragment {
     private FirebaseDatabase database;
     private DatabaseReference myMessagesRef;
     private ChildEventListener myMessagesListener;
+    private Project currentProject;
+    private TextView projNametv;
 
-    
     public MessagesFragment() {
         // Required empty public constructor
     }
@@ -86,12 +92,13 @@ public class MessagesFragment extends Fragment {
         return fragment;
     }
 
-    public  String getProject_id(){
-        if (project_id == null){
+    public String getProject_id() {
+        if (this.project_id == null) {
             return "FAKE";
         }
         return this.project_id;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,19 +113,14 @@ public class MessagesFragment extends Fragment {
         my_username = sharedPreferences.getString("USERNAME", "Not found");
         my_usertype = sharedPreferences.getString("USERTYPE", "Not found");
         String project_id2 = sharedPreferences.getString("MSGPROJID", "Not found");
-        if (project_id == null){
+        if (project_id == null) {
             project_id = project_id2;
             Log.e(TAG, "got projid from shared pref");
         }
 
-
         createDatabaseResources();
-        // get saved state and initialize the recyclerview
         initialMessagesData(savedInstanceState);
-        messageHistory.add(new Message("apples", "this is a test post 1"));
-        messageHistory.add(new Message("peaches", "this is a test post 2"));
-        messageHistory.add(new Message("mangoes", "this is a test post 3"));
-        messageHistory.add(new Message("watermelons","this is a test post 4"));
+        // get saved state and initialize the recyclerview
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.recycler_message, container, false);
@@ -152,17 +154,20 @@ public class MessagesFragment extends Fragment {
         my_username = sharedPreferences.getString("USERNAME", "Not found");
         my_usertype = sharedPreferences.getString("USERTYPE", "Not found");
         String project_id2 = sharedPreferences.getString("MSGPROJID", "Not found");
-        if (project_id == null){
+        if (project_id == null) {
             project_id = project_id2;
             Log.e(TAG, "got projid from shared pref");
         }
         messagesRecyclerView = view.findViewById(R.id.messages);
-        Log.e(TAG,"messages: " + messagesRecyclerView.toString());
+        Log.e(TAG, "messages: " + messagesRecyclerView.toString());
         messageLayoutManager = new LinearLayoutManager(view.getContext());
         messagesRecyclerView.setHasFixedSize(true);
         messagesAdapter = new MessagesAdapter(messageHistory);
         messagesRecyclerView.setAdapter(messagesAdapter);
         messagesRecyclerView.setLayoutManager(messageLayoutManager);
+        projNametv = view.findViewById(R.id.project_name);
+        //TODO fix to project name later
+        projNametv.setText(project_id);
         back = view.findViewById(R.id.back_button);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,7 +176,7 @@ public class MessagesFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, new MatchesFragment());
                 fragmentTransaction.addToBackStack(null);
-                Toast.makeText(getActivity(), "going to matches from msgs" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "going to matches from msgs", Toast.LENGTH_SHORT).show();
                 fragmentTransaction.commit();
             }
         });
@@ -188,7 +193,7 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO figure out all the movems for the marking of complete and what info we need here
-               markProjectCompleteToDB(project_id, my_username);
+                markProjectCompleteToDB(project_id, my_username);
 
             }
         });
@@ -219,15 +224,13 @@ public class MessagesFragment extends Fragment {
                 // get references to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 // Update user stats for sending message
-                DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/"+proj_id);
+                DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/" + proj_id);
                 activeProjectRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    public Project proj;
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other project so we can add a new message
-                        projectToMove[0] = dataSnapshot.getValue(Project.class);
-                        proj = projectToMove[0];
-                        if (activeProjectRef != null && proj != null){
+                        currentProject = dataSnapshot.getValue(Project.class);
+                        if (activeProjectRef != null && currentProject != null) {
                             // add message to project
                             // set other project to the newly updates other project
                             dataSnapshot.getRef().removeValue();
@@ -253,25 +256,31 @@ public class MessagesFragment extends Fragment {
                         Log.w(TAG, "proj ref add proj onCancelled", databaseError.toException());
                     }
                 });
-                DatabaseReference completedProjectRef = database.getReference("COMPLETED_PROJECTS/"+proj_id);
+                DatabaseReference completedProjectRef = database.getReference("COMPLETED_PROJECTS/" + proj_id);
                 completedProjectRef.addValueEventListener(new ValueEventListener() {
                     public Boolean first_change = true;
+
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other user so we can add a new message
-                        if (completedProjectRef != null && dataSnapshot != null && first_change ){
+                        if (completedProjectRef != null && dataSnapshot != null && first_change) {
                             Log.w(TAG, "added proj to completed list: " + proj_id);
-                            completedProjectRef.setValue(projectToMove[0]).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            completedProjectRef.setValue(currentProject).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received added completed project: " + projectToMove[0].toString());
+                                    if (currentProject != null) {
+                                        Log.w(TAG, "Update received added completed project: " + currentProject.toString());
+                                    }
+                                    if (currentProject == null) {
+                                        Log.w(TAG, "Update received removed completed project");
+                                    }
 
                                 }
                             })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " +"completed not changed");
+                                            Log.w(TAG, "FAILED to update project list: " + "completed not changed");
                                         }
                                     });
                             first_change = false;
@@ -335,7 +344,6 @@ public class MessagesFragment extends Fragment {
     }
 
 
-
     // send a msg to another user's entry in the realtime db
     private void sendMessageToDB(Message message, String proj_id) {
         new Thread(new Runnable() {
@@ -344,29 +352,30 @@ public class MessagesFragment extends Fragment {
                 // get references to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 // Update user stats for sending message
-                DatabaseReference projectRef = database.getReference("ACTIVE_PROJECTS/"+proj_id);
+                DatabaseReference projectRef = database.getReference("ACTIVE_PROJECTS/" + proj_id);
                 Log.w(TAG, "Update received new project: " + proj_id);
                 projectRef.addValueEventListener(new ValueEventListener() {
                     public Project proj;
                     public Boolean first_change = true;
+
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other project so we can add a new message
                         proj = dataSnapshot.getValue(Project.class);
-                        if (projectRef != null && proj != null &&first_change){
+                        if (projectRef != null && proj != null && first_change) {
                             // add message to projec
                             proj.addMessage(my_username, message);
                             // set other project to the newly updates other project
                             projectRef.setValue(proj).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received new project: " + proj.toString());
+                                    Log.w(TAG, "Update received new msg to proj: " + proj.toString());
                                 }
                             })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + proj.toString());
+                                            Log.w(TAG, "FAILED to update project msg list: " + proj.toString());
                                         }
                                     });
                         }
@@ -386,9 +395,6 @@ public class MessagesFragment extends Fragment {
     }
 
 
-
-
-
     /**
      * LISTENERS FOR DATA CHANGES
      * - Listen for change for number of stickers sent
@@ -397,26 +403,43 @@ public class MessagesFragment extends Fragment {
      */
     private void createDatabaseResources() {
         database = FirebaseDatabase.getInstance();
-        myMessagesRef = database.getReference("ACTIVE_PROJECTS/"+project_id+"/messageThreads/"+contractor_id);
-        setCompletedProjectsListener();
+
+        Log.e(TAG, "proj " + project_id + " myuser " + my_username);
+        if (my_usertype.equals("HOMEOWNER")) {
+            myMessagesRef = database.getReference("ACTIVE_PROJECTS/" + project_id + "/messageThreads/" + contractor_id);
+            Log.e(TAG, "FROM HOMEOWNER proj " + project_id + " contractor " + contractor_id);
+        } else {
+            myMessagesRef = database.getReference("ACTIVE_PROJECTS/" + project_id + "/messageThreads/" + my_username);
+            Log.e(TAG, "FROM CONTRACTOR proj " + project_id + " myuser " + my_username);
+        }
+
+        setMyMessagesListener();
     }
 
 
     // sets listener for changes to received history; updates the messages received on device
-    public void setCompletedProjectsListener(){
+    public void setMyMessagesListener() {
         myMessagesListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                // A new data item has been added, add it to the list
-                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
-                Message msg = dataSnapshot.getValue(Message.class);
-                Log.d(TAG, "onChildAdded:" + msg.message +" " + msg.username);
 
-                // Add new project from the db to this device's stickerhistory
-                messageHistory.add(0, msg);
+                Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
+                //   private HashMap<String, ArrayList<Message>> messageThreads = new HashMap<>();
+                HashMap<String, Message> msgData = (HashMap<String, Message>) dataSnapshot.getValue();
+                if (msgData != null) {
+                    for (int i = 0; i < msgData.size(); i++) {
+                        if (!msgData.get(String.valueOf(i)).getMessage().equals("EMPTY") && msgData.get(String.valueOf(i)).getMessage() != null) {
 
-                // update recyclerView adapter to add the new project
-                messagesAdapter.notifyItemInserted(0);
+                            Message msg = msgData.get(String.valueOf(i));
+                          //  Log.e(TAG, each.toString() + " from " +each.get("username") + " said " +each.get("message"));
+                           Log.e(TAG, msg.toString());
+                            messageHistory.add(0, msg);
+                            messagesAdapter.notifyItemInserted(0);
+                        }
+                    }
+
+                    ;
+                }
             }
 
             @Override
@@ -438,7 +461,9 @@ public class MessagesFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "onCancelled", databaseError.toException());
             }
+
         };
         myMessagesRef.addChildEventListener(myMessagesListener);
     }
+
 }

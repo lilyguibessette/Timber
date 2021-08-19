@@ -99,6 +99,7 @@ public class MatchesFragment extends Fragment {
     }
 
 
+
     private void initialMatchesData(Bundle savedInstanceState) {
 
         // recreate the sticker history on orientation change or open
@@ -255,6 +256,7 @@ public class MatchesFragment extends Fragment {
             public void onDataChange(@NotNull DataSnapshot snapshot) {
                 Log.e(TAG, "onChildAdded:" + snapshot.getKey());
                 Project project = snapshot.getValue(Project.class);
+                if (project != null){
                 Log.e(TAG, "onChildAdded:" + project.project_id);
                 List<String> contractors =  project.getMatchList();
                 for (String each : contractors) {
@@ -265,6 +267,7 @@ public class MatchesFragment extends Fragment {
                         matchesAdapter.notifyItemInserted(0);
                         Log.e(TAG, match.toString() + " " +match.getProjectName() +" " + match.getContractor_id());
                     }
+                }
                 }
             }
 
@@ -284,10 +287,12 @@ public class MatchesFragment extends Fragment {
             public void onDataChange(@NotNull DataSnapshot snapshot) {
                 Log.e(TAG, "onChildAdded:" + snapshot.getKey());
                 Project project = snapshot.getValue(Project.class);
-                Log.e(TAG, "onChildAdded:" + project.project_id);
-                Match match = new Match(project.getProject_id(), project.getImage(), project.getUsername());
-                matchesHistory.add(0, match);
-                matchesAdapter.notifyItemInserted(0);
+                if (project != null) {
+                    Log.e(TAG, "onChildAdded:" + project.project_id);
+                    Match match = new Match(project.getProject_id(), project.getImage(), project.getUsername());
+                    matchesHistory.add(0, match);
+                    matchesAdapter.notifyItemInserted(0);
+                }
 
             }
 
