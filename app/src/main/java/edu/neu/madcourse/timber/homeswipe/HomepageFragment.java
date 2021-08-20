@@ -474,7 +474,9 @@ public class HomepageFragment extends Fragment {
 
             }
         });
-        if(Objects.isNull(thisProject)){
+
+
+        if(Objects.isNull(thisProject) && my_usertype == "HOMEOWNERS"){
             Toast.makeText(getActivity(), "No projects listed! " +
                     "\nPlease create a new project to begin swiping", Toast.LENGTH_LONG).show();
         }
