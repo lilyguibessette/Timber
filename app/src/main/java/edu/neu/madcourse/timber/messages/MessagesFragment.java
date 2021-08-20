@@ -71,7 +71,8 @@ public class MessagesFragment extends Fragment {
     // Database Resources
     private FirebaseDatabase database;
     private DatabaseReference myMessagesRef;
-    private ValueEventListener myMessagesListener;
+    //private ValueEventListener myMessagesListener;
+    private ChildEventListener myMessagesListener;
     private ChildEventListener myMessageThreadsListener;
     private DatabaseReference myMessageThreadsRef;
     private Project currentProject;
@@ -544,7 +545,7 @@ public class MessagesFragment extends Fragment {
         });*/
     }
 
-
+/*
     // sets listener for changes to received history; updates the messages received on device
     public void setMyMessagesListener() {
         myMessagesListener = new ValueEventListener() {
@@ -581,8 +582,44 @@ public class MessagesFragment extends Fragment {
 
             }
         };
-        myMessagesRef.addListenerForSingleValueEvent(myMessagesListener);
+        myMessagesRef.addValueEventListener(myMessagesListener);
+    }*/
+
+    // sets listener for changes to received history; updates the messages received on device
+    public void setMyMessagesListener() {
+        myMessagesListener = new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(@NonNull @NotNull DataSnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable String previousChildName) {
+                Message msg = snapshot.getValue(Message.class);
+                messageHistory.add(msg);
+                Log.e(TAG,"onchildadded: " + msg.toString());
+                messagesAdapter.notifyItemInserted(messageHistory.size());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull @NotNull DataSnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull @NotNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull @NotNull DataSnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        myMessagesRef.addChildEventListener(myMessagesListener);
     }
+
 
 /*        myMessagesListener = new ChildEventListener() {
             @Override
