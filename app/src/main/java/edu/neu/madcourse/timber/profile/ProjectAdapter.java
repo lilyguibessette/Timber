@@ -43,6 +43,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectHolder>{
                     .load(imageRef)
                     .into(holder.image);
             holder.description.setText(currentItem.getDescription());
+            holder.type.setText(currentItem.getProject_type());
         }
     }
 
