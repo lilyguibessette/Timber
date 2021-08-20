@@ -225,7 +225,7 @@ public class Utils {
                         if (!task.isSuccessful()) {
                             msg = "Failed to subscribe to " + topic;
                         }
-                        Toast.makeText(activity.getBaseContext(), msg, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity.getBaseContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
