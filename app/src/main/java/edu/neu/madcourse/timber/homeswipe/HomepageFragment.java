@@ -147,7 +147,7 @@ public class HomepageFragment extends Fragment {
             if (Objects.isNull(thisProject)) {
                 Toast.makeText(getActivity(), "No projects listed! " +
                         "\nPlease create a new project to begin swiping", Toast.LENGTH_LONG).show();
-                return getView();
+                //return getView();
             }
 
             // else if the user is a contractor
@@ -197,14 +197,14 @@ public class HomepageFragment extends Fragment {
                         Log.e(TAG, "starting a thread for right swipe");
 
                         // if the user is a homeowner, assign match to contractor
-                        if(!Objects.isNull(thisProject)) {
+
                             if (my_usertype.equals("HOMEOWNERS")) {
                                 swipedOnContractorHandler("Right", swipedName);
                                 // otherwise assign the swipe to the project
                             } else {
                                 swipedOnProjectHandler("Right", swipedName);
                             }
-                        }
+
                         Log.e(TAG, "ending a thread for right swipe");
                     }).start();
                 }
@@ -219,7 +219,7 @@ public class HomepageFragment extends Fragment {
                         Log.e(TAG, "starting a thread for left swipe");
 
                         // if the user is a homeowner, assign rejection to contractor
-                        if(!Objects.isNull(thisProject)) {
+
                             if (my_usertype.equals("HOMEOWNERS")) {
                                 swipedOnContractorHandler("Left", swipedName);
 
@@ -227,7 +227,7 @@ public class HomepageFragment extends Fragment {
                             } else {
                                 swipedOnProjectHandler("Left", swipedName);
                             }
-                        }
+
 
                         Log.e(TAG, "ending a thread for left swipe");
                     }).start();
@@ -388,7 +388,7 @@ public class HomepageFragment extends Fragment {
                         public void onStopTrackingTouch(SeekBar seekBar) {
 
                             Log.e(TAG, "discrete = " + String.valueOf(discrete));
-                            Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), "discrete = " + String.valueOf(discrete), Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -474,6 +474,12 @@ public class HomepageFragment extends Fragment {
 
             }
         });
+        if(Objects.isNull(thisProject)){
+            Toast.makeText(getActivity(), "No projects listed! " +
+                    "\nPlease create a new project to begin swiping", Toast.LENGTH_LONG).show();
+        }
+
+
         return view;
     }
 
@@ -519,14 +525,16 @@ public class HomepageFragment extends Fragment {
 
                                 // otherwise add the card to the cardstack
                                 Log.d(TAG, "adding new card");
-                                cardStack.add(new SwipeCard(
-                                        (String) singleUser.get("image"),
-                                        (String) entry.getKey(),
-                                        (String) singleUser.get("email"),
-                                        (String) singleUser.get("zipcode")));
+                                if(!Objects.isNull(thisProject)) {
+                                    cardStack.add(new SwipeCard(
+                                            (String) singleUser.get("image"),
+                                            (String) entry.getKey(),
+                                            (String) singleUser.get("email"),
+                                            (String) singleUser.get("zipcode")));
 
-                                // then notify the adapter that the data is updated
-                                adapter.notifyDataSetChanged();
+                                    // then notify the adapter that the data is updated
+                                    adapter.notifyDataSetChanged();
+                                }
                             }
                         }
                     }
@@ -578,14 +586,16 @@ public class HomepageFragment extends Fragment {
 
                                 // otherwise add the card to the cardstack
                                 Log.d(TAG, "adding new card?");
-                                cardStack.add(new SwipeCard(
-                                        (String) singleUser.get("image"),
-                                        (String) entry.getKey(),
-                                        (String) singleUser.get("description"),
-                                        (String) singleUser.get("zipcode")));
+                                if(!Objects.isNull(thisProject)) {
+                                    cardStack.add(new SwipeCard(
+                                            (String) singleUser.get("image"),
+                                            (String) entry.getKey(),
+                                            (String) singleUser.get("description"),
+                                            (String) singleUser.get("zipcode")));
 
-                                // then notify the adapter that the data is updated
-                                adapter.notifyDataSetChanged();
+                                    // then notify the adapter that the data is updated
+                                    adapter.notifyDataSetChanged();
+                                }
                             }
                         }
                     }
