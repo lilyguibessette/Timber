@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.fcm_server.Utils;
@@ -422,7 +423,8 @@ public class MessagesFragment extends Fragment {
     // need to iterate over the match lsit for the project and complete for each user?
     // send a sticker to another user's entry in the realtime db
     private void unmatchToDB(String proj_id,  String contractor_id) {
-        Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+        Log.e(TAG, "attempt Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -434,14 +436,22 @@ public class MessagesFragment extends Fragment {
 
                 Log.e(TAG, "matchListRef "+ matchListRef);
 
-                matchListRef.equalTo(contractor_id).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                matchListRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            if (matchListRef != null ) {
-                                dataSnapshot.getRef().removeValue();
-                                Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+                        Log.e(TAG,"440 snapshot is :" + dataSnapshot);
 
+                        if (dataSnapshot.exists()) {
+                            ArrayList<String> matchList = (ArrayList<String>) dataSnapshot.getValue();
+
+                            if (matchList != null ) {
+                                Log.e(TAG,"snapshot is :" + matchList);
+                                matchList.remove(contractor_id);
+
+                                //dataSnapshot.getRef().removeValue();
+                                Log.e(TAG, "445 Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+                                matchListRef.setValue(matchList);
                             }
                         }
                     }
@@ -452,20 +462,25 @@ public class MessagesFragment extends Fragment {
                         Log.w(TAG, "proj ref remove match onCancelled", databaseError.toException());
                     }
                 });
-                DatabaseReference contractorMatchRef = database.getReference("CONSTRACTORS/" + contractor_id + "/matchList");
+                DatabaseReference contractorMatchRef = database.getReference("CONTRACTORS/" + contractor_id + "/matchList");
 
                 Log.e(TAG, "contractorMatchRef "+ contractorMatchRef);
 
-                contractorMatchRef.equalTo(proj_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                contractorMatchRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        // get other user so we can add a new message
                         if (dataSnapshot.exists()) {
-                            if (contractorMatchRef != null ) {dataSnapshot.getRef().removeValue();
-                                Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
-                            }
+                            ArrayList<String> matchList = (ArrayList<String>) dataSnapshot.getValue();
 
+                            if (matchList != null ) {
+                                Log.e(TAG,"snapshot is :" + matchList);
+                                matchList.remove(proj_id);
+
+                                //dataSnapshot.getRef().removeValue();
+                                Log.e(TAG, "445 Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+                                contractorMatchRef.setValue(matchList);
+                            }
                         }
                     }
 
@@ -476,7 +491,10 @@ public class MessagesFragment extends Fragment {
                     }
 
                 });
+
             }
+
+
         }).start();
     }
 
