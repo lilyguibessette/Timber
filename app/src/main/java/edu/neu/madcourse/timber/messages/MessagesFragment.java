@@ -198,14 +198,11 @@ public class MessagesFragment extends Fragment {
         unMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
                 if(my_usertype.equals("HOMEOWNERS")){
                     unmatchToDB(project_id,  other_user_id);
                 } else{
                     unmatchToDB(project_id,  my_username);
                 }
-                // use dialog for add link
-                // remove this match from match lists so they don't communicate anymore
             }
         });
         markComplete = view.findViewById(R.id.complete_button);
@@ -455,10 +452,14 @@ public class MessagesFragment extends Fragment {
                         Log.w(TAG, "proj ref remove match onCancelled", databaseError.toException());
                     }
                 });
-                DatabaseReference contractorMatchRef = database.getReference("CONSTRACTORS/" + contractor_id + "matchList");
+                DatabaseReference contractorMatchRef = database.getReference("CONSTRACTORS/" + contractor_id + "/matchList");
+
+                Log.e(TAG, "contractorMatchRef "+ contractorMatchRef);
+
                 contractorMatchRef.equalTo(proj_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
                         // get other user so we can add a new message
                         if (dataSnapshot.exists()) {
                             if (contractorMatchRef != null ) {dataSnapshot.getRef().removeValue();
