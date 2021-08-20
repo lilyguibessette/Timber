@@ -123,16 +123,6 @@ public class MatchesFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         // Save the sticker history so we can retrieve it on orientation change
-        int size = matchesHistory == null ? 0 : matchesHistory.size();
-        outState.putInt(NUMBER_OF_MATCHES, size);
-        for (int i = 0; i < size; i++) {
-            outState.putString(KEY_OF_MATCH
-                    + i + "0", matchesHistory.get(i).getProjectName());
-            outState.putString(KEY_OF_MATCH
-                    + i + "1", matchesHistory.get(i).getImage());
-            outState.putString(KEY_OF_MATCH
-                    + i + "2", matchesHistory.get(i).getContractor_id());
-        }
         super.onSaveInstanceState(outState);
     }
 

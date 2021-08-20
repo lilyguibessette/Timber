@@ -198,6 +198,12 @@ public class MessagesFragment extends Fragment {
         unMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                
+                if(my_usertype.equals("HOMEOWNERS")){
+                    unmatchToDB(project_id,  other_user_id);
+                } else{
+                    unmatchToDB(project_id,  my_username);
+                }
                 // use dialog for add link
                 // remove this match from match lists so they don't communicate anymore
             }
@@ -258,7 +264,7 @@ public class MessagesFragment extends Fragment {
                                 Message msg = new Message(msgData.get("username"),msgData.get("to_username") , msgData.get("message"));
                                 if((msg.getTo_username().equals(other_user_id) && msg.getUsername().equals(my_username))
                                         ||( msg.getTo_username().equals(my_username) && msg.getUsername().equals(other_user_id))){
-                                    if(i > msgList.size() -1) {
+                                    if(i == msgList.size() ) {
                                         messageHistory.add(msg);
                                         //TODO the adapter might end up backwards
                                         messagesAdapter.notifyItemInserted(0);
@@ -413,6 +419,66 @@ public class MessagesFragment extends Fragment {
             }
         }).start();
     }
+
+
+
+    // need to iterate over the match lsit for the project and complete for each user?
+    // send a sticker to another user's entry in the realtime db
+    private void unmatchToDB(String proj_id,  String contractor_id) {
+        Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Project[] projectToMove = new Project[1];
+                // get references to database
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                // Update user stats for sending message
+                DatabaseReference matchListRef = database.getReference("ACTIVE_PROJECTS/" + proj_id+"/matchList" );
+
+                Log.e(TAG, "matchListRef "+ matchListRef);
+
+                matchListRef.equalTo(contractor_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (matchListRef != null ) {
+                                dataSnapshot.getRef().removeValue();
+                                Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "proj ref remove match onCancelled", databaseError.toException());
+                    }
+                });
+                DatabaseReference contractorMatchRef = database.getReference("CONSTRACTORS/" + contractor_id + "matchList");
+                contractorMatchRef.equalTo(proj_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // get other user so we can add a new message
+                        if (dataSnapshot.exists()) {
+                            if (contractorMatchRef != null ) {dataSnapshot.getRef().removeValue();
+                                Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "user ref add proj onCancelled", databaseError.toException());
+                    }
+
+                });
+            }
+        }).start();
+    }
+
 
 
     // send a msg to another user's entry in the realtime db
