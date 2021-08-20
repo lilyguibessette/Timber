@@ -204,6 +204,12 @@ public class MessagesFragment extends Fragment {
                 } else{
                     unmatchToDB(project_id,  my_username);
                 }
+
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, new MatchesFragment());
+                fragmentTransaction.addToBackStack(null);
+                Toast.makeText(getActivity(), "going to matches from msgs", Toast.LENGTH_SHORT).show();
+                fragmentTransaction.commit();
             }
         });
         markComplete = view.findViewById(R.id.complete_button);
@@ -215,6 +221,12 @@ public class MessagesFragment extends Fragment {
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("ACTIVE_PROJECT", null);
                 myEdit.commit();
+
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, new MatchesFragment());
+                fragmentTransaction.addToBackStack(null);
+                Toast.makeText(getActivity(), "going to matches from msgs", Toast.LENGTH_SHORT).show();
+                fragmentTransaction.commit();
 
             }
         });

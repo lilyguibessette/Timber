@@ -271,13 +271,15 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onDataChange(@NotNull DataSnapshot snapshot) {
-                Log.e(TAG, "onChildAdded:" + snapshot.getKey());
+                Log.e(TAG, "274 onChildAdded:" + snapshot);
                 Project project = snapshot.getValue(Project.class);
+                Log.e(TAG, "276 project:" + project);
                 if(!Objects.isNull(project)) {
-                    Log.e(TAG, "onChildAdded:" + project.project_id);
+                    Log.e(TAG, "277 onChildAdded:" + project.project_id);
 
                     // Add new project from the db to this device's stickerhistory
                     projects.add(0, project);
+                    Log.e(TAG, "281 projects:" + projects);
 
                     // update recyclerView adapter to add the new project
                     activeProjectsAdapter.notifyItemInserted(0);
