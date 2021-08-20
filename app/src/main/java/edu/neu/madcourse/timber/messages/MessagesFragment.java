@@ -197,6 +197,12 @@ public class MessagesFragment extends Fragment {
         unMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                
+                if(my_usertype.equals("HOMEOWNERS")){
+                    unmatchToDB(project_id,  other_user_id);
+                } else{
+                    unmatchToDB(project_id,  my_username);
+                }
                 // use dialog for add link
                 // remove this match from match lists so they don't communicate anymore
             }
@@ -257,7 +263,7 @@ public class MessagesFragment extends Fragment {
                                 Message msg = new Message(msgData.get("username"),msgData.get("to_username") , msgData.get("message"));
                                 if((msg.getTo_username().equals(other_user_id) && msg.getUsername().equals(my_username))
                                         ||( msg.getTo_username().equals(my_username) && msg.getUsername().equals(other_user_id))){
-                                    if(i > msgList.size() -1) {
+                                    if(i == msgList.size() ) {
                                         messageHistory.add(msg);
                                         //TODO the adapter might end up backwards
                                         messagesAdapter.notifyItemInserted(0);
@@ -417,7 +423,8 @@ public class MessagesFragment extends Fragment {
 
     // need to iterate over the match lsit for the project and complete for each user?
     // send a sticker to another user's entry in the realtime db
-    private void unmatchToDB(String proj_id, String my_username, String other_user_id) {
+    private void unmatchToDB(String proj_id,  String contractor_id) {
+        Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -425,65 +432,39 @@ public class MessagesFragment extends Fragment {
                 // get references to database
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 // Update user stats for sending message
-                DatabaseReference activeProjectRef = database.getReference("ACTIVE_PROJECTS/" + proj_id);
-                activeProjectRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                DatabaseReference matchListRef = database.getReference("ACTIVE_PROJECTS/" + proj_id+"/matchList" );
+
+                Log.e(TAG, "matchListRef "+ matchListRef);
+
+                matchListRef.equalTo(contractor_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // get other project so we can add a new message
-                        currentProject = dataSnapshot.getValue(Project.class);
-                        if (activeProjectRef != null && currentProject != null) {
-                            // add message to project
-                            // set other project to the newly updates other project
-                            dataSnapshot.getRef().removeValue();
-                            /*
-                            activeProjectRef.setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.w(TAG, "Update received removed project from active: " + proj_id);
-                                }
-                            })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + proj_id);
-                                        }
-                                    });*/
+                        if (dataSnapshot.exists()) {
+                            if (matchListRef != null ) {
+                                dataSnapshot.getRef().removeValue();
+                                Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+
+                            }
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         // Getting Post failed, log a message
-                        Log.w(TAG, "proj ref add proj onCancelled", databaseError.toException());
+                        Log.w(TAG, "proj ref remove match onCancelled", databaseError.toException());
                     }
                 });
-                DatabaseReference completedProjectRef = database.getReference("COMPLETED_PROJECTS/" + proj_id);
-                completedProjectRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                DatabaseReference contractorMatchRef = database.getReference("CONSTRACTORS/" + contractor_id + "matchList");
+                contractorMatchRef.equalTo(proj_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // get other user so we can add a new message
-                        if (completedProjectRef != null && dataSnapshot != null) {
-                            Log.w(TAG, "added proj to completed list: " + proj_id);
-                            completedProjectRef.setValue(currentProject).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    if (currentProject != null) {
-                                        Log.w(TAG, "Update received added completed project: " + currentProject.toString());
-                                    }
-                                    if (currentProject == null) {
-                                        Log.w(TAG, "Update received removed completed project");
-                                    }
+                        if (dataSnapshot.exists()) {
+                            if (contractorMatchRef != null ) {dataSnapshot.getRef().removeValue();
+                                Log.e(TAG, "Removing "+ proj_id + " and " + contractor_id + " from match lists.");
+                            }
 
-                                }
-                            })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "FAILED to update project list: " + "completed not changed");
-                                        }
-                                    });
                         }
-
                     }
 
                     @Override
@@ -493,48 +474,6 @@ public class MessagesFragment extends Fragment {
                     }
 
                 });
-                if (my_usertype.equals("HOMEOWNERS")) {
-                    DatabaseReference userRef = database.getReference("HOMEOWNERS/" + my_username);
-                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        public Homeowner user;
-
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // get other user so we can add a new message
-                            user = dataSnapshot.getValue(Homeowner.class);
-                            if (userRef != null && dataSnapshot != null && user != null) {
-                                // add message to user
-                                Log.w(TAG, "test proj to user list: " + user.toString());
-                                Log.w(TAG, "test proj to user list: " + user.getUsername());
-                                user.removeActiveProject(proj_id);
-                                user.addCompleteProject(proj_id);
-                                Log.w(TAG, "added proj to user list: " + user.toString());
-                                userRef.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.w(TAG, "Update received removed and added (moved) project: " + user.toString());
-                                    }
-                                })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "FAILED to update project list: " + user.toString());
-                                            }
-                                        });
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // Getting Post failed, log a message
-                            Log.w(TAG, "user ref add proj onCancelled", databaseError.toException());
-                        }
-
-                    });
-                }
-
-
             }
         }).start();
     }
