@@ -518,7 +518,7 @@ public class HomepageFragment extends Fragment {
                                 Log.d(TAG, "adding new card");
                                 cardStack.add(new SwipeCard(
                                         (String) singleUser.get("image"),
-                                        (String) singleUser.get("username"),
+                                        (String) entry.getKey(),
                                         (String) singleUser.get("email"),
                                         (String) singleUser.get("zipcode")));
 
@@ -577,7 +577,7 @@ public class HomepageFragment extends Fragment {
                                 Log.d(TAG, "adding new card?");
                                 cardStack.add(new SwipeCard(
                                         (String) singleUser.get("image"),
-                                        (String) singleUser.get("username"),
+                                        (String) entry.getKey(),
                                         (String) singleUser.get("description"),
                                         (String) singleUser.get("zipcode")));
 
@@ -795,7 +795,6 @@ public class HomepageFragment extends Fragment {
         final boolean[] willMatch = {false};
         // Check if project/contractor will match first
         if (direction.equals("Right")) {
-
             contractorsRef.child(my_username).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -836,6 +835,8 @@ public class HomepageFragment extends Fragment {
             });
         }
 
+        Log.e(TAG, "838 direction is : " + direction);
+
         // get the current project reference
         currentCardRef = activeProjectRef.child(swipedName);
         currentCardRef.get();
@@ -844,6 +845,8 @@ public class HomepageFragment extends Fragment {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e(TAG, "848 direction is : " + direction);
+                Log.e(TAG, "snapshot : " + dataSnapshot);
                 if (dataSnapshot.exists()) {
                     // get other user so we can add a new message
                     project = dataSnapshot.getValue(Project.class);
@@ -853,7 +856,7 @@ public class HomepageFragment extends Fragment {
 
                         // add message to user
                         Log.e(TAG, "attempting to add: " + my_username);
-
+                        Log.e(TAG, "direction is : " + direction);
                         // if the swipe direction is right
                         if (direction.equals("Right")) {
 
