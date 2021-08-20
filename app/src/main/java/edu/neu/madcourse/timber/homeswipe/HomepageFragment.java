@@ -197,12 +197,13 @@ public class HomepageFragment extends Fragment {
                         Log.e(TAG, "starting a thread for right swipe");
 
                         // if the user is a homeowner, assign match to contractor
-                        if (my_usertype.equals("HOMEOWNERS")) {
-                            swipedOnContractorHandler("Right", swipedName);
-
-                            // otherwise assign the swipe to the project
-                        } else {
-                            swipedOnProjectHandler("Right", swipedName);
+                        if(!Objects.isNull(thisProject)) {
+                            if (my_usertype.equals("HOMEOWNERS")) {
+                                swipedOnContractorHandler("Right", swipedName);
+                                // otherwise assign the swipe to the project
+                            } else {
+                                swipedOnProjectHandler("Right", swipedName);
+                            }
                         }
                         Log.e(TAG, "ending a thread for right swipe");
                     }).start();
@@ -218,12 +219,14 @@ public class HomepageFragment extends Fragment {
                         Log.e(TAG, "starting a thread for left swipe");
 
                         // if the user is a homeowner, assign rejection to contractor
-                        if (my_usertype.equals("HOMEOWNERS")) {
-                            swipedOnContractorHandler("Left", swipedName);
+                        if(!Objects.isNull(thisProject)) {
+                            if (my_usertype.equals("HOMEOWNERS")) {
+                                swipedOnContractorHandler("Left", swipedName);
 
-                            // otherwise assign the swipe to the project
-                        } else {
-                            swipedOnProjectHandler("Left", swipedName);
+                                // otherwise assign the swipe to the project
+                            } else {
+                                swipedOnProjectHandler("Left", swipedName);
+                            }
                         }
 
                         Log.e(TAG, "ending a thread for left swipe");
