@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import edu.neu.madcourse.timber.R;
 import edu.neu.madcourse.timber.profile.update.UpdateContractorProfileDialogFragment;
@@ -272,14 +273,15 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NotNull DataSnapshot snapshot) {
                 Log.e(TAG, "onChildAdded:" + snapshot.getKey());
                 Project project = snapshot.getValue(Project.class);
-                Log.e(TAG, "onChildAdded:" + project.project_id );
+                if(!Objects.isNull(project)) {
+                    Log.e(TAG, "onChildAdded:" + project.project_id);
 
-                // Add new project from the db to this device's stickerhistory
-                projects.add(0, project);
+                    // Add new project from the db to this device's stickerhistory
+                    projects.add(0, project);
 
-                // update recyclerView adapter to add the new project
-                activeProjectsAdapter.notifyItemInserted(0);
-
+                    // update recyclerView adapter to add the new project
+                    activeProjectsAdapter.notifyItemInserted(0);
+                }
             }
 
             @Override
